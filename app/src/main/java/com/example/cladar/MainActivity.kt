@@ -3,119 +3,145 @@ package com.example.cladar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.example.cladar.model.ActivityItem
-import com.example.cladar.ui.DailyScreen
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.cladar.model.*
+import com.example.cladar.ui.*
 import com.example.cladar.ui.theme.*
-import java.time.DayOfWeek
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var isDarkMode by remember { mutableStateOf(false) }
+            val context = LocalContext.current
+            val storage = remember { StorageManager(context) }
 
-            // Tema dinamico con supporto OLED (#000000 puro)
+            var isDarkMode by remember { mutableStateOf(storage.loadDarkMode()) }
+            var events by remember { mutableStateOf(storage.loadEvents()) }
+            var activities by remember { mutableStateOf(storage.loadActivities()) }
+
+            var selectedEventForModal by remember { mutableStateOf<EventItem?>(null) }
+            var showSettingsDialog by remember { mutableStateOf(false) }
+
             val colorScheme = if (isDarkMode) {
-                darkColorScheme(
-                    background = OLEDBlack,
-                    surface = OLEDSurface,
-                    primary = BurgundyTitle
-                )
+                darkColorScheme(background = OLEDBlack, surface = OLEDSurface, primary = BurgundyTitle)
             } else {
-                lightColorScheme(
-                    background = GridBackgroundLight,
-                    surface = Color.White,
-                    primary = BurgundyTitle
-                )
+                lightColorScheme(background = GridBackgroundLight, surface = Color.White, primary = BurgundyTitle)
             }
 
             MaterialTheme(colorScheme = colorScheme) {
-                MainScreen(
-                    isDarkMode = isDarkMode,
-                    onToggleTheme = { isDarkMode = !isDarkMode }
-                )
-            }
-        }
-    }
-}
+                // 1 = Daily / Diurnal Log come Landing Page
+                var selectedTab by remember { mutableIntStateOf(1) }
 
-@Composable
-fun MainScreen(isDarkMode: Boolean, onToggleTheme: () -> Unit) {
-    // 1 = Daily / Diurnal Log come landing page di default
-    var selectedTab by remember { mutableIntStateOf(1) }
-    
-    // Dati attività condivisi
-    var activities by remember {
-        mutableStateOf(
-            listOf(
-                ActivityItem(dayOfWeek = DayOfWeek.MONDAY, title = "Analisi I", location = "Aula Volterra", startHour = 8, categoryColor = CatSageGreen),
-                ActivityItem(dayOfWeek = DayOfWeek.MONDAY, title = "Algebra Lineare", location = "Aula Enriques", startHour = 10, categoryColor = CatGoldAmber),
-                ActivityItem(dayOfWeek = DayOfWeek.MONDAY, title = "Fisica I", location = "Aula De Lollis", startHour = 14, categoryColor = CatWarmOrange)
-            )
-        )
-    }
+                Scaffold(
+                    topBar = {
+                        SmallTopAppBar(
+                            title = { Text("Cladar", color = BurgundyTitle) },
+                            actions = {
+                                IconButton(onClick = { showSettingsDialog = true }) {
+                                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                                }
+                            }
+                        )
+                    },
+                    bottomBar = {
+                        NavigationBar(containerColor = if (isDarkMode) OLEDSurface else Color.White) {
+                            listOf("Thy Tasks", "Diurnal Log", "Almanack").forEachIndexed { index, title ->
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            when (index) {
+                                                0 -> Icons.Default.Check
+                                                1 -> Icons.Default.Edit
+                                                else -> Icons.Default.DateRange
+                                            },
+                                            contentDescription = title
+                                        )
+                                    },
+                                    label = { Text(title) },
+                                    selected = selectedTab == index,
+                                    onClick = { selectedTab = index }
+                                )
+                            }
+                        }
+                    }
+                ) { innerPadding ->
+                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                        when (selectedTab) {
+                            0 -> Box(Modifier.fillMaxSize(), Alignment.Center) { Text("Thy Tasks & Toils") }
+                            1 -> DailyScreen(
+                                isDarkMode = isDarkMode,
+                                activities = activities,
+                                events = events,
+                                onEventClick = { selectedEventForModal = it },
+                                onOpenEditModal = {}
+                            )
+                            2 -> CalendarScreen(
+                                isDarkMode = isDarkMode,
+                                events = events,
+                                onAddEvent = { newEv ->
+                                    events = events + newEv
+                                    storage.saveEvents(events)
+                                },
+                                onEventClick = { selectedEventForModal = it }
+                            )
+                        }
+                    }
+                }
 
-    val tabs = listOf("Thy Tasks", "Diurnal Log", "Almanack")
-    val icons = listOf(
-        Icons.Default.Check,
-        Icons.Default.Edit,
-        Icons.Default.DateRange
-    )
+                // Modal Dettagli Evento (Markdown + Math)
+                selectedEventForModal?.let { ev ->
+                    EventDetailModal(
+                        event = ev,
+                        isDarkMode = isDarkMode,
+                        onDismiss = { selectedEventForModal = null },
+                        onSaveNotes = { newNotes ->
+                            events = events.map { if (it.id == ev.id) it.copy(notesMarkdown = newNotes) else it }
+                            storage.saveEvents(events)
+                        }
+                    )
+                }
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = if (isDarkMode) OLEDSurface else Color.White
-            ) {
-                tabs.forEachIndexed { index, title ->
-                    NavigationBarItem(
-                        icon = { Icon(icons[index], contentDescription = title) },
-                        label = { Text(title) },
-                        selected = selectedTab == index,
-                        onClick = { selectedTab = index }
+                // Modal Impostazioni Tema
+                if (showSettingsDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showSettingsDialog = false },
+                        confirmButton = {
+                            TextButton(onClick = { showSettingsDialog = false }) { Text("Close") }
+                        },
+                        title = { Text("Settings & Mode of Night") },
+                        text = {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("OLED Obsidian Dark Mode")
+                                Switch(
+                                    checked = isDarkMode,
+                                    onCheckedChange = {
+                                        isDarkMode = it
+                                        storage.saveDarkMode(it)
+                                    }
+                                )
+                            }
+                        }
                     )
                 }
             }
         }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            when (selectedTab) {
-                0 -> TasksScreenPlaceholder()
-                1 -> DailyScreen(
-                    isDarkMode = isDarkMode,
-                    activities = activities,
-                    onUpdateActivities = { updated -> activities = updated }
-                )
-                2 -> CalendarScreenPlaceholder()
-            }
-        }
-    }
-}
-
-@Composable
-fun TasksScreenPlaceholder() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        Text("Thy Toils & Tasks", style = MaterialTheme.typography.headlineMedium)
-    }
-}
-
-@Composable
-fun CalendarScreenPlaceholder() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        Text("The Grand Almanack of Time", style = MaterialTheme.typography.headlineMedium)
     }
 }
