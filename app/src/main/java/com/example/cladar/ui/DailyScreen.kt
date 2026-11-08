@@ -5,13 +5,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,24 +21,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cladar.model.ActivityItem
+import com.example.cladar.model.EventItem
 import com.example.cladar.ui.theme.*
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyScreen(
     isDarkMode: Boolean,
     activities: List<ActivityItem>,
-    onUpdateActivities: (List<ActivityItem>) -> Unit
+    events: List<EventItem>,
+    onEventClick: (EventItem) -> Unit,
+    onOpenEditModal: () -> Unit
 ) {
-    
     var selectedDay by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-    var showEditModal by remember { mutableStateOf(false) }
+    val todayDateStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-    
     val bgColor = if (isDarkMode) OLEDBlack else GridBackgroundLight
     val borderColor = if (isDarkMode) OLEDBorder else GridBorderLight
     val headerTextColor = if (isDarkMode) Color.White else BurgundyTitle
@@ -51,11 +49,10 @@ fun DailyScreen(
             .fillMaxSize()
             .background(bgColor)
     ) {
-        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -67,15 +64,14 @@ fun DailyScreen(
                     color = headerTextColor
                 )
                 Text(
-                    text = "Hark! Schedule for ${selectedDay.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}",
+                    text = "Hark! View for ${selectedDay.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}",
                     fontSize = 12.sp,
                     color = headerTextColor.copy(alpha = 0.7f)
                 )
             }
 
-           
             IconButton(
-                onClick = { showEditModal = true },
+                onClick = onOpenEditModal,
                 modifier = Modifier
                     .size(36.dp)
                     .background(headerTextColor.copy(alpha = 0.1f), RoundedCornerShape(50))
@@ -89,7 +85,6 @@ fun DailyScreen(
             }
         }
 
-        
         ScrollableTabRow(
             selectedTabIndex = selectedDay.ordinal,
             edgePadding = 8.dp,
@@ -110,31 +105,18 @@ fun DailyScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-       
         val dayActivities = activities.filter { it.dayOfWeek == selectedDay }
-        val locations = dayActivities.map { it.location }.distinct().take(3).ifEmpty {
-            listOf("Chamber I", "Chamber II", "Chamber III")
-        }
+        val dayEvents = events.filter { it.date == todayDateStr }
+        val locations = (dayActivities.map { it.location } + dayEvents.map { it.location })
+            .distinct().take(3).ifEmpty { listOf("Chamber I", "Chamber II", "Chamber III") }
 
         TimetableGrid(
             locations = locations,
             activities = dayActivities,
+            events = dayEvents,
             borderColor = borderColor,
-            isDarkMode = isDarkMode
-        )
-    }
-
-    
-    if (showEditModal) {
-        EditWeeklyScheduleModal(
-            activities = activities,
-            onDismiss = { showEditModal = false },
-            onSave = { updatedList ->
-                onUpdateActivities(updatedList)
-                showEditModal = false
-            }
+            isDarkMode = isDarkMode,
+            onEventClick = onEventClick
         )
     }
 }
@@ -143,8 +125,10 @@ fun DailyScreen(
 fun TimetableGrid(
     locations: List<String>,
     activities: List<ActivityItem>,
+    events: List<EventItem>,
     borderColor: Color,
-    isDarkMode: Boolean
+    isDarkMode: Boolean,
+    onEventClick: (EventItem) -> Unit
 ) {
     val hours = (8..19).toList()
     val verticalScrollState = rememberScrollState()
@@ -156,7 +140,6 @@ fun TimetableGrid(
             .padding(8.dp)
             .border(1.dp, borderColor, RoundedCornerShape(6.dp))
     ) {
-        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -194,7 +177,6 @@ fun TimetableGrid(
             }
         }
 
-     
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -205,9 +187,8 @@ fun TimetableGrid(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .border(0.5.dp, borderColor.copy(alpha = 0.4f))
+                        .border(0.5.dp, borderColor.copy(alpha = 0.3f))
                 ) {
-                    
                     Text(
                         text = String.format("%02d:00", hour),
                         fontSize = 10.sp,
@@ -218,48 +199,44 @@ fun TimetableGrid(
                             .padding(top = 4.dp)
                     )
 
-             
                     Row(
                         modifier = Modifier
                             .weight(1f)
                             .horizontalScroll(horizontalScrollState)
                     ) {
                         locations.forEach { loc ->
-                            val activity = activities.find {
-                                it.location == loc && it.startHour == hour
+                            // Controlla se c'è un evento dal calendario sovrapposto
+                            val calEvent = events.find {
+                                it.location == loc && it.time.startsWith(String.format("%02d", hour))
                             }
+                            val act = activities.find { it.location == loc && it.startHour == hour }
+
+                            val title = calEvent?.title ?: act?.title
+                            val bgColor = calEvent?.let { Color(it.colorHex) }
+                                ?: act?.let { Color(it.colorHex) }
+                                ?: Color.Transparent
 
                             Box(
                                 modifier = Modifier
                                     .width(110.dp)
                                     .fillMaxHeight()
                                     .padding(1.dp)
-                                    .background(
-                                        activity?.categoryColor ?: Color.Transparent,
-                                        RoundedCornerShape(4.dp)
-                                    )
-                                    .border(
-                                        if (activity != null) 1.dp else 0.dp,
-                                        borderColor.copy(alpha = 0.3f),
-                                        RoundedCornerShape(4.dp)
-                                    ),
+                                    .background(bgColor, RoundedCornerShape(4.dp))
+                                    .clickable(enabled = calEvent != null) {
+                                        calEvent?.let { onEventClick(it) }
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (activity != null) {
-                                    Column(
-                                        modifier = Modifier.padding(2.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = activity.title,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.Black,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis,
-                                            textAlign = TextAlign.Center
-                                        )
-                                    }
+                                if (title != null) {
+                                    Text(
+                                        text = title,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             }
                         }
@@ -268,122 +245,4 @@ fun TimetableGrid(
             }
         }
     }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditWeeklyScheduleModal(
-    activities: List<ActivityItem>,
-    onDismiss: () -> Unit,
-    onSave: (List<ActivityItem>) -> Unit
-) {
-    val editableList = remember { mutableStateListOf(*activities.toTypedArray()) }
-    var selectedDayToEdit by remember { mutableStateOf(DayOfWeek.MONDAY) }
-
-
-    var newTitle by remember { mutableStateOf("") }
-    var newLocation by remember { mutableStateOf("") }
-    var newHour by remember { mutableStateOf("9") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = { onSave(editableList) }) {
-                Text("Save Changes")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        },
-        title = { Text("Amend Thy Weekly Schedule", fontSize = 16.sp, fontWeight = FontWeight.Bold) },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                
-                ScrollableTabRow(selectedTabIndex = selectedDayToEdit.ordinal) {
-                    DayOfWeek.values().forEach { d ->
-                        Tab(
-                            selected = selectedDayToEdit == d,
-                            onClick = { selectedDayToEdit = d },
-                            text = { Text(d.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)) }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                
-                OutlinedTextField(
-                    value = newTitle,
-                    onValueChange = { newTitle = it },
-                    label = { Text("Task / Activity Name") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    OutlinedTextField(
-                        value = newLocation,
-                        onValueChange = { newLocation = it },
-                        label = { Text("Location") },
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = newHour,
-                        onValueChange = { newHour = it },
-                        label = { Text("Start Hour (8-19)") },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        val h = newHour.toIntOrNull() ?: 9
-                        if (newTitle.isNotBlank() && newLocation.isNotBlank()) {
-                            editableList.add(
-                                ActivityItem(
-                                    dayOfWeek = selectedDayToEdit,
-                                    title = newTitle,
-                                    location = newLocation,
-                                    startHour = h,
-                                    categoryColor = listOf(CatSageGreen, CatGoldAmber, CatWarmOrange, CatTeal).random()
-                                )
-                            )
-                            newTitle = ""
-                            newLocation = ""
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null)
-                    Text("Add Entry")
-                }
-
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-               
-                LazyColumn(modifier = Modifier.height(150.dp)) {
-                    val currentItems = editableList.filter { it.dayOfWeek == selectedDayToEdit }
-                    items(currentItems.size) { index ->
-                        val item = currentItems[index]
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "${item.startHour}:00 - ${item.title} (${item.location})",
-                                fontSize = 11.sp,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(onClick = { editableList.remove(item) }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    )
 }
