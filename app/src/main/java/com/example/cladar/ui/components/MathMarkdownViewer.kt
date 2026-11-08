@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import org.json.JSONObject
 
 @Composable
 fun MathMarkdownViewer(content: String, isDarkMode: Boolean) {
@@ -19,7 +20,6 @@ fun MathMarkdownViewer(content: String, isDarkMode: Boolean) {
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-            <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></script>
             <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
