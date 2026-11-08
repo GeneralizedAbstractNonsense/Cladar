@@ -1,13 +1,9 @@
 package com.example.cladar.model
 
 import android.content.Context
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalTime
 import java.util.UUID
 
 data class EventItem(
