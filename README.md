@@ -1,5 +1,4 @@
 # Cladar
-# Cladar — Academic & Daily Management System
 
 Cladar is a lightweight, offline-first web application optimized for mobile devices and Android WebView. Built for university students, it unifies academic tracking, course planning, daily scheduling, and task management into a single responsive interface.
 
