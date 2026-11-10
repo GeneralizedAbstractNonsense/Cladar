@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cladar — Daily Planner & Student Profile</title>
+  <title>Cladar</title>
   
+  <!-- Google Fonts and External Libraries -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX for LaTeX rendering ($...$ and $$...$$) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <!-- Marked.js for Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
     :root {
+      /* Palette Ufficiale Cladar */
       --c-MATE1: rgba(170, 201, 182, 0.45);
       --c-MATE2: rgba(170, 201, 182, 0.75);
       --c-MATE3: rgba(170, 201, 182, 0.95);
@@ -35,6 +39,7 @@
       --accent-red: #ff453a;
     }
 
+    /* Dark Mode */
     [data-theme="dark"] {
       --bg-color: #000000;
       --card-bg: #1c1c1e;
@@ -48,6 +53,7 @@
       --separator: #38383a;
     }
 
+    /* Light Mode */
     [data-theme="light"] {
       --bg-color: #f2f2f7;
       --card-bg: #ffffff;
@@ -64,7 +70,17 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Open Sans', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
     body { background: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    header { background: var(--header-bg); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--card-border); flex-shrink: 0; z-index: 10; }
+    /* Header Banner */
+    header {
+      background: var(--header-bg);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
     .header-titles h1 { font-size: 1.2rem; color: var(--accent-color); font-weight: 700; letter-spacing: 0.02em; }
     .header-titles p { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
     .header-actions { display: flex; align-items: center; gap: 12px; }
@@ -72,15 +88,41 @@
     .btn-icon { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 6px; border-radius: 50%; opacity: 0.8; transition: opacity 0.2s; }
     .btn-icon:hover { opacity: 1; }
 
+    /* Main Container & Screens */
     main { flex: 1; overflow: hidden; position: relative; }
     .tab-content { display: none; width: 100%; height: 100%; overflow-y: auto; flex-direction: column; }
     .tab-content.active { display: flex; }
 
-    .bottom-nav { height: var(--nav-height); background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; z-index: 100; }
-    .nav-btn { flex: 1; height: 100%; background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+    /* Bottom Navigation Bar (4 Items) */
+    .bottom-nav {
+      height: var(--nav-height);
+      background: var(--card-bg);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1;
+      height: 100%;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
     .nav-btn.active { color: var(--accent-color); font-weight: 700; }
     .nav-btn svg { width: 20px; height: 20px; fill: currentColor; margin-bottom: 2px; }
 
+    /* --- TAB 1: DAILY JOURNAL (Infinite Dynamic Columns Grid) --- */
     .daily-header { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid var(--card-border); flex-shrink: 0; }
     .day-selector { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
     .day-chip { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--card-border); background: var(--bg-color); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
@@ -98,8 +140,19 @@
     .gc-event { border: 1px solid var(--c-BORDR); border-radius: 6px; padding: 4px 6px; margin: 1px; font-size: 0.72rem; font-weight: 600; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; justify-content: center; z-index: 2; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.15); height: calc(100% - 2px); }
     .gc-event .time-lbl { font-size: 0.65rem; opacity: 0.85; font-weight: 400; }
 
+    /* --- TAB 2: TASKS, HOMEWORK & NOTES --- */
     .tasks-main-wrap { display: flex; flex-direction: column; min-height: 100%; padding-bottom: 90px; }
-    .section-homework { background: var(--bg-color); border-bottom: 1px solid var(--card-border); display: flex; flex-direction: column; height: 38vh; min-height: 260px; flex-shrink: 0; }
+
+    /* Top Homework Section with Horizontal Date Strip & Swipe Container */
+    .section-homework {
+      background: var(--bg-color);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      height: 38vh;
+      min-height: 260px;
+      flex-shrink: 0;
+    }
     .date-nav-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--card-bg); border-bottom: 1px solid var(--separator); }
     .date-nav-title { font-size: 1rem; font-weight: 700; color: var(--text-color); }
     
@@ -111,7 +164,7 @@
     .date-chip-hw.active { background: var(--accent-blue); border-color: var(--accent-blue); }
     .date-chip-hw.active .day-name, .date-chip-hw.active .day-num { color: #ffffff; }
 
-    .homework-list-container { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .homework-list-container { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; touch-action: pan-y; }
     .homework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     .homework-card .subject-badge { align-self: flex-start; background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 14px; text-transform: uppercase; }
 
@@ -119,6 +172,7 @@
     .markdown-content p { margin-bottom: 4px; }
     .markdown-content p:last-child { margin-bottom: 0; }
 
+    /* Section Tasks & Notes (iOS Style) */
     .section-tasks, .section-notes { padding: 16px 16px 8px 16px; display: flex; flex-direction: column; }
     .ios-section-header { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text-color); letter-spacing: -0.01em; }
     .ios-group-list { background: var(--card-bg); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--card-border); }
@@ -136,6 +190,7 @@
     .ios-note-item { background: var(--card-bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; transition: transform 0.2s ease; z-index: 2; position: relative; }
     .note-title { font-size: 0.95rem; font-weight: 600; color: var(--text-color); }
 
+    /* Floating Action Button (+) & Action Sheet */
     .fab-container { position: fixed; bottom: 80px; right: 20px; z-index: 90; }
     .fab-btn { width: 54px; height: 54px; border-radius: 50%; background: var(--accent-blue); color: #fff; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(10, 132, 255, 0.4); cursor: pointer; }
     .fab-btn:active { transform: scale(0.94); }
@@ -147,6 +202,7 @@
     .action-sheet-item:last-child { border-bottom: none; }
     .action-sheet-cancel { background: var(--card-bg); border-radius: 14px; padding: 14px; font-size: 1rem; font-weight: 700; color: var(--accent-red); text-align: center; border: 1px solid var(--card-border); cursor: pointer; }
 
+    /* --- TAB 3: CALENDAR & COUNTDOWNS --- */
     .calendar-split-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
     .cal-top-half { height: 50%; padding: 12px; border-bottom: 2px solid var(--card-border); overflow-y: auto; display: flex; flex-direction: column; }
     .cal-bottom-half { height: 50%; padding: 12px; overflow-y: auto; background: var(--bg-color); }
@@ -162,6 +218,7 @@
     .countdown-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     .cd-timer { font-size: 0.8rem; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; }
 
+    /* --- TAB 4: PROFILE & ACADEMIC DASHBOARD --- */
     .profile-container { padding: 16px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; padding-bottom: 80px; }
     .profile-header-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
     .avatar-wrapper { position: relative; width: 86px; height: 86px; margin-bottom: 10px; cursor: pointer; }
@@ -217,6 +274,7 @@
     .course-prof { font-size: 0.75rem; color: var(--text-muted); }
     .course-cfu { background: rgba(255, 255, 255, 0.08); padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: var(--accent-color); }
 
+    /* Modals & Overlays */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
     .modal-overlay.active { display: flex; }
     .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 520px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
@@ -228,6 +286,16 @@
     .form-group label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
     .form-control { padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-color); font-size: 0.85rem; outline: none; }
     .form-control:focus { border-color: var(--accent-blue); }
+
+    .color-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+    .color-option { padding: 8px 6px; border-radius: 6px; border: 2px solid transparent; cursor: pointer; font-size: 0.7rem; font-weight: 600; color: #000; text-align: center; }
+    .color-option.selected { border-color: var(--text-color); transform: scale(1.03); }
+
+    .markdown-render { border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; background: var(--bg-color); min-height: 80px; font-size: 0.85rem; line-height: 1.5; }
+    .markdown-render p { margin-bottom: 8px; }
+    .markdown-render ul { padding-left: 20px; margin-bottom: 8px; }
+
+    .routine-item-card { background: var(--bg-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
     .btn-primary-action { background: var(--accent-blue); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; margin-top: 6px; }
 
@@ -252,6 +320,7 @@
 </head>
 <body>
 
+  <!-- Header Banner -->
   <header>
     <div class="header-titles">
       <h1>Cladar</h1>
@@ -265,7 +334,10 @@
     </div>
   </header>
 
+  <!-- Main Views Container -->
   <main>
+    
+    <!-- TAB 1: DAILY JOURNAL -->
     <section id="tab-daily" class="tab-content active">
       <div class="daily-header">
         <div class="day-selector" id="day-selector-bar"></div>
@@ -278,29 +350,41 @@
       </div>
     </section>
 
+    <!-- TAB 2: TASKS, HOMEWORK & NOTES -->
     <section id="tab-tasks" class="tab-content">
       <div class="tasks-main-wrap">
+        
+        <!-- Top Homework Scroll Section -->
         <div class="section-homework">
           <div class="date-nav-bar">
             <div class="date-nav-title" id="current-date-title">Homework Overview</div>
           </div>
           <div class="date-scroll-strip" id="date-strip-container"></div>
+          <!-- Homework List Container with Touch Swipe Gesture -->
           <div class="homework-list-container" id="homework-list-container"></div>
         </div>
+
+        <!-- Tasks Section (iOS Style) -->
         <div class="section-tasks">
           <div class="ios-section-header">Tasks</div>
           <div class="ios-group-list" id="tasks-list-container"></div>
         </div>
+
+        <!-- Notes Section (iOS Style) -->
         <div class="section-notes">
           <div class="ios-section-header">Notes</div>
           <div class="ios-group-list" id="notes-list-container"></div>
         </div>
+
       </div>
+
+      <!-- FAB (+) Floating Button -->
       <div class="fab-container">
         <button class="fab-btn" id="fab-add-btn">+</button>
       </div>
     </section>
 
+    <!-- TAB 3: CALENDAR & COUNTDOWNS -->
     <section id="tab-calendar" class="tab-content">
       <div class="calendar-split-container">
         <div class="cal-top-half">
@@ -318,8 +402,11 @@
       </div>
     </section>
 
+    <!-- TAB 4: PROFILE & ACADEMIC DASHBOARD -->
     <section id="tab-profile" class="tab-content">
       <div class="profile-container">
+        
+        <!-- Profile Header & Avatar Card -->
         <div class="profile-header-card">
           <div class="avatar-wrapper" id="profile-avatar-trigger" title="Click for Student Badge, Long Press to Edit">
             <img id="profile-avatar-img" class="avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Avatar">
@@ -331,11 +418,14 @@
           <div class="profile-univ-line" id="display-profile-univ">Sapienza University of Rome • Dept. of Computer Science</div>
         </div>
 
+        <!-- Academic Dashboard (ClasseViva Style) -->
         <div class="dashboard-card">
           <div class="dash-top-bar">
             <div class="dash-title">Academic Overview</div>
             <div class="cfu-badge-small" id="display-cfu-progress">0 / 180 CFU</div>
           </div>
+
+          <!-- Circular Weighted Average Gauges -->
           <div class="gauges-row">
             <div class="gauge-box">
               <div class="circle-gauge gauge-green" id="gauge-official">
@@ -352,6 +442,8 @@
               <span class="gauge-label">Inc. Partials/Esoneri</span>
             </div>
           </div>
+
+          <!-- Recent Evaluations -->
           <div class="evaluations-header">
             <h4>Recent Evaluations</h4>
             <button class="btn-link" id="open-all-evals-btn">Evaluations &rarr;</button>
@@ -359,14 +451,18 @@
           <div class="eval-list" id="recent-evals-list"></div>
         </div>
 
+        <!-- Study Plan Action Button -->
         <button class="btn-study-plan" id="open-study-plan-btn">
           <span>Study Plan (Piano di Studi)</span>
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </button>
+
       </div>
     </section>
+
   </main>
 
+  <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-target="tab-daily">
       <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
@@ -386,7 +482,7 @@
     </button>
   </nav>
 
-  <!-- ACTION SHEETS & MODALS -->
+  <!-- ACTION SHEETS & CREATION MODALS FOR HOMEWORK/TASK/NOTE -->
   <div class="action-sheet-overlay" id="action-sheet-overlay">
     <div class="action-sheet-menu">
       <button class="action-sheet-item" id="opt-add-homework">New Homework</button>
@@ -460,6 +556,57 @@
     </div>
   </div>
 
+  <!-- EVENT DETAILS & CREATION MODAL -->
+  <div class="modal-overlay" id="modal-event">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-event-title-text">Event Details</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="event-form">
+          <input type="hidden" id="event-id">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="event-title" class="form-control" required placeholder="Event name...">
+          </div>
+          <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;">
+              <label>Date</label>
+              <input type="date" id="event-date" class="form-control" required>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label>Time</label>
+              <input type="time" id="event-time" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="event-location" class="form-control" placeholder="e.g. Aula Volterra...">
+          </div>
+          <div class="form-group">
+            <label>Color Palette</label>
+            <div class="color-picker-grid" id="color-picker-container"></div>
+            <input type="hidden" id="event-color" value="var(--c-MATE1)">
+          </div>
+          <div class="form-group">
+            <label>Lore & Description (Markdown & LaTeX $$...$$)</label>
+            <textarea id="event-notes" class="form-control" rows="4" placeholder="Description with LaTeX $$ \\int_{0}^{\\infty} x^2 dx $$"></textarea>
+          </div>
+          
+          <label style="font-size:0.72rem; font-weight:600; color:var(--text-muted);">Rendered Preview:</label>
+          <div id="notes-preview" class="markdown-render"></div>
+
+          <div style="display:flex; justify-content:space-between; margin-top:10px;">
+            <button type="button" id="delete-event-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete</button>
+            <button type="submit" class="btn-primary-action" style="margin-left:auto;">Save Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION OVERLAY -->
   <div class="modal-overlay" id="modal-confirm">
     <div class="confirm-card">
       <h4>Confirm Deletion</h4>
@@ -471,6 +618,7 @@
     </div>
   </div>
 
+  <!-- PROFILE, BADGE, EVALUATIONS & STUDY PLAN MODALS -->
   <div class="modal-overlay" id="modal-student-badge">
     <div class="badge-card">
       <div class="badge-univ" id="badge-univ-name">Sapienza University of Rome</div>
@@ -672,8 +820,8 @@
         <div class="form-group">
           <label>Theme Mode</label>
           <select id="theme-select" class="form-control">
-            <option value="dark">OLED Dark (Obsidian Black)</option>
-            <option value="light">Light Minimal</option>
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
           </select>
         </div>
 
@@ -689,6 +837,7 @@
     </div>
   </div>
 
+  <!-- ROUTINE EDITOR MODAL -->
   <div class="modal-overlay" id="modal-weekly-edit">
     <div class="modal-card">
       <div class="modal-header">
@@ -702,14 +851,14 @@
         </div>
         <div id="routine-items-list" style="margin-top: 6px;"></div>
         <hr style="border:none; border-top:1px solid var(--card-border); margin:10px 0;">
-        <h4 style="font-size:0.85rem; color:var(--accent-color);">Add Activity</h4>
+        <h4 style="font-size:0.85rem; color:var(--accent-color);">Add Routine Activity</h4>
         <div class="form-group">
           <label>Activity Name</label>
           <input type="text" id="routine-title" class="form-control" placeholder="Analysis Lecture">
         </div>
         <div style="display:flex; gap:8px;">
           <div class="form-group" style="flex:1;">
-            <label>Time</label>
+            <label>Precise Time</label>
             <input type="time" id="routine-time" class="form-control" value="09:30">
           </div>
           <div class="form-group" style="flex:1;">
@@ -717,12 +866,37 @@
             <input type="text" id="routine-location" class="form-control" placeholder="Aula Volterra">
           </div>
         </div>
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker-grid" id="routine-color-picker"></div>
+          <input type="hidden" id="routine-color" value="var(--c-MATE1)">
+        </div>
+        <div class="form-group">
+          <label>Description (Markdown + LaTeX $$...$$)</label>
+          <textarea id="routine-notes" class="form-control" rows="3" placeholder="Description with LaTeX $$ f(x) = x^2 $$"></textarea>
+        </div>
         <button type="button" id="add-routine-btn" class="btn-primary-action">Add to Routine</button>
       </div>
     </div>
   </div>
 
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
+    /* ==========================================================================
+       1. PALETTE & INITIAL STATE
+       ========================================================================== */
+    const INTUITIVE_PALETTE = [
+      { name: 'Sage Mist',      var: 'var(--c-MATE1)', hex: 'rgba(170, 201, 182, 0.45)' },
+      { name: 'Sage Leaf',      var: 'var(--c-MATE2)', hex: 'rgba(170, 201, 182, 0.75)' },
+      { name: 'Deep Sage',      var: 'var(--c-MATE3)', hex: 'rgba(170, 201, 182, 0.95)' },
+      { name: 'Amber Gold',     var: 'var(--c-SMIA2)', hex: 'rgba(215, 169, 0, 0.65)' },
+      { name: 'Deep Amber',     var: 'var(--c-SMIA3)', hex: 'rgba(215, 169, 0, 0.85)' },
+      { name: 'Peach Coral',    var: 'var(--c-LMMP1)', hex: 'rgba(246, 146, 64, 0.45)' },
+      { name: 'Sunset Orange',  var: 'var(--c-LMMP2)', hex: 'rgba(246, 146, 64, 0.75)' },
+      { name: 'Teal Cyan',      var: 'var(--c-ESAME)', hex: 'rgba(0, 179, 190, 0.40)' },
+      { name: 'Sand Stone',     var: 'var(--c-UNATA)', hex: 'rgba(215, 211, 199, 0.80)' }
+    ];
+
     const today = new Date();
     const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -738,6 +912,8 @@
       selectedDateISO: today.toISOString().split('T')[0],
       selectedDayIdx: (today.getDay() + 6) % 7,
       calendarDate: new Date(),
+      
+      events: JSON.parse(localStorage.getItem('cladar_events') || '[]'),
       
       profile: JSON.parse(localStorage.getItem('cladar_profile') || JSON.stringify({
         name: 'Alex Taylor',
@@ -777,7 +953,8 @@
       ])),
 
       weeklyPlan: JSON.parse(localStorage.getItem('cladar_weekly_plan') || JSON.stringify({
-        Monday: [{ id: 'r1', title: 'Calculus I', time: '09:30', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: '' }]
+        Monday: [{ id: 'r1', title: 'Analysis I', time: '09:30', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: 'Study limits:\n$$ \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 $$' }],
+        Wednesday: [{ id: 'r2', title: 'Linear Algebra', time: '14:15', location: 'Aula Enriques', color: 'var(--c-SMIA2)', notes: 'Matrix rank theorem.' }]
       })),
 
       pendingDelete: null
@@ -785,6 +962,7 @@
 
     function saveAllState() {
       localStorage.setItem('cladar_theme', state.theme);
+      localStorage.setItem('cladar_events', JSON.stringify(state.events));
       localStorage.setItem('cladar_profile', JSON.stringify(state.profile));
       localStorage.setItem('cladar_study_plan', JSON.stringify(state.studyPlan));
       localStorage.setItem('cladar_evaluations', JSON.stringify(state.evaluations));
@@ -796,6 +974,9 @@
 
     document.documentElement.setAttribute('data-theme', state.theme);
 
+    /* ==========================================================================
+       2. UI NAVIGATION & CLOCK
+       ========================================================================== */
     function updateClock() {
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
@@ -811,6 +992,10 @@
         btn.classList.add('active');
         const target = btn.dataset.target;
         document.getElementById(target).classList.add('active');
+
+        if(target === 'tab-daily') {
+          scrollToCurrentHour();
+        }
       });
     });
 
@@ -829,9 +1014,10 @@
     });
     document.getElementById('open-settings-btn').addEventListener('click', () => openModal('modal-settings'));
 
-    // EXPORT AND IMPORT JSON
+    // JSON Export & Import
     document.getElementById('btn-export-json').addEventListener('click', () => {
       const backupData = {
+        cladar_events: state.events,
         cladar_profile: state.profile,
         cladar_study_plan: state.studyPlan,
         cladar_evaluations: state.evaluations,
@@ -841,7 +1027,6 @@
         cladar_weekly_plan: state.weeklyPlan,
         cladar_theme: state.theme
       };
-      
       const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -862,6 +1047,7 @@
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
+          if (data.cladar_events) localStorage.setItem('cladar_events', JSON.stringify(data.cladar_events));
           if (data.cladar_profile) localStorage.setItem('cladar_profile', JSON.stringify(data.cladar_profile));
           if (data.cladar_study_plan) localStorage.setItem('cladar_study_plan', JSON.stringify(data.cladar_study_plan));
           if (data.cladar_evaluations) localStorage.setItem('cladar_evaluations', JSON.stringify(data.cladar_evaluations));
@@ -870,17 +1056,20 @@
           if (data.cladar_notes) localStorage.setItem('cladar_notes', JSON.stringify(data.cladar_notes));
           if (data.cladar_weekly_plan) localStorage.setItem('cladar_weekly_plan', JSON.stringify(data.cladar_weekly_plan));
           
-          alert('Backup imported successfully! The app will reload.');
+          alert('Backup imported successfully! Reloading application.');
           window.location.reload();
         } catch (err) {
-          alert('Error parsing JSON file. Make sure it is a valid backup.');
+          alert('Error parsing JSON backup file.');
         }
       };
       reader.readAsText(file);
     });
 
+    /* ==========================================================================
+       3. MARKDOWN & LATEX MATH PARSER
+       ========================================================================== */
     function renderMarkdownAndMath(text) {
-      if (!text || !text.trim()) return '<em>No content.</em>';
+      if (!text || !text.trim()) return '<em>No content inscribed.</em>';
       const mathBlocks = [];
       let processed = text
         .replace(/\$\$([\s\S]+?)\$\$/g, (m, f) => {
@@ -894,8 +1083,37 @@
       return html;
     }
 
+    const notesTextarea = document.getElementById('event-notes');
+    const notesPreview = document.getElementById('notes-preview');
+    notesTextarea.addEventListener('input', () => {
+      notesPreview.innerHTML = renderMarkdownAndMath(notesTextarea.value);
+    });
+
+    /* ==========================================================================
+       4. TAB 1: DAILY JOURNAL (Dynamic Infinite Locations Grid)
+       ========================================================================== */
     const daySelectorBar = document.getElementById('day-selector-bar');
     const dailyGridTable = document.getElementById('daily-grid-table');
+
+    function getDynamicLocationsForDay(dayIdx) {
+      const selectedDayName = DAYS_OF_WEEK[dayIdx];
+      const routineEvents = state.weeklyPlan[selectedDayName] || [];
+      const dayEvents = state.events.filter(e => {
+        const d = new Date(e.date + 'T00:00:00');
+        const dIdx = (d.getDay() + 6) % 7;
+        return dIdx === dayIdx;
+      });
+
+      const uniqueLocs = new Set();
+      routineEvents.forEach(r => { if (r.location && r.location.trim()) uniqueLocs.add(r.location.trim()); });
+      dayEvents.forEach(e => { if (e.location && e.location.trim()) uniqueLocs.add(e.location.trim()); });
+
+      const locList = Array.from(uniqueLocs);
+      if (locList.length === 0) {
+        return ['Sanctuary A', 'Library B', 'Hall C'];
+      }
+      return locList;
+    }
 
     function renderDayChips() {
       daySelectorBar.innerHTML = '';
@@ -914,46 +1132,152 @@
 
     function renderDailyGrid() {
       dailyGridTable.innerHTML = '';
-      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
-      const routineEvents = state.weeklyPlan[selectedDayName] || [];
+      const locations = getDynamicLocationsForDay(state.selectedDayIdx);
 
-      dailyGridTable.style.gridTemplateColumns = `55px repeat(3, minmax(110px, 1fr))`;
+      dailyGridTable.style.gridTemplateColumns = `55px repeat(${locations.length}, minmax(130px, 1fr))`;
 
       const timeHead = document.createElement('div');
       timeHead.className = 'gh-cell';
       timeHead.textContent = 'Hour';
       dailyGridTable.appendChild(timeHead);
 
-      ['Sanctuary A', 'Library B', 'Hall C'].forEach(loc => {
+      locations.forEach(loc => {
         const cell = document.createElement('div');
         cell.className = 'gh-cell';
         cell.textContent = loc;
+        cell.title = loc;
         dailyGridTable.appendChild(cell);
       });
 
+      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
+      const dayRoutineEvents = state.weeklyPlan[selectedDayName] || [];
+
       for (let h = 0; h < 24; h++) {
+        const hourStr = `${String(h).padStart(2, '0')}:00`;
+
         const timeCell = document.createElement('div');
         timeCell.className = 'gc-time';
-        timeCell.textContent = `${String(h).padStart(2, '0')}:00`;
+        timeCell.id = `hour-row-${h}`;
+        timeCell.textContent = hourStr;
         dailyGridTable.appendChild(timeCell);
 
-        for (let col = 0; col < 3; col++) {
+        locations.forEach((loc, locIdx) => {
           const gridCell = document.createElement('div');
           gridCell.className = 'gc-empty';
-          
-          const activeEv = routineEvents.find(r => parseInt(r.time.split(':')[0]) === h && col === 0);
+
+          const matchCalendarEv = state.events.find(e => {
+            const d = new Date(e.date + 'T00:00:00');
+            const dayIdx = (d.getDay() + 6) % 7;
+            const matchesHour = parseInt(e.time.split(':')[0]) === h;
+            const matchesLoc = e.location ? e.location.trim() === loc : locIdx === 0;
+            return dayIdx === state.selectedDayIdx && matchesHour && matchesLoc;
+          });
+
+          const matchRoutineEv = dayRoutineEvents.find(r => {
+            const rHour = parseInt(r.time.split(':')[0]);
+            const matchesHour = rHour === h;
+            const matchesLoc = r.location ? r.location.trim() === loc : locIdx === 0;
+            return matchesHour && matchesLoc;
+          });
+
+          const activeEv = matchCalendarEv || matchRoutineEv;
+
           if (activeEv) {
             const evEl = document.createElement('div');
             evEl.className = 'gc-event';
             evEl.style.background = activeEv.color || 'var(--c-MATE1)';
             evEl.innerHTML = `<span>${activeEv.title}</span><span class="time-lbl">${activeEv.time}</span>`;
+            evEl.addEventListener('click', () => openEventModal(activeEv));
             gridCell.appendChild(evEl);
           }
           dailyGridTable.appendChild(gridCell);
-        }
+        });
       }
     }
 
+    function scrollToCurrentHour() {
+      const currentHour = new Date().getHours();
+      const targetEl = document.getElementById(`hour-row-${currentHour}`);
+      if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    /* ==========================================================================
+       5. WEEKLY ROUTINE EDITOR MODAL CONTROLLER
+       ========================================================================== */
+    const routineDaySelect = document.getElementById('routine-day-select');
+    const routineItemsList = document.getElementById('routine-items-list');
+
+    DAYS_OF_WEEK.forEach(day => {
+      const opt = document.createElement('option');
+      opt.value = day;
+      opt.textContent = day;
+      routineDaySelect.appendChild(opt);
+    });
+
+    function renderRoutineList() {
+      const day = routineDaySelect.value;
+      const items = state.weeklyPlan[day] || [];
+      routineItemsList.innerHTML = '';
+
+      if (items.length === 0) {
+        routineItemsList.innerHTML = '<p style="font-size:0.75rem; color:var(--text-muted);">No routine activities set for this day.</p>';
+        return;
+      }
+
+      items.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'routine-item-card';
+        card.innerHTML = `
+          <div>
+            <strong style="font-size:0.85rem;">${item.title}</strong>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${item.time} | ${item.location || 'Default'}</div>
+          </div>
+          <button class="btn-icon" style="color:#b3261e;" onclick="deleteRoutineItem('${day}', ${idx})">&times;</button>
+        `;
+        routineItemsList.appendChild(card);
+      });
+    }
+
+    routineDaySelect.addEventListener('change', renderRoutineList);
+
+    document.getElementById('open-weekly-edit-btn').addEventListener('click', () => {
+      renderRoutineList();
+      openModal('modal-weekly-edit');
+    });
+
+    document.getElementById('add-routine-btn').addEventListener('click', () => {
+      const day = routineDaySelect.value;
+      const title = document.getElementById('routine-title').value;
+      const time = document.getElementById('routine-time').value;
+      const location = document.getElementById('routine-location').value || 'Aula Volterra';
+      const color = document.getElementById('routine-color').value;
+      const notes = document.getElementById('routine-notes').value;
+
+      if (!title) return;
+
+      if (!state.weeklyPlan[day]) state.weeklyPlan[day] = [];
+      state.weeklyPlan[day].push({
+        id: 'r_' + Date.now(),
+        title, time, location, color, notes
+      });
+
+      saveAllState();
+      renderRoutineList();
+      renderDailyGrid();
+      document.getElementById('routine-title').value = '';
+      document.getElementById('routine-notes').value = '';
+    });
+
+    window.deleteRoutineItem = function(day, index) {
+      state.weeklyPlan[day].splice(index, 1);
+      saveAllState();
+      renderRoutineList();
+      renderDailyGrid();
+    };
+
+    /* ==========================================================================
+       6. TAB 2: HOMEWORK (WITH HORIZONTAL SWIPE GESTURE), TASKS & NOTES
+       ========================================================================== */
     const dateStripContainer = document.getElementById('date-strip-container');
     const homeworkListContainer = document.getElementById('homework-list-container');
     const tasksListContainer = document.getElementById('tasks-list-container');
@@ -976,6 +1300,13 @@
         });
         dateStripContainer.appendChild(chip);
       });
+
+      setTimeout(() => {
+        const activeChip = dateStripContainer.querySelector('.date-chip-hw.active');
+        if (activeChip) {
+          activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }, 50);
     }
 
     function renderHomeworks() {
@@ -985,7 +1316,7 @@
       homeworkListContainer.innerHTML = '';
       const dayHws = state.homeworks.filter(h => h.date === state.selectedDateISO);
       if (dayHws.length === 0) {
-        homeworkListContainer.innerHTML = '<div class="empty-state">No homework assigned for this date.</div>';
+        homeworkListContainer.innerHTML = '<div class="empty-state">No homework assigned for this date. (Swipe left/right to change day)</div>';
         return;
       }
       dayHws.forEach(hw => {
@@ -995,6 +1326,52 @@
         homeworkListContainer.appendChild(card);
       });
     }
+
+    // Attach Horizontal Swipe Left/Right Gesture to Homework Container
+    (function attachHomeworkContainerSwipe() {
+      let startX = 0, startY = 0, currentX = 0, currentY = 0;
+      let isSwiping = false;
+
+      homeworkListContainer.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+      }, { passive: true });
+
+      homeworkListContainer.addEventListener('touchmove', e => {
+        if (!isSwiping) return;
+        currentX = e.touches[0].clientX;
+        currentY = e.touches[0].clientY;
+      }, { passive: true });
+
+      homeworkListContainer.addEventListener('touchend', () => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const diffX = currentX - startX;
+        const diffY = currentY - startY;
+
+        // Check if swipe is horizontal and exceeds threshold
+        if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
+          const currentIdx = dateList.findIndex(d => d.toISOString().split('T')[0] === state.selectedDateISO);
+          if (diffX < 0) {
+            // Swipe Left -> Next Day
+            if (currentIdx >= 0 && currentIdx < dateList.length - 1) {
+              state.selectedDateISO = dateList[currentIdx + 1].toISOString().split('T')[0];
+              renderDateStrip();
+              renderHomeworks();
+            }
+          } else {
+            // Swipe Right -> Previous Day
+            if (currentIdx > 0) {
+              state.selectedDateISO = dateList[currentIdx - 1].toISOString().split('T')[0];
+              renderDateStrip();
+              renderHomeworks();
+            }
+          }
+        }
+        startX = 0; startY = 0; currentX = 0; currentY = 0;
+      });
+    })();
 
     function renderTasks() {
       tasksListContainer.innerHTML = '';
@@ -1078,6 +1455,7 @@
       closeModal('modal-confirm');
     });
 
+    // FAB Button & Action Sheet
     const fabBtn = document.getElementById('fab-add-btn');
     let fabTimer = null;
     fabBtn.addEventListener('touchstart', () => { fabTimer = setTimeout(() => openModal('action-sheet-overlay'), 350); });
@@ -1127,12 +1505,17 @@
       renderNotes();
     });
 
+    /* ==========================================================================
+       7. TAB 3: CALENDAR & LIVE COUNTDOWNS
+       ========================================================================== */
+    const monthTitle = document.getElementById('cal-month-title');
+    const monthGrid = document.getElementById('month-grid-container');
+
     function renderCalendarMonth() {
-      const monthGrid = document.getElementById('month-grid-container');
       monthGrid.innerHTML = '';
       const year = state.calendarDate.getFullYear();
       const month = state.calendarDate.getMonth();
-      document.getElementById('cal-month-title').textContent = state.calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      monthTitle.textContent = state.calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
       ['M','T','W','T','F','S','S'].forEach(d => {
         const h = document.createElement('div');
@@ -1141,22 +1524,168 @@
         monthGrid.appendChild(h);
       });
 
-      const startingDay = (new Date(year, month, 1).getDay() + 6) % 7;
+      const firstDay = new Date(year, month, 1);
+      const startingDay = (firstDay.getDay() + 6) % 7;
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      for (let i = 0; i < startingDay; i++) monthGrid.appendChild(document.createElement('div'));
+      for (let i = 0; i < startingDay; i++) {
+        monthGrid.appendChild(document.createElement('div'));
+      }
 
+      const today = new Date();
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'month-cell';
         cell.textContent = day;
+
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+          cell.classList.add('today');
+        }
+
+        const hasEvent = state.events.some(e => e.date === dateStr);
+        if (hasEvent) cell.classList.add('has-event');
+
+        cell.addEventListener('click', () => {
+          openEventModal({ date: dateStr, time: '10:00', location: 'Aula Volterra', color: INTUITIVE_PALETTE[0].var });
+        });
+
         monthGrid.appendChild(cell);
       }
     }
 
-    document.getElementById('cal-prev-month').addEventListener('click', () => { state.calendarDate.setMonth(state.calendarDate.getMonth() - 1); renderCalendarMonth(); });
-    document.getElementById('cal-next-month').addEventListener('click', () => { state.calendarDate.setMonth(state.calendarDate.getMonth() + 1); renderCalendarMonth(); });
+    document.getElementById('cal-prev-month').addEventListener('click', () => {
+      state.calendarDate.setMonth(state.calendarDate.getMonth() - 1);
+      renderCalendarMonth();
+    });
+    document.getElementById('cal-next-month').addEventListener('click', () => {
+      state.calendarDate.setMonth(state.calendarDate.getMonth() + 1);
+      renderCalendarMonth();
+    });
 
+    function renderCountdowns() {
+      const container = document.getElementById('countdown-list-container');
+      container.innerHTML = '';
+
+      const now = new Date();
+      const futureEvents = state.events
+        .map(e => ({ ...e, dateTime: new Date(`${e.date}T${e.time}`) }))
+        .filter(e => e.dateTime > now)
+        .sort((a,b) => a.dateTime - b.dateTime);
+
+      if (futureEvents.length === 0) {
+        container.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted);">No upcoming events scheduled.</p>';
+        return;
+      }
+
+      futureEvents.forEach(e => {
+        const diff = e.dateTime - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / 1000 / 60) % 60);
+        const secs = Math.floor((diff / 1000) % 60);
+
+        const card = document.createElement('div');
+        card.className = 'countdown-card';
+        card.innerHTML = `
+          <div>
+            <strong style="font-size:0.85rem;">${e.title}</strong>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${e.date} at ${e.time} • ${e.location || 'General'}</div>
+          </div>
+          <div class="cd-timer">${days}d ${hours}h ${mins}m ${secs}s</div>
+        `;
+        card.addEventListener('click', () => openEventModal(e));
+        container.appendChild(card);
+      });
+    }
+    setInterval(renderCountdowns, 1000);
+
+    /* ==========================================================================
+       8. COLOR PICKER & EVENT MODAL CONTROLLER
+       ========================================================================== */
+    function buildColorPickers() {
+      const containers = [
+        { id: 'color-picker-container', inputId: 'event-color' },
+        { id: 'routine-color-picker', inputId: 'routine-color' }
+      ];
+
+      containers.forEach(c => {
+        const el = document.getElementById(c.id);
+        el.innerHTML = '';
+        INTUITIVE_PALETTE.forEach((col, idx) => {
+          const opt = document.createElement('div');
+          opt.className = `color-option ${idx === 0 ? 'selected' : ''}`;
+          opt.style.background = col.hex;
+          opt.textContent = col.name;
+          opt.addEventListener('click', () => {
+            el.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            document.getElementById(c.inputId).value = col.var;
+          });
+          el.appendChild(opt);
+        });
+      });
+    }
+    buildColorPickers();
+
+    function openEventModal(ev = {}) {
+      document.getElementById('event-id').value = ev.id || '';
+      document.getElementById('event-title').value = ev.title || '';
+      document.getElementById('event-date').value = ev.date || new Date().toISOString().split('T')[0];
+      document.getElementById('event-time').value = ev.time || '10:00';
+      document.getElementById('event-location').value = ev.location || '';
+      document.getElementById('event-notes').value = ev.notes || '';
+      document.getElementById('event-color').value = ev.color || INTUITIVE_PALETTE[0].var;
+      
+      notesPreview.innerHTML = renderMarkdownAndMath(ev.notes || '');
+
+      const delBtn = document.getElementById('delete-event-btn');
+      delBtn.style.display = ev.id ? 'block' : 'none';
+
+      openModal('modal-event');
+    }
+
+    document.getElementById('event-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('event-id').value || String(Date.now());
+      const newEv = {
+        id,
+        title: document.getElementById('event-title').value,
+        date: document.getElementById('event-date').value,
+        time: document.getElementById('event-time').value,
+        location: document.getElementById('event-location').value,
+        color: document.getElementById('event-color').value,
+        notes: document.getElementById('event-notes').value
+      };
+
+      const existingIdx = state.events.findIndex(x => x.id === id);
+      if (existingIdx >= 0) {
+        state.events[existingIdx] = newEv;
+      } else {
+        state.events.push(newEv);
+      }
+
+      saveAllState();
+      closeModal('modal-event');
+      renderCalendarMonth();
+      renderDailyGrid();
+      renderCountdowns();
+    });
+
+    document.getElementById('delete-event-btn').addEventListener('click', () => {
+      const id = document.getElementById('event-id').value;
+      if (!id) return;
+      state.events = state.events.filter(x => x.id !== id);
+      saveAllState();
+      closeModal('modal-event');
+      renderCalendarMonth();
+      renderDailyGrid();
+      renderCountdowns();
+    });
+
+    /* ==========================================================================
+       9. TAB 4: PROFILE & ACADEMIC DASHBOARD LOGIC
+       ========================================================================== */
     function renderProfileView() {
       document.getElementById('display-profile-name').textContent = state.profile.name;
       document.getElementById('display-profile-mat').textContent = `ID: ${state.profile.mat}`;
@@ -1423,6 +1952,9 @@
       renderProfileView();
     });
 
+    /* ==========================================================================
+       10. INITIALIZATION
+       ========================================================================== */
     renderDayChips();
     renderDailyGrid();
     renderDateStrip();
@@ -1430,7 +1962,9 @@
     renderTasks();
     renderNotes();
     renderCalendarMonth();
+    renderCountdowns();
     renderProfileView();
+    setTimeout(scrollToCurrentHour, 200);
   </script>
 </body>
 </html>
