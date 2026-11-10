@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cladar — Daily Planner & Student Profile</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    :root {
+      --c-MATE1: rgba(170, 201, 182, 0.45);
+      --c-MATE2: rgba(170, 201, 182, 0.75);
+      --c-MATE3: rgba(170, 201, 182, 0.95);
+      --c-SMIA1: rgba(215, 169, 0, 0.35);
+      --c-SMIA2: rgba(215, 169, 0, 0.65);
+      --c-SMIA3: rgba(215, 169, 0, 0.85);
+      --c-LMMP1: rgba(246, 146, 64, 0.45);
+      --c-LMMP2: rgba(246, 146, 64, 0.75);
+      --c-ESAME: rgba(0, 179, 190, 0.40);
+      --c-UNATA: rgba(215, 211, 199, 0.80);
+      --c-TITLE: rgb(130, 36, 67);
+      --c-BORDR: rgb(204, 204, 204);
+      --c-BAGRO: rgba(211, 222, 228, 0.5);
+
+      --row-height: 48px;
+      --nav-height: 62px;
+
+      --accent-blue: #0a84ff;
+      --accent-green: #30d158;
+      --accent-yellow: #ffd60a;
+      --accent-red: #ff453a;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #000000;
+      --card-bg: #1c1c1e;
+      --card-border: #2c2c2e;
+      --text-color: #f2f2f7;
+      --text-muted: #8e8e93;
+      --accent-color: #d45d79;
+      --grid-bg: #050505;
+      --header-bg: #080808;
+      --cell-empty: #0a0a0a;
+      --separator: #38383a;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f2f2f7;
+      --card-bg: #ffffff;
+      --card-border: #e5e5ea;
+      --text-color: #1c1c1e;
+      --text-muted: #6c6c70;
+      --accent-color: var(--c-TITLE);
+      --grid-bg: #ffffff;
+      --header-bg: #ffffff;
+      --cell-empty: #f9f9fb;
+      --separator: #c6c6c8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Open Sans', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+    body { background: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    header { background: var(--header-bg); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--card-border); flex-shrink: 0; z-index: 10; }
+    .header-titles h1 { font-size: 1.2rem; color: var(--accent-color); font-weight: 700; letter-spacing: 0.02em; }
+    .header-titles p { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    #clock-display { font-size: 0.95rem; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; }
+    .btn-icon { background: none; border: none; color: var(--text-color); cursor: pointer; padding: 6px; border-radius: 50%; opacity: 0.8; transition: opacity 0.2s; }
+    .btn-icon:hover { opacity: 1; }
+
+    main { flex: 1; overflow: hidden; position: relative; }
+    .tab-content { display: none; width: 100%; height: 100%; overflow-y: auto; flex-direction: column; }
+    .tab-content.active { display: flex; }
+
+    .bottom-nav { height: var(--nav-height); background: var(--card-bg); border-top: 1px solid var(--card-border); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; z-index: 100; }
+    .nav-btn { flex: 1; height: 100%; background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: color 0.2s; }
+    .nav-btn.active { color: var(--accent-color); font-weight: 700; }
+    .nav-btn svg { width: 20px; height: 20px; fill: currentColor; margin-bottom: 2px; }
+
+    .daily-header { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid var(--card-border); flex-shrink: 0; }
+    .day-selector { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+    .day-chip { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--card-border); background: var(--bg-color); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .day-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+    
+    .btn-edit-discrete { opacity: 0.4; transition: opacity 0.2s; background: none; border: none; color: var(--text-color); cursor: pointer; padding: 4px; }
+    .btn-edit-discrete:hover { opacity: 1; }
+
+    .daily-grid-wrapper { flex: 1; overflow-x: auto; overflow-y: auto; position: relative; }
+    .daily-grid { display: grid; grid-template-rows: 35px repeat(24, var(--row-height)); border-collapse: collapse; min-width: 100%; position: relative; }
+    .gh-cell { background: var(--card-bg); border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--accent-color); position: sticky; top: 0; z-index: 10; padding: 0 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gc-time { background: var(--card-bg); border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); font-size: 0.7rem; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; color: var(--text-muted); position: sticky; left: 0; z-index: 5; }
+    .gc-empty { background: var(--cell-empty); border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); position: relative; }
+    
+    .gc-event { border: 1px solid var(--c-BORDR); border-radius: 6px; padding: 4px 6px; margin: 1px; font-size: 0.72rem; font-weight: 600; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; justify-content: center; z-index: 2; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.15); height: calc(100% - 2px); }
+    .gc-event .time-lbl { font-size: 0.65rem; opacity: 0.85; font-weight: 400; }
+
+    .tasks-main-wrap { display: flex; flex-direction: column; min-height: 100%; padding-bottom: 90px; }
+    .section-homework { background: var(--bg-color); border-bottom: 1px solid var(--card-border); display: flex; flex-direction: column; height: 38vh; min-height: 260px; flex-shrink: 0; }
+    .date-nav-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--card-bg); border-bottom: 1px solid var(--separator); }
+    .date-nav-title { font-size: 1rem; font-weight: 700; color: var(--text-color); }
+    
+    .date-scroll-strip { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .date-scroll-strip::-webkit-scrollbar { display: none; }
+    .date-chip-hw { flex: 0 0 auto; scroll-snap-align: center; padding: 6px 12px; border-radius: 12px; background: var(--card-bg); border: 1px solid var(--card-border); display: flex; flex-direction: column; align-items: center; cursor: pointer; min-width: 60px; transition: all 0.2s ease; }
+    .date-chip-hw .day-name { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    .date-chip-hw .day-num { font-size: 1rem; font-weight: 700; color: var(--text-color); margin-top: 1px; }
+    .date-chip-hw.active { background: var(--accent-blue); border-color: var(--accent-blue); }
+    .date-chip-hw.active .day-name, .date-chip-hw.active .day-num { color: #ffffff; }
+
+    .homework-list-container { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .homework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .homework-card .subject-badge { align-self: flex-start; background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 14px; text-transform: uppercase; }
+
+    .markdown-content { font-size: 0.85rem; line-height: 1.4; color: var(--text-color); user-select: text; }
+    .markdown-content p { margin-bottom: 4px; }
+    .markdown-content p:last-child { margin-bottom: 0; }
+
+    .section-tasks, .section-notes { padding: 16px 16px 8px 16px; display: flex; flex-direction: column; }
+    .ios-section-header { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text-color); letter-spacing: -0.01em; }
+    .ios-group-list { background: var(--card-bg); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--card-border); }
+    
+    .swipe-item-wrapper { position: relative; overflow: hidden; border-bottom: 0.5px solid var(--separator); background: var(--accent-red); }
+    .swipe-item-wrapper:last-child { border-bottom: none; }
+    
+    .ios-task-item { background: var(--card-bg); padding: 12px 14px; display: flex; align-items: center; gap: 10px; transition: transform 0.2s ease; z-index: 2; position: relative; }
+    .task-checkbox { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .task-checkbox.completed { background: var(--accent-green); border-color: var(--accent-green); }
+    .task-checkbox.completed::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+    .task-text { font-size: 0.9rem; color: var(--text-color); flex: 1; }
+    .task-text.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
+
+    .ios-note-item { background: var(--card-bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; transition: transform 0.2s ease; z-index: 2; position: relative; }
+    .note-title { font-size: 0.95rem; font-weight: 600; color: var(--text-color); }
+
+    .fab-container { position: fixed; bottom: 80px; right: 20px; z-index: 90; }
+    .fab-btn { width: 54px; height: 54px; border-radius: 50%; background: var(--accent-blue); color: #fff; border: none; font-size: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(10, 132, 255, 0.4); cursor: pointer; }
+    .fab-btn:active { transform: scale(0.94); }
+
+    .action-sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); z-index: 250; justify-content: flex-end; flex-direction: column; padding: 16px; }
+    .action-sheet-overlay.active { display: flex; }
+    .action-sheet-menu { background: var(--card-bg); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; margin-bottom: 8px; border: 1px solid var(--card-border); }
+    .action-sheet-item { padding: 14px; font-size: 1rem; font-weight: 600; color: var(--accent-blue); text-align: center; border-bottom: 0.5px solid var(--separator); background: none; border-left: none; border-right: none; border-top: none; cursor: pointer; }
+    .action-sheet-item:last-child { border-bottom: none; }
+    .action-sheet-cancel { background: var(--card-bg); border-radius: 14px; padding: 14px; font-size: 1rem; font-weight: 700; color: var(--accent-red); text-align: center; border: 1px solid var(--card-border); cursor: pointer; }
+
+    .calendar-split-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+    .cal-top-half { height: 50%; padding: 12px; border-bottom: 2px solid var(--card-border); overflow-y: auto; display: flex; flex-direction: column; }
+    .cal-bottom-half { height: 50%; padding: 12px; overflow-y: auto; background: var(--bg-color); }
+    .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .month-title { font-size: 1rem; font-weight: 700; color: var(--accent-color); }
+    .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .month-day-head { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); padding: 4px 0; }
+    .month-cell { aspect-ratio: 1.2; border: 1px solid var(--card-border); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; cursor: pointer; background: var(--card-bg); position: relative; }
+    .month-cell.today { border: 2px solid var(--accent-color); font-weight: 700; }
+    .month-cell.has-event::after { content: ''; width: 6px; height: 6px; background: var(--accent-color); border-radius: 50%; position: absolute; bottom: 4px; }
+    .countdown-title { font-size: 0.9rem; font-weight: 700; color: var(--accent-color); margin-bottom: 10px; }
+    .countdown-list { display: flex; flex-direction: column; gap: 8px; }
+    .countdown-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .cd-timer { font-size: 0.8rem; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; }
+
+    .profile-container { padding: 16px; max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; padding-bottom: 80px; }
+    .profile-header-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+    .avatar-wrapper { position: relative; width: 86px; height: 86px; margin-bottom: 10px; cursor: pointer; }
+    .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-color); background: #3a3a3c; }
+    .avatar-badge-hint { position: absolute; bottom: 0; right: 0; background: var(--accent-blue); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid var(--card-bg); }
+    
+    .profile-name { font-size: 1.2rem; font-weight: 700; color: var(--text-color); margin-bottom: 2px; }
+    .profile-mat { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+    .profile-degree { font-size: 0.85rem; color: var(--accent-color); font-weight: 600; margin-top: 4px; }
+    .profile-univ-line { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .dashboard-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+    .dash-top-bar { display: flex; justify-content: space-between; align-items: center; }
+    .dash-title { font-size: 1rem; font-weight: 700; color: var(--text-color); }
+    .cfu-badge-small { background: rgba(255, 255, 255, 0.08); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; color: var(--accent-blue); border: 1px solid var(--card-border); }
+
+    .gauges-row { display: flex; justify-content: space-around; align-items: center; padding: 8px 0; }
+    .gauge-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .circle-gauge { width: 90px; height: 90px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 6px solid #333; position: relative; transition: border-color 0.3s; }
+    .circle-gauge .gauge-val { font-size: 1.25rem; font-weight: 800; color: var(--text-color); line-height: 1; }
+    .circle-gauge .gauge-scale { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+    .gauge-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-align: center; max-width: 110px; }
+
+    .gauge-green { border-color: var(--accent-green) !important; }
+    .gauge-yellow { border-color: var(--accent-yellow) !important; }
+    .gauge-red { border-color: var(--accent-red) !important; }
+
+    .evaluations-header { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+    .evaluations-header h4 { font-size: 0.9rem; font-weight: 700; color: var(--text-color); }
+    .btn-link { background: none; border: none; color: var(--accent-blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+    .eval-list { display: flex; flex-direction: column; gap: 8px; }
+    .eval-item { background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .eval-left { display: flex; align-items: center; gap: 10px; }
+    .eval-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .eval-title { font-size: 0.85rem; font-weight: 600; color: var(--text-color); }
+    .eval-sub { font-size: 0.7rem; color: var(--text-muted); }
+    .eval-score { font-size: 0.95rem; font-weight: 700; color: var(--text-color); }
+
+    .btn-study-plan { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; color: var(--text-color); font-weight: 700; font-size: 0.95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+    .btn-study-plan svg { fill: var(--accent-blue); width: 20px; height: 20px; }
+
+    .study-plan-header { background: var(--card-bg); padding: 14px; border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 14px; }
+    .study-plan-header h2 { font-size: 1rem; font-weight: 700; color: var(--accent-color); }
+    .study-plan-header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .semester-section { margin-bottom: 14px; }
+    .semester-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; padding-left: 4px; letter-spacing: 0.04em; }
+    .course-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .course-code { font-size: 0.7rem; color: var(--text-muted); opacity: 0.75; font-weight: 600; }
+    .course-ssd { font-size: 0.7rem; color: var(--accent-blue); font-weight: 600; opacity: 0.85; }
+    .course-name { font-size: 0.88rem; font-weight: 700; color: var(--text-color); margin: 2px 0; }
+    .course-prof { font-size: 0.75rem; color: var(--text-muted); }
+    .course-cfu { background: rgba(255, 255, 255, 0.08); padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: var(--accent-color); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
+    .modal-overlay.active { display: flex; }
+    .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 520px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+    .modal-header { padding: 14px 16px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { font-size: 1rem; color: var(--accent-color); font-weight: 700; }
+    .modal-body { padding: 16px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+    
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    .form-control { padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-color); font-size: 0.85rem; outline: none; }
+    .form-control:focus { border-color: var(--accent-blue); }
+
+    .btn-primary-action { background: var(--accent-blue); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; margin-top: 6px; }
+
+    .badge-card { background: linear-gradient(135deg, #1c1c1e 0%, #0a0a0c 100%); border: 2px solid var(--accent-color); border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.8); position: relative; }
+    .badge-univ { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-color); }
+    .badge-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid var(--text-color); }
+    .badge-qr { width: 130px; height: 130px; background: #fff; padding: 6px; border-radius: 12px; object-fit: contain; }
+
+    .eval-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .eval-table th, .eval-table td { padding: 8px; text-align: left; border-bottom: 1px solid var(--card-border); }
+    .eval-table th { color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; }
+    .sub-code-col { color: var(--text-muted); font-size: 0.7rem; opacity: 0.8; }
+
+    .confirm-card { background: var(--card-bg); border-radius: 16px; padding: 20px; width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--card-border); }
+    .confirm-card h4 { font-size: 1.05rem; color: var(--text-color); font-weight: 700; }
+    .confirm-card p { font-size: 0.82rem; color: var(--text-muted); }
+    .confirm-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .btn-confirm-del { flex: 1; background: var(--accent-red); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .btn-confirm-cancel { flex: 1; background: var(--card-border); color: var(--text-color); border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .empty-state { font-size: 0.82rem; color: var(--text-muted); font-style: italic; text-align: center; padding: 14px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-titles">
+      <h1>Cladar</h1>
+      <p>Thy Academic & Daily Record</p>
+    </div>
+    <div class="header-actions">
+      <div id="clock-display">00:00:00</div>
+      <button class="btn-icon" id="open-settings-btn" title="Thy Preferences">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section id="tab-daily" class="tab-content active">
+      <div class="daily-header">
+        <div class="day-selector" id="day-selector-bar"></div>
+        <button class="btn-edit-discrete" id="open-weekly-edit-btn" title="Configure Routine">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </button>
+      </div>
+      <div class="daily-grid-wrapper" id="daily-grid-wrapper">
+        <div class="daily-grid" id="daily-grid-table"></div>
+      </div>
+    </section>
+
+    <section id="tab-tasks" class="tab-content">
+      <div class="tasks-main-wrap">
+        <div class="section-homework">
+          <div class="date-nav-bar">
+            <div class="date-nav-title" id="current-date-title">Homework Overview</div>
+          </div>
+          <div class="date-scroll-strip" id="date-strip-container"></div>
+          <div class="homework-list-container" id="homework-list-container"></div>
+        </div>
+        <div class="section-tasks">
+          <div class="ios-section-header">Tasks</div>
+          <div class="ios-group-list" id="tasks-list-container"></div>
+        </div>
+        <div class="section-notes">
+          <div class="ios-section-header">Notes</div>
+          <div class="ios-group-list" id="notes-list-container"></div>
+        </div>
+      </div>
+      <div class="fab-container">
+        <button class="fab-btn" id="fab-add-btn">+</button>
+      </div>
+    </section>
+
+    <section id="tab-calendar" class="tab-content">
+      <div class="calendar-split-container">
+        <div class="cal-top-half">
+          <div class="month-header">
+            <button class="btn-icon" id="cal-prev-month">&lt;</button>
+            <div class="month-title" id="cal-month-title">Month Year</div>
+            <button class="btn-icon" id="cal-next-month">&gt;</button>
+          </div>
+          <div class="month-grid" id="month-grid-container"></div>
+        </div>
+        <div class="cal-bottom-half">
+          <div class="countdown-title">Upcoming Event Countdowns</div>
+          <div class="countdown-list" id="countdown-list-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-profile" class="tab-content">
+      <div class="profile-container">
+        <div class="profile-header-card">
+          <div class="avatar-wrapper" id="profile-avatar-trigger" title="Click for Student Badge, Long Press to Edit">
+            <img id="profile-avatar-img" class="avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Avatar">
+            <div class="avatar-badge-hint">🪪</div>
+          </div>
+          <div class="profile-name" id="display-profile-name">Alex Taylor</div>
+          <div class="profile-mat" id="display-profile-mat">ID: 1984203</div>
+          <div class="profile-degree" id="display-profile-degree">B.Sc. Computer Science (L-31)</div>
+          <div class="profile-univ-line" id="display-profile-univ">Sapienza University of Rome • Dept. of Computer Science</div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dash-top-bar">
+            <div class="dash-title">Academic Overview</div>
+            <div class="cfu-badge-small" id="display-cfu-progress">0 / 180 CFU</div>
+          </div>
+          <div class="gauges-row">
+            <div class="gauge-box">
+              <div class="circle-gauge gauge-green" id="gauge-official">
+                <span class="gauge-val" id="val-official-avg">28.4</span>
+                <span class="gauge-scale">/ 30</span>
+              </div>
+              <span class="gauge-label">Official Average</span>
+            </div>
+            <div class="gauge-box">
+              <div class="circle-gauge gauge-green" id="gauge-provisional">
+                <span class="gauge-val" id="val-provisional-avg">27.9</span>
+                <span class="gauge-scale">/ 30</span>
+              </div>
+              <span class="gauge-label">Inc. Partials/Esoneri</span>
+            </div>
+          </div>
+          <div class="evaluations-header">
+            <h4>Recent Evaluations</h4>
+            <button class="btn-link" id="open-all-evals-btn">Evaluations &rarr;</button>
+          </div>
+          <div class="eval-list" id="recent-evals-list"></div>
+        </div>
+
+        <button class="btn-study-plan" id="open-study-plan-btn">
+          <span>Study Plan (Piano di Studi)</span>
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-target="tab-daily">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+      Daily Journal
+    </button>
+    <button class="nav-btn" data-target="tab-tasks">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      Tasks & Notes
+    </button>
+    <button class="nav-btn" data-target="tab-calendar">
+      <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+      Calendar
+    </button>
+    <button class="nav-btn" data-target="tab-profile">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      Profile
+    </button>
+  </nav>
+
+  <!-- ACTION SHEETS & MODALS -->
+  <div class="action-sheet-overlay" id="action-sheet-overlay">
+    <div class="action-sheet-menu">
+      <button class="action-sheet-item" id="opt-add-homework">New Homework</button>
+      <button class="action-sheet-item" id="opt-add-task">New Task</button>
+      <button class="action-sheet-item" id="opt-add-note">New Note</button>
+    </div>
+    <button class="action-sheet-cancel" id="action-sheet-cancel">Cancel</button>
+  </div>
+
+  <div class="modal-overlay" id="modal-homework">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Homework</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" id="hw-subject-input" class="form-control" placeholder="e.g. Mathematics, Physics...">
+        </div>
+        <div class="form-group">
+          <label>Target Date</label>
+          <input type="date" id="hw-date-input" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Homework Text (Markdown + LaTeX $...$ supported)</label>
+          <textarea id="hw-text-input" class="form-control" rows="4" placeholder="e.g. Limits problem: $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$"></textarea>
+        </div>
+        <label style="font-size:0.72rem; font-weight:600; color:var(--text-muted);">Rendered Preview:</label>
+        <div class="markdown-render" id="hw-live-preview"></div>
+        <button class="btn-primary-action" id="save-homework-btn">Save Homework</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-task">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Task</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Task Description</label>
+          <input type="text" id="task-text-input" class="form-control" placeholder="Task details...">
+        </div>
+        <button class="btn-primary-action" id="save-task-btn">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-note">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Note</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="note-title-input" class="form-control" placeholder="Note title...">
+        </div>
+        <div class="form-group">
+          <label>Content (Markdown & LaTeX $$...$$)</label>
+          <textarea id="note-text-input" class="form-control" rows="5" placeholder="Note contents..."></textarea>
+        </div>
+        <label style="font-size:0.72rem; font-weight:600; color:var(--text-muted);">Rendered Preview:</label>
+        <div class="markdown-render" id="note-live-preview"></div>
+        <button class="btn-primary-action" id="save-note-btn">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="confirm-card">
+      <h4>Confirm Deletion</h4>
+      <p>Are you sure you want to remove this item? This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-confirm-cancel" id="confirm-cancel-btn">Cancel</button>
+        <button class="btn-confirm-del" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-student-badge">
+    <div class="badge-card">
+      <div class="badge-univ" id="badge-univ-name">Sapienza University of Rome</div>
+      <img id="badge-avatar-img" class="badge-avatar" src="" alt="Student Avatar">
+      <div style="font-weight:700; font-size:1.1rem; color:#fff;" id="badge-student-name">Alex Taylor</div>
+      <div style="font-size:0.8rem; color:var(--text-muted);" id="badge-mat-num">ID: 1984203</div>
+      <div style="font-size:0.75rem; color:var(--accent-blue);" id="badge-course-name">B.Sc. Computer Science</div>
+      <img id="badge-qr-img" class="badge-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=1984203_SAPIENZA" alt="Student QR Code">
+      <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:4px;">Edit Profile & Badge Data</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-edit-profile">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit Student Profile</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="edit-name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Student ID (Matricola)</label>
+          <input type="text" id="edit-mat" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>University / Ateneo</label>
+          <input type="text" id="edit-univ" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" id="edit-dept" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Degree Name & Class</label>
+          <input type="text" id="edit-degree" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Degree Type</label>
+          <select id="edit-degree-type" class="form-control">
+            <option value="Bachelor's Degree (Triennale)">Bachelor's Degree (Triennale)</option>
+            <option value="Master's Degree (Magistrale)">Master's Degree (Magistrale)</option>
+            <option value="Single-Cycle Master's (Magistrale a ciclo unico)">Single-Cycle Master's</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Avatar Photo URL / Base64</label>
+          <input type="text" id="edit-avatar-url" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>QR Code Data or Custom Image URL</label>
+          <input type="text" id="edit-qr-data" class="form-control">
+        </div>
+        <button class="btn-primary-action" id="save-profile-btn">Save Profile Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-evaluations-detail">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>All Academic Evaluations</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="eval-count-lbl">0 exams taken</span>
+          <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:6px 12px; font-size:0.8rem;">+ Add Grade</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="eval-table">
+            <thead>
+              <tr>
+                <th>Code / SSD</th>
+                <th>Course & Professors</th>
+                <th>Grade</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="eval-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-add-grade">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Record New Grade</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Course from Study Plan</label>
+          <select id="grade-course-select" class="form-control"></select>
+        </div>
+        <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between; margin:4px 0;">
+          <label style="margin:0;">Partial Evaluation (Esonero)</label>
+          <input type="checkbox" id="grade-is-partial" style="width:20px; height:20px;">
+        </div>
+        <div class="form-group">
+          <label>Grade (e.g. 18-30 or 30L)</label>
+          <input type="text" id="grade-score-input" class="form-control" placeholder="30, 28, 30L...">
+        </div>
+        <div class="form-group">
+          <label>Date of Evaluation</label>
+          <input type="date" id="grade-date-input" class="form-control">
+        </div>
+        <button class="btn-primary-action" id="save-grade-btn">Save Grade</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-study-plan">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Study Plan (Piano di Studi)</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="study-plan-header">
+          <h2 id="sp-univ-dept">Sapienza University • Dept. of Computer Science</h2>
+          <p id="sp-course-full">B.Sc. in Computer Science (Class L-31) — Bachelor's Degree</p>
+        </div>
+        <button class="btn-primary-action" id="open-add-course-btn" style="margin-bottom:12px;">+ Add Course to Plan</button>
+        <div id="study-plan-tree"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-add-course">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Course to Study Plan</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label>Course Code</label>
+            <input type="text" id="course-code-in" class="form-control" placeholder="1042918">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>SSD</label>
+            <input type="text" id="course-ssd-in" class="form-control" placeholder="INF/01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Course Name</label>
+          <input type="text" id="course-name-in" class="form-control" placeholder="Calculus I">
+        </div>
+        <div class="form-group">
+          <label>Professors</label>
+          <input type="text" id="course-prof-in" class="form-control" placeholder="Prof. A. Rossi">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label>Academic Year</label>
+            <input type="text" id="course-ay-in" class="form-control" placeholder="2026/2027">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Program Year</label>
+            <select id="course-year-in" class="form-control">
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label>Semester</label>
+            <select id="course-sem-in" class="form-control">
+              <option value="1">1st Semester</option>
+              <option value="2">2nd Semester</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>CFU Count</label>
+            <input type="number" id="course-cfu-in" class="form-control" value="6">
+          </div>
+        </div>
+        <button class="btn-primary-action" id="save-course-btn">Add to Study Plan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL WITH JSON BACKUP EXPORT & IMPORT -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Preferences</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Theme Mode</label>
+          <select id="theme-select" class="form-control">
+            <option value="dark">OLED Dark (Obsidian Black)</option>
+            <option value="light">Light Minimal</option>
+          </select>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--card-border); margin:8px 0;">
+
+        <div class="form-group">
+          <label>Backup & Data Management (Offline)</label>
+          <button class="btn-primary-action" id="btn-export-json" style="background: var(--accent-blue);">Export Data (JSON)</button>
+          <button class="btn-primary-action" id="btn-import-json" style="background: var(--card-border); color: var(--text-color); margin-top: 6px;">Import Data (JSON)</button>
+          <input type="file" id="file-import-input" accept=".json" style="display: none;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-weekly-edit">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Configure Weekly Routine</h3>
+        <button class="btn-icon modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Day of Week</label>
+          <select id="routine-day-select" class="form-control"></select>
+        </div>
+        <div id="routine-items-list" style="margin-top: 6px;"></div>
+        <hr style="border:none; border-top:1px solid var(--card-border); margin:10px 0;">
+        <h4 style="font-size:0.85rem; color:var(--accent-color);">Add Activity</h4>
+        <div class="form-group">
+          <label>Activity Name</label>
+          <input type="text" id="routine-title" class="form-control" placeholder="Analysis Lecture">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label>Time</label>
+            <input type="time" id="routine-time" class="form-control" value="09:30">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Location</label>
+            <input type="text" id="routine-location" class="form-control" placeholder="Aula Volterra">
+          </div>
+        </div>
+        <button type="button" id="add-routine-btn" class="btn-primary-action">Add to Routine</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const today = new Date();
+    const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    const dateList = [];
+    for (let i = -7; i <= 30; i++) {
+      const d = new Date();
+      d.setDate(today.getDate() + i);
+      dateList.push(d);
+    }
+
+    const state = {
+      theme: localStorage.getItem('cladar_theme') || 'dark',
+      selectedDateISO: today.toISOString().split('T')[0],
+      selectedDayIdx: (today.getDay() + 6) % 7,
+      calendarDate: new Date(),
+      
+      profile: JSON.parse(localStorage.getItem('cladar_profile') || JSON.stringify({
+        name: 'Alex Taylor',
+        mat: '1984203',
+        univ: 'Sapienza University of Rome',
+        dept: 'Dept. of Computer Science',
+        degree: 'B.Sc. Computer Science (L-31)',
+        degreeType: 'Bachelor\'s Degree (Triennale)',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        qrData: '1984203_SAPIENZA'
+      })),
+
+      studyPlan: JSON.parse(localStorage.getItem('cladar_study_plan') || JSON.stringify([
+        { id: 'c1', code: '1042918', ssd: 'INF/01', name: 'Calculus I', prof: 'Prof. Rossi', ay: '2025/2026', year: 1, sem: 1, cfu: 9 },
+        { id: 'c2', code: '1042919', ssd: 'INF/01', name: 'Linear Algebra', prof: 'Prof. Bianchi', ay: '2025/2026', year: 1, sem: 1, cfu: 6 },
+        { id: 'c3', code: '1042920', ssd: 'INF/01', name: 'Computer Programming', prof: 'Prof. Verdi', ay: '2025/2026', year: 1, sem: 2, cfu: 12 },
+        { id: 'c4', code: '1042921', ssd: 'FIS/01', name: 'Physics I', prof: 'Prof. Neri', ay: '2026/2027', year: 2, sem: 1, cfu: 6 }
+      ])),
+
+      evaluations: JSON.parse(localStorage.getItem('cladar_evaluations') || JSON.stringify([
+        { id: 'e1', courseId: 'c1', isPartial: false, score: '29', date: '2026-01-20' },
+        { id: 'e2', courseId: 'c2', isPartial: false, score: '28', date: '2026-02-14' },
+        { id: 'e3', courseId: 'c3', isPartial: true, score: '30L', date: '2026-04-10' }
+      ])),
+
+      homeworks: JSON.parse(localStorage.getItem('cladar_homeworks') || JSON.stringify([
+        { id: 'hw1', subject: 'Mathematics', date: today.toISOString().split('T')[0], text: 'Solve limits exercise on page 24:\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$' }
+      ])),
+
+      tasks: JSON.parse(localStorage.getItem('cladar_tasks') || JSON.stringify([
+        { id: 't1', text: 'Prepare presentation slides for Friday', completed: false },
+        { id: 't2', text: 'Return book to the library', completed: true }
+      ])),
+
+      notes: JSON.parse(localStorage.getItem('cladar_notes') || JSON.stringify([
+        { id: 'n1', title: 'Exam Strategy', text: 'Focus on **Limits** and **Integrals**.\nFormula: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$' }
+      ])),
+
+      weeklyPlan: JSON.parse(localStorage.getItem('cladar_weekly_plan') || JSON.stringify({
+        Monday: [{ id: 'r1', title: 'Calculus I', time: '09:30', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: '' }]
+      })),
+
+      pendingDelete: null
+    };
+
+    function saveAllState() {
+      localStorage.setItem('cladar_theme', state.theme);
+      localStorage.setItem('cladar_profile', JSON.stringify(state.profile));
+      localStorage.setItem('cladar_study_plan', JSON.stringify(state.studyPlan));
+      localStorage.setItem('cladar_evaluations', JSON.stringify(state.evaluations));
+      localStorage.setItem('cladar_homeworks', JSON.stringify(state.homeworks));
+      localStorage.setItem('cladar_tasks', JSON.stringify(state.tasks));
+      localStorage.setItem('cladar_notes', JSON.stringify(state.notes));
+      localStorage.setItem('cladar_weekly_plan', JSON.stringify(state.weeklyPlan));
+    }
+
+    document.documentElement.setAttribute('data-theme', state.theme);
+
+    function updateClock() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      document.getElementById('clock-display').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.target;
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    document.querySelectorAll('.modal-close').forEach(btn => {
+      btn.addEventListener('click', (e) => e.target.closest('.modal-overlay').classList.remove('active'));
+    });
+
+    const themeSelect = document.getElementById('theme-select');
+    themeSelect.value = state.theme;
+    themeSelect.addEventListener('change', (e) => {
+      state.theme = e.target.value;
+      document.documentElement.setAttribute('data-theme', state.theme);
+      saveAllState();
+    });
+    document.getElementById('open-settings-btn').addEventListener('click', () => openModal('modal-settings'));
+
+    // EXPORT AND IMPORT JSON
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const backupData = {
+        cladar_profile: state.profile,
+        cladar_study_plan: state.studyPlan,
+        cladar_evaluations: state.evaluations,
+        cladar_homeworks: state.homeworks,
+        cladar_tasks: state.tasks,
+        cladar_notes: state.notes,
+        cladar_weekly_plan: state.weeklyPlan,
+        cladar_theme: state.theme
+      };
+      
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cladar_backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    const fileInput = document.getElementById('file-import-input');
+    document.getElementById('btn-import-json').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.cladar_profile) localStorage.setItem('cladar_profile', JSON.stringify(data.cladar_profile));
+          if (data.cladar_study_plan) localStorage.setItem('cladar_study_plan', JSON.stringify(data.cladar_study_plan));
+          if (data.cladar_evaluations) localStorage.setItem('cladar_evaluations', JSON.stringify(data.cladar_evaluations));
+          if (data.cladar_homeworks) localStorage.setItem('cladar_homeworks', JSON.stringify(data.cladar_homeworks));
+          if (data.cladar_tasks) localStorage.setItem('cladar_tasks', JSON.stringify(data.cladar_tasks));
+          if (data.cladar_notes) localStorage.setItem('cladar_notes', JSON.stringify(data.cladar_notes));
+          if (data.cladar_weekly_plan) localStorage.setItem('cladar_weekly_plan', JSON.stringify(data.cladar_weekly_plan));
+          
+          alert('Backup imported successfully! The app will reload.');
+          window.location.reload();
+        } catch (err) {
+          alert('Error parsing JSON file. Make sure it is a valid backup.');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function renderMarkdownAndMath(text) {
+      if (!text || !text.trim()) return '<em>No content.</em>';
+      const mathBlocks = [];
+      let processed = text
+        .replace(/\$\$([\s\S]+?)\$\$/g, (m, f) => {
+          try { mathBlocks.push(katex.renderToString(f.trim(), { displayMode: true })); return `___MATH_${mathBlocks.length - 1}___`; } catch(e){ return m; }
+        })
+        .replace(/\$([^\$\n]+?)\$/g, (m, f) => {
+          try { mathBlocks.push(katex.renderToString(f.trim(), { displayMode: false })); return `___MATH_${mathBlocks.length - 1}___`; } catch(e){ return m; }
+        });
+      let html = marked.parse(processed);
+      mathBlocks.forEach((mHtml, idx) => { html = html.replace(`___MATH_${idx}___`, mHtml); });
+      return html;
+    }
+
+    const daySelectorBar = document.getElementById('day-selector-bar');
+    const dailyGridTable = document.getElementById('daily-grid-table');
+
+    function renderDayChips() {
+      daySelectorBar.innerHTML = '';
+      DAYS_OF_WEEK.forEach((day, idx) => {
+        const chip = document.createElement('div');
+        chip.className = `day-chip ${idx === state.selectedDayIdx ? 'active' : ''}`;
+        chip.textContent = day.substring(0, 3);
+        chip.addEventListener('click', () => {
+          state.selectedDayIdx = idx;
+          renderDayChips();
+          renderDailyGrid();
+        });
+        daySelectorBar.appendChild(chip);
+      });
+    }
+
+    function renderDailyGrid() {
+      dailyGridTable.innerHTML = '';
+      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
+      const routineEvents = state.weeklyPlan[selectedDayName] || [];
+
+      dailyGridTable.style.gridTemplateColumns = `55px repeat(3, minmax(110px, 1fr))`;
+
+      const timeHead = document.createElement('div');
+      timeHead.className = 'gh-cell';
+      timeHead.textContent = 'Hour';
+      dailyGridTable.appendChild(timeHead);
+
+      ['Sanctuary A', 'Library B', 'Hall C'].forEach(loc => {
+        const cell = document.createElement('div');
+        cell.className = 'gh-cell';
+        cell.textContent = loc;
+        dailyGridTable.appendChild(cell);
+      });
+
+      for (let h = 0; h < 24; h++) {
+        const timeCell = document.createElement('div');
+        timeCell.className = 'gc-time';
+        timeCell.textContent = `${String(h).padStart(2, '0')}:00`;
+        dailyGridTable.appendChild(timeCell);
+
+        for (let col = 0; col < 3; col++) {
+          const gridCell = document.createElement('div');
+          gridCell.className = 'gc-empty';
+          
+          const activeEv = routineEvents.find(r => parseInt(r.time.split(':')[0]) === h && col === 0);
+          if (activeEv) {
+            const evEl = document.createElement('div');
+            evEl.className = 'gc-event';
+            evEl.style.background = activeEv.color || 'var(--c-MATE1)';
+            evEl.innerHTML = `<span>${activeEv.title}</span><span class="time-lbl">${activeEv.time}</span>`;
+            gridCell.appendChild(evEl);
+          }
+          dailyGridTable.appendChild(gridCell);
+        }
+      }
+    }
+
+    const dateStripContainer = document.getElementById('date-strip-container');
+    const homeworkListContainer = document.getElementById('homework-list-container');
+    const tasksListContainer = document.getElementById('tasks-list-container');
+    const notesListContainer = document.getElementById('notes-list-container');
+
+    function renderDateStrip() {
+      dateStripContainer.innerHTML = '';
+      dateList.forEach(d => {
+        const iso = d.toISOString().split('T')[0];
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = d.getDate();
+
+        const chip = document.createElement('div');
+        chip.className = `date-chip-hw ${iso === state.selectedDateISO ? 'active' : ''}`;
+        chip.innerHTML = `<span class="day-name">${dayName}</span><span class="day-num">${dayNum}</span>`;
+        chip.addEventListener('click', () => {
+          state.selectedDateISO = iso;
+          renderDateStrip();
+          renderHomeworks();
+        });
+        dateStripContainer.appendChild(chip);
+      });
+    }
+
+    function renderHomeworks() {
+      const selectedDate = new Date(state.selectedDateISO + 'T00:00:00');
+      document.getElementById('current-date-title').textContent = selectedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', weekday: 'short' });
+      
+      homeworkListContainer.innerHTML = '';
+      const dayHws = state.homeworks.filter(h => h.date === state.selectedDateISO);
+      if (dayHws.length === 0) {
+        homeworkListContainer.innerHTML = '<div class="empty-state">No homework assigned for this date.</div>';
+        return;
+      }
+      dayHws.forEach(hw => {
+        const card = document.createElement('div');
+        card.className = 'homework-card';
+        card.innerHTML = `<div class="subject-badge">${hw.subject}</div><div class="markdown-content">${renderMarkdownAndMath(hw.text)}</div>`;
+        homeworkListContainer.appendChild(card);
+      });
+    }
+
+    function renderTasks() {
+      tasksListContainer.innerHTML = '';
+      if (state.tasks.length === 0) {
+        tasksListContainer.innerHTML = '<div class="empty-state">No tasks created.</div>';
+        return;
+      }
+      state.tasks.forEach(task => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'swipe-item-wrapper';
+        const item = document.createElement('div');
+        item.className = 'ios-task-item';
+        item.innerHTML = `
+          <div class="task-checkbox ${task.completed ? 'completed' : ''}" onclick="toggleTask('${task.id}')"></div>
+          <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
+        `;
+        attachSwipeLeft(item, () => requestDelete('task', task.id));
+        wrapper.appendChild(item);
+        tasksListContainer.appendChild(wrapper);
+      });
+    }
+
+    window.toggleTask = function(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (t) { t.completed = !t.completed; saveAllState(); renderTasks(); }
+    };
+
+    function renderNotes() {
+      notesListContainer.innerHTML = '';
+      if (state.notes.length === 0) {
+        notesListContainer.innerHTML = '<div class="empty-state">No notes written.</div>';
+        return;
+      }
+      state.notes.forEach(note => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'swipe-item-wrapper';
+        const item = document.createElement('div');
+        item.className = 'ios-note-item';
+        item.innerHTML = `<div class="note-title">${note.title}</div><div class="markdown-content">${renderMarkdownAndMath(note.text)}</div>`;
+        attachSwipeLeft(item, () => requestDelete('note', note.id));
+        wrapper.appendChild(item);
+        notesListContainer.appendChild(wrapper);
+      });
+    }
+
+    function attachSwipeLeft(element, callback) {
+      let startX = 0, currentX = 0, isSwiping = false;
+      element.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isSwiping = true; }, { passive: true });
+      element.addEventListener('touchmove', e => {
+        if (!isSwiping) return;
+        currentX = e.touches[0].clientX;
+        const diff = currentX - startX;
+        if (diff < 0) element.style.transform = `translateX(${Math.max(diff, -90)}px)`;
+      }, { passive: true });
+      element.addEventListener('touchend', () => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        if (currentX - startX < -60) {
+          element.style.transform = 'translateX(-90px)';
+          callback();
+        }
+        setTimeout(() => { element.style.transform = 'translateX(0px)'; }, 300);
+      });
+    }
+
+    function requestDelete(type, id) {
+      state.pendingDelete = { type, id };
+      openModal('modal-confirm');
+    }
+
+    document.getElementById('confirm-cancel-btn').addEventListener('click', () => closeModal('modal-confirm'));
+    document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+      if (state.pendingDelete) {
+        const { type, id } = state.pendingDelete;
+        if (type === 'task') state.tasks = state.tasks.filter(t => t.id !== id);
+        if (type === 'note') state.notes = state.notes.filter(n => n.id !== id);
+        saveAllState();
+        renderTasks();
+        renderNotes();
+      }
+      closeModal('modal-confirm');
+    });
+
+    const fabBtn = document.getElementById('fab-add-btn');
+    let fabTimer = null;
+    fabBtn.addEventListener('touchstart', () => { fabTimer = setTimeout(() => openModal('action-sheet-overlay'), 350); });
+    fabBtn.addEventListener('touchend', () => clearTimeout(fabTimer));
+    fabBtn.addEventListener('click', () => openModal('action-sheet-overlay'));
+    document.getElementById('action-sheet-cancel').addEventListener('click', () => closeModal('action-sheet-overlay'));
+
+    document.getElementById('opt-add-homework').addEventListener('click', () => {
+      closeModal('action-sheet-overlay');
+      document.getElementById('hw-date-input').value = state.selectedDateISO;
+      openModal('modal-homework');
+    });
+    document.getElementById('opt-add-task').addEventListener('click', () => {
+      closeModal('action-sheet-overlay');
+      openModal('modal-task');
+    });
+    document.getElementById('opt-add-note').addEventListener('click', () => {
+      closeModal('action-sheet-overlay');
+      openModal('modal-note');
+    });
+
+    document.getElementById('save-homework-btn').addEventListener('click', () => {
+      const subject = document.getElementById('hw-subject-input').value.trim() || 'General';
+      const date = document.getElementById('hw-date-input').value || state.selectedDateISO;
+      const text = document.getElementById('hw-text-input').value.trim();
+      if (!text) return;
+      state.homeworks.push({ id: 'hw_' + Date.now(), subject, date, text });
+      saveAllState();
+      closeModal('modal-homework');
+      renderHomeworks();
+    });
+    document.getElementById('save-task-btn').addEventListener('click', () => {
+      const text = document.getElementById('task-text-input').value.trim();
+      if (!text) return;
+      state.tasks.push({ id: 't_' + Date.now(), text, completed: false });
+      saveAllState();
+      closeModal('modal-task');
+      renderTasks();
+    });
+    document.getElementById('save-note-btn').addEventListener('click', () => {
+      const title = document.getElementById('note-title-input').value.trim() || 'Untitled Note';
+      const text = document.getElementById('note-text-input').value.trim();
+      if (!text) return;
+      state.notes.push({ id: 'n_' + Date.now(), title, text });
+      saveAllState();
+      closeModal('modal-note');
+      renderNotes();
+    });
+
+    function renderCalendarMonth() {
+      const monthGrid = document.getElementById('month-grid-container');
+      monthGrid.innerHTML = '';
+      const year = state.calendarDate.getFullYear();
+      const month = state.calendarDate.getMonth();
+      document.getElementById('cal-month-title').textContent = state.calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      ['M','T','W','T','F','S','S'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'month-day-head';
+        h.textContent = d;
+        monthGrid.appendChild(h);
+      });
+
+      const startingDay = (new Date(year, month, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < startingDay; i++) monthGrid.appendChild(document.createElement('div'));
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'month-cell';
+        cell.textContent = day;
+        monthGrid.appendChild(cell);
+      }
+    }
+
+    document.getElementById('cal-prev-month').addEventListener('click', () => { state.calendarDate.setMonth(state.calendarDate.getMonth() - 1); renderCalendarMonth(); });
+    document.getElementById('cal-next-month').addEventListener('click', () => { state.calendarDate.setMonth(state.calendarDate.getMonth() + 1); renderCalendarMonth(); });
+
+    function renderProfileView() {
+      document.getElementById('display-profile-name').textContent = state.profile.name;
+      document.getElementById('display-profile-mat').textContent = `ID: ${state.profile.mat}`;
+      document.getElementById('display-profile-degree').textContent = state.profile.degree;
+      document.getElementById('display-profile-univ').textContent = `${state.profile.univ} • ${state.profile.dept}`;
+      document.getElementById('profile-avatar-img').src = state.profile.avatarUrl;
+
+      const totalCFU = state.studyPlan.reduce((acc, c) => acc + Number(c.cfu || 0), 0);
+      const passedCourseIds = state.evaluations.filter(e => !e.isPartial).map(e => e.courseId);
+      const completedCFU = state.studyPlan.filter(c => passedCourseIds.includes(c.id)).reduce((acc, c) => acc + Number(c.cfu || 0), 0);
+      document.getElementById('display-cfu-progress').textContent = `${completedCFU} / ${totalCFU} CFU`;
+
+      const parseScore = (s) => (s.toUpperCase().includes('30L') ? 30 : parseFloat(s) || 0);
+
+      const officialEvals = state.evaluations.filter(e => !e.isPartial);
+      let sumOfficial = 0, cfuOfficial = 0;
+      officialEvals.forEach(e => {
+        const c = state.studyPlan.find(x => x.id === e.courseId);
+        const weight = c ? Number(c.cfu) : 6;
+        sumOfficial += parseScore(e.score) * weight;
+        cfuOfficial += weight;
+      });
+      const officialAvg = cfuOfficial > 0 ? (sumOfficial / cfuOfficial).toFixed(1) : '--';
+      
+      let sumProv = 0, cfuProv = 0;
+      state.evaluations.forEach(e => {
+        const c = state.studyPlan.find(x => x.id === e.courseId);
+        const weight = c ? Number(c.cfu) : 6;
+        sumProv += parseScore(e.score) * weight;
+        cfuProv += weight;
+      });
+      const provAvg = cfuProv > 0 ? (sumProv / cfuProv).toFixed(1) : '--';
+
+      const gOff = document.getElementById('gauge-official');
+      document.getElementById('val-official-avg').textContent = officialAvg;
+      applyGaugeColor(gOff, parseFloat(officialAvg));
+
+      const gProv = document.getElementById('gauge-provisional');
+      document.getElementById('val-provisional-avg').textContent = provAvg;
+      applyGaugeColor(gProv, parseFloat(provAvg));
+
+      renderRecentEvals();
+    }
+
+    function applyGaugeColor(gaugeEl, score) {
+      gaugeEl.classList.remove('gauge-green', 'gauge-yellow', 'gauge-red');
+      if (isNaN(score)) return;
+      if (score >= 26) gaugeEl.classList.add('gauge-green');
+      else if (score >= 22) gaugeEl.classList.add('gauge-yellow');
+      else gaugeEl.classList.add('gauge-red');
+    }
+
+    function renderRecentEvals() {
+      const container = document.getElementById('recent-evals-list');
+      container.innerHTML = '';
+      if (state.evaluations.length === 0) {
+        container.innerHTML = '<div class="empty-state">No evaluations registered yet.</div>';
+        return;
+      }
+      
+      const recent = [...state.evaluations].reverse().slice(0, 3);
+      recent.forEach(e => {
+        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---' };
+        const scoreNum = e.score.toUpperCase().includes('30L') ? 30 : parseFloat(e.score);
+        let colorClass = 'var(--accent-green)';
+        if (scoreNum < 22) colorClass = 'var(--accent-red)';
+        else if (scoreNum < 26) colorClass = 'var(--accent-yellow)';
+
+        const item = document.createElement('div');
+        item.className = 'eval-item';
+        item.innerHTML = `
+          <div class="eval-left">
+            <div class="eval-dot" style="background:${colorClass};"></div>
+            <div>
+              <div class="eval-title">${c.name} ${e.isPartial ? '<small style="color:var(--text-muted);">(Partial)</small>' : ''}</div>
+              <div class="eval-sub">${e.date}</div>
+            </div>
+          </div>
+          <div class="eval-score">${e.score}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    const avatarTrigger = document.getElementById('profile-avatar-trigger');
+    let avatarTimer = null;
+    avatarTrigger.addEventListener('touchstart', () => { avatarTimer = setTimeout(openEditProfileModal, 400); });
+    avatarTrigger.addEventListener('touchend', () => clearTimeout(avatarTimer));
+    avatarTrigger.addEventListener('click', () => {
+      document.getElementById('badge-univ-name').textContent = state.profile.univ;
+      document.getElementById('badge-student-name').textContent = state.profile.name;
+      document.getElementById('badge-mat-num').textContent = `ID: ${state.profile.mat}`;
+      document.getElementById('badge-course-name').textContent = state.profile.degree;
+      document.getElementById('badge-avatar-img').src = state.profile.avatarUrl;
+      document.getElementById('badge-qr-img').src = state.profile.qrData.startsWith('http') ? state.profile.qrData : `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(state.profile.qrData)}`;
+      openModal('modal-student-badge');
+    });
+
+    document.getElementById('open-edit-profile-from-badge').addEventListener('click', () => {
+      closeModal('modal-student-badge');
+      openEditProfileModal();
+    });
+
+    function openEditProfileModal() {
+      document.getElementById('edit-name').value = state.profile.name;
+      document.getElementById('edit-mat').value = state.profile.mat;
+      document.getElementById('edit-univ').value = state.profile.univ;
+      document.getElementById('edit-dept').value = state.profile.dept;
+      document.getElementById('edit-degree').value = state.profile.degree;
+      document.getElementById('edit-degree-type').value = state.profile.degreeType || 'Bachelor\'s Degree (Triennale)';
+      document.getElementById('edit-avatar-url').value = state.profile.avatarUrl;
+      document.getElementById('edit-qr-data').value = state.profile.qrData;
+      openModal('modal-edit-profile');
+    }
+
+    document.getElementById('save-profile-btn').addEventListener('click', () => {
+      state.profile.name = document.getElementById('edit-name').value;
+      state.profile.mat = document.getElementById('edit-mat').value;
+      state.profile.univ = document.getElementById('edit-univ').value;
+      state.profile.dept = document.getElementById('edit-dept').value;
+      state.profile.degree = document.getElementById('edit-degree').value;
+      state.profile.degreeType = document.getElementById('edit-degree-type').value;
+      state.profile.avatarUrl = document.getElementById('edit-avatar-url').value;
+      state.profile.qrData = document.getElementById('edit-qr-data').value;
+      saveAllState();
+      closeModal('modal-edit-profile');
+      renderProfileView();
+    });
+
+    document.getElementById('open-all-evals-btn').addEventListener('click', () => {
+      renderEvaluationsTable();
+      openModal('modal-evaluations-detail');
+    });
+
+    function renderEvaluationsTable() {
+      const tbody = document.getElementById('eval-table-body');
+      tbody.innerHTML = '';
+      document.getElementById('eval-count-lbl').textContent = `${state.evaluations.length} evaluation(s) recorded`;
+
+      state.evaluations.forEach(e => {
+        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown', code: '---', ssd: '---', prof: '---' };
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd}</div></td>
+          <td>${c.prof}</td>
+          <td><strong style="color:var(--accent-blue);">${e.score}</strong></td>
+          <td>${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('open-add-grade-modal-btn').addEventListener('click', () => {
+      populateCourseSelect();
+      openModal('modal-add-grade');
+    });
+
+    function populateCourseSelect() {
+      const sel = document.getElementById('grade-course-select');
+      sel.innerHTML = '';
+      const passedFinalCourseIds = state.evaluations.filter(e => !e.isPartial).map(e => e.courseId);
+      const eligibleCourses = state.studyPlan.filter(c => !passedFinalCourseIds.includes(c.id));
+
+      if (eligibleCourses.length === 0) {
+        sel.innerHTML = '<option value="">No available courses to grade</option>';
+        return;
+      }
+      eligibleCourses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.code})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    document.getElementById('save-grade-btn').addEventListener('click', () => {
+      const courseId = document.getElementById('grade-course-select').value;
+      const isPartial = document.getElementById('grade-is-partial').checked;
+      const score = document.getElementById('grade-score-input').value.trim();
+      const date = document.getElementById('grade-date-input').value || new Date().toISOString().split('T')[0];
+
+      if (!courseId || !score) return;
+
+      state.evaluations.push({ id: 'e_' + Date.now(), courseId, isPartial, score, date });
+      saveAllState();
+      closeModal('modal-add-grade');
+      renderEvaluationsTable();
+      renderProfileView();
+    });
+
+    document.getElementById('open-study-plan-btn').addEventListener('click', () => {
+      renderStudyPlanView();
+      openModal('modal-study-plan');
+    });
+
+    function renderStudyPlanView() {
+      document.getElementById('sp-univ-dept').textContent = `${state.profile.univ} • ${state.profile.dept}`;
+      document.getElementById('sp-course-full').textContent = `${state.profile.degree} — ${state.profile.degreeType}`;
+
+      const tree = document.getElementById('study-plan-tree');
+      tree.innerHTML = '';
+
+      if (state.studyPlan.length === 0) {
+        tree.innerHTML = '<div class="empty-state">No courses added to the study plan.</div>';
+        return;
+      }
+
+      const years = [1, 2, 3];
+      years.forEach(y => {
+        const yearCourses = state.studyPlan.filter(c => Number(c.year) === y);
+        if (yearCourses.length === 0) return;
+
+        const yearHead = document.createElement('h3');
+        yearHead.style.cssText = 'font-size:0.9rem; color:var(--accent-color); margin:12px 0 6px 0; border-bottom:1px solid var(--card-border); padding-bottom:4px;';
+        yearHead.textContent = `Year ${y}`;
+        tree.appendChild(yearHead);
+
+        [1, 2].forEach(s => {
+          const semCourses = yearCourses.filter(c => Number(c.sem) === s);
+          if (semCourses.length === 0) return;
+
+          const semWrap = document.createElement('div');
+          semWrap.className = 'semester-section';
+          semWrap.innerHTML = `<div class="semester-title">Semester ${s}</div>`;
+
+          semCourses.forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+              <div>
+                <div class="course-code">${c.code} • <span class="course-ssd">${c.ssd}</span></div>
+                <div class="course-name">${c.name}</div>
+                <div class="course-prof">${c.prof} (${c.ay})</div>
+              </div>
+              <div class="course-cfu">${c.cfu} CFU</div>
+            `;
+            semWrap.appendChild(card);
+          });
+          tree.appendChild(semWrap);
+        });
+      });
+    }
+
+    document.getElementById('open-add-course-btn').addEventListener('click', () => {
+      openModal('modal-add-course');
+    });
+
+    document.getElementById('save-course-btn').addEventListener('click', () => {
+      const code = document.getElementById('course-code-in').value.trim() || 'CODE';
+      const ssd = document.getElementById('course-ssd-in').value.trim() || 'SSD';
+      const name = document.getElementById('course-name-in').value.trim();
+      const prof = document.getElementById('course-prof-in').value.trim() || 'Prof.';
+      const ay = document.getElementById('course-ay-in').value.trim() || '2026/2027';
+      const year = Number(document.getElementById('course-year-in').value);
+      const sem = Number(document.getElementById('course-sem-in').value);
+      const cfu = Number(document.getElementById('course-cfu-in').value) || 6;
+
+      if (!name) return;
+
+      state.studyPlan.push({ id: 'c_' + Date.now(), code, ssd, name, prof, ay, year, sem, cfu });
+      saveAllState();
+      closeModal('modal-add-course');
+      renderStudyPlanView();
+      renderProfileView();
+    });
+
+    renderDayChips();
+    renderDailyGrid();
+    renderDateStrip();
+    renderHomeworks();
+    renderTasks();
+    renderNotes();
+    renderCalendarMonth();
+    renderProfileView();
+  </script>
+</body>
+</html>
