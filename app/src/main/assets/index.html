@@ -1014,56 +1014,68 @@
     });
     document.getElementById('open-settings-btn').addEventListener('click', () => openModal('modal-settings'));
 
-    // JSON Export & Import
-    document.getElementById('btn-export-json').addEventListener('click', () => {
-      const backupData = {
-        cladar_events: state.events,
-        cladar_profile: state.profile,
-        cladar_study_plan: state.studyPlan,
-        cladar_evaluations: state.evaluations,
-        cladar_homeworks: state.homeworks,
-        cladar_tasks: state.tasks,
-        cladar_notes: state.notes,
-        cladar_weekly_plan: state.weeklyPlan,
-        cladar_theme: state.theme
-      };
-      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `cladar_backup_${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    // --- EXPORT JSON (Sia Native Android che Web) ---
+document.getElementById('btn-export-json').addEventListener('click', () => {
+  const backupData = {
+    cladar_events: state.events,
+    cladar_profile: state.profile,
+    cladar_study_plan: state.studyPlan,
+    cladar_evaluations: state.evaluations,
+    cladar_homeworks: state.homeworks,
+    cladar_tasks: state.tasks,
+    cladar_notes: state.notes,
+    cladar_weekly_plan: state.weeklyPlan,
+    cladar_theme: state.theme
+  };
+  
+  const jsonStr = JSON.stringify(backupData, null, 2);
+  const fileName = `cladar_backup_${new Date().toISOString().split('T')[0]}.json`;
 
-    const fileInput = document.getElementById('file-import-input');
-    document.getElementById('btn-import-json').addEventListener('click', () => fileInput.click());
+  // Se l'app gira su Android Nativo, usa l'interfaccia Kotlin per salvare in Download
+  if (window.AndroidBridge && window.AndroidBridge.saveJson) {
+    window.AndroidBridge.saveJson(jsonStr, fileName);
+  } else {
+    // Fallback standard per browser Web
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+});
 
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+// --- IMPORT JSON ---
+const fileInput = document.getElementById('file-import-input');
+document.getElementById('btn-import-json').addEventListener('click', () => fileInput.click());
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target.result);
-          if (data.cladar_events) localStorage.setItem('cladar_events', JSON.stringify(data.cladar_events));
-          if (data.cladar_profile) localStorage.setItem('cladar_profile', JSON.stringify(data.cladar_profile));
-          if (data.cladar_study_plan) localStorage.setItem('cladar_study_plan', JSON.stringify(data.cladar_study_plan));
-          if (data.cladar_evaluations) localStorage.setItem('cladar_evaluations', JSON.stringify(data.cladar_evaluations));
-          if (data.cladar_homeworks) localStorage.setItem('cladar_homeworks', JSON.stringify(data.cladar_homeworks));
-          if (data.cladar_tasks) localStorage.setItem('cladar_tasks', JSON.stringify(data.cladar_tasks));
-          if (data.cladar_notes) localStorage.setItem('cladar_notes', JSON.stringify(data.cladar_notes));
-          if (data.cladar_weekly_plan) localStorage.setItem('cladar_weekly_plan', JSON.stringify(data.cladar_weekly_plan));
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const data = JSON.parse(event.target.result);
+      if (data.cladar_events) localStorage.setItem('cladar_events', JSON.stringify(data.cladar_events));
+      if (data.cladar_profile) localStorage.setItem('cladar_profile', JSON.stringify(data.cladar_profile));
+      if (data.cladar_study_plan) localStorage.setItem('cladar_study_plan', JSON.stringify(data.cladar_study_plan));
+      if (data.cladar_evaluations) localStorage.setItem('cladar_evaluations', JSON.stringify(data.cladar_evaluations));
+      if (data.cladar_homeworks) localStorage.setItem('cladar_homeworks', JSON.stringify(data.cladar_homeworks));
+      if (data.cladar_tasks) localStorage.setItem('cladar_tasks', JSON.stringify(data.cladar_tasks));
+      if (data.cladar_notes) localStorage.setItem('cladar_notes', JSON.stringify(data.cladar_notes));
+      if (data.cladar_weekly_plan) localStorage.setItem('cladar_weekly_plan', JSON.stringify(data.cladar_weekly_plan));
+      
+       alert('Backup imported successfully! Reloading application.');
+      window.location.reload();
+    } catch (err) {
+      alert('Error parsing JSON backup file.');
+    }
+  };
+  reader.readAsText(file);
+});
           
-          alert('Backup imported successfully! Reloading application.');
-          window.location.reload();
-        } catch (err) {
-          alert('Error parsing JSON backup file.');
-        }
-      };
-      reader.readAsText(file);
-    });
 
     /* ==========================================================================
        3. MARKDOWN & LATEX MATH PARSER
