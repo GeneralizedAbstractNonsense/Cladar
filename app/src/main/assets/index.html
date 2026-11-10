@@ -1455,17 +1455,27 @@ fileInput.addEventListener('change', (e) => {
     }
 
     document.getElementById('confirm-cancel-btn').addEventListener('click', () => closeModal('modal-confirm'));
-    document.getElementById('confirm-delete-btn').addEventListener('click', () => {
-      if (state.pendingDelete) {
-        const { type, id } = state.pendingDelete;
-        if (type === 'task') state.tasks = state.tasks.filter(t => t.id !== id);
-        if (type === 'note') state.notes = state.notes.filter(n => n.id !== id);
-        saveAllState();
-        renderTasks();
-        renderNotes();
-      }
-      closeModal('modal-confirm');
-    });
+   document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+  if (state.pendingDelete) {
+    const { type, id } = state.pendingDelete;
+    if (type === 'task') state.tasks = state.tasks.filter(t => t.id !== id);
+    if (type === 'note') state.notes = state.notes.filter(n => n.id !== id);
+    if (type === 'eval') state.evaluations = state.evaluations.filter(e => e.id !== id);
+    if (type === 'course') {
+      state.studyPlan = state.studyPlan.filter(c => c.id !== id);
+      
+      state.evaluations = state.evaluations.filter(e => e.courseId !== id);
+    }
+    
+    saveAllState();
+    renderTasks();
+    renderNotes();
+    renderProfileView();
+    renderEvaluationsTable();
+    renderStudyPlanView();
+  }
+  closeModal('modal-confirm');
+}););
 
     // FAB Button & Action Sheet
     const fabBtn = document.getElementById('fab-add-btn');
@@ -1750,37 +1760,9 @@ fileInput.addEventListener('change', (e) => {
       else gaugeEl.classList.add('gauge-red');
     }
 
-    function renderRecentEvals() {
-      const container = document.getElementById('recent-evals-list');
-      container.innerHTML = '';
-      if (state.evaluations.length === 0) {
-        container.innerHTML = '<div class="empty-state">No evaluations registered yet.</div>';
-        return;
-      }
-      
-      const recent = [...state.evaluations].reverse().slice(0, 3);
-      recent.forEach(e => {
-        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---' };
-        const scoreNum = e.score.toUpperCase().includes('30L') ? 30 : parseFloat(e.score);
-        let colorClass = 'var(--accent-green)';
-        if (scoreNum < 22) colorClass = 'var(--accent-red)';
-        else if (scoreNum < 26) colorClass = 'var(--accent-yellow)';
+    
 
-        const item = document.createElement('div');
-        item.className = 'eval-item';
-        item.innerHTML = `
-          <div class="eval-left">
-            <div class="eval-dot" style="background:${colorClass};"></div>
-            <div>
-              <div class="eval-title">${c.name} ${e.isPartial ? '<small style="color:var(--text-muted);">(Partial)</small>' : ''}</div>
-              <div class="eval-sub">${e.date}</div>
-            </div>
-          </div>
-          <div class="eval-score">${e.score}</div>
-        `;
-        container.appendChild(item);
-      });
-    }
+    
 
     const avatarTrigger = document.getElementById('profile-avatar-trigger');
     let avatarTimer = null;
@@ -1813,6 +1795,8 @@ fileInput.addEventListener('change', (e) => {
       openModal('modal-edit-profile');
     }
 
+    
+
     document.getElementById('save-profile-btn').addEventListener('click', () => {
       state.profile.name = document.getElementById('edit-name').value;
       state.profile.mat = document.getElementById('edit-mat').value;
@@ -1832,23 +1816,7 @@ fileInput.addEventListener('change', (e) => {
       openModal('modal-evaluations-detail');
     });
 
-    function renderEvaluationsTable() {
-      const tbody = document.getElementById('eval-table-body');
-      tbody.innerHTML = '';
-      document.getElementById('eval-count-lbl').textContent = `${state.evaluations.length} evaluation(s) recorded`;
-
-      state.evaluations.forEach(e => {
-        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown', code: '---', ssd: '---', prof: '---' };
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd}</div></td>
-          <td>${c.prof}</td>
-          <td><strong style="color:var(--accent-blue);">${e.score}</strong></td>
-          <td>${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    
 
     document.getElementById('open-add-grade-modal-btn').addEventListener('click', () => {
       populateCourseSelect();
@@ -1893,53 +1861,112 @@ fileInput.addEventListener('change', (e) => {
       openModal('modal-study-plan');
     });
 
-    function renderStudyPlanView() {
-      document.getElementById('sp-univ-dept').textContent = `${state.profile.univ} • ${state.profile.dept}`;
-      document.getElementById('sp-course-full').textContent = `${state.profile.degree} — ${state.profile.degreeType}`;
+    function renderRecentEvals() {
+  const container = document.getElementById('recent-evals-list');
+  container.innerHTML = '';
+  if (state.evaluations.length === 0) {
+    container.innerHTML = '<div class="empty-state">No evaluations registered yet.</div>';
+    return;
+  }
+  
+  const recent = [...state.evaluations].reverse().slice(0, 3);
+  recent.forEach(e => {
+    const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---' };
+    const scoreNum = e.score.toUpperCase().includes('30L') ? 30 : parseFloat(e.score);
+    let colorClass = 'var(--accent-green)';
+    if (scoreNum < 22) colorClass = 'var(--accent-red)';
+    else if (scoreNum < 26) colorClass = 'var(--accent-yellow)';
 
-      const tree = document.getElementById('study-plan-tree');
-      tree.innerHTML = '';
+    const item = document.createElement('div');
+    item.className = 'eval-item';
+    item.style.cursor = 'pointer';
+    item.innerHTML = `
+      <div class="eval-left">
+        <div class="eval-dot" style="background:${colorClass};"></div>
+        <div>
+          <div class="eval-title">${c.name} ${e.isPartial ? '<small style="color:var(--text-muted);">(Partial)</small>' : ''}</div>
+          <div class="eval-sub">${e.date}</div>
+        </div>
+      </div>
+      <div class="eval-score">${e.score}</div>
+    `;
+   
+    attachLongPress(item, () => requestDelete('eval', e.id));
+    container.appendChild(item);
+  });
+}
 
-      if (state.studyPlan.length === 0) {
-        tree.innerHTML = '<div class="empty-state">No courses added to the study plan.</div>';
-        return;
-      }
+function renderEvaluationsTable() {
+  const tbody = document.getElementById('eval-table-body');
+  tbody.innerHTML = '';
+  document.getElementById('eval-count-lbl').textContent = `${state.evaluations.length} evaluation(s) recorded`;
 
-      const years = [1, 2, 3];
-      years.forEach(y => {
-        const yearCourses = state.studyPlan.filter(c => Number(c.year) === y);
-        if (yearCourses.length === 0) return;
+  state.evaluations.forEach(e => {
+    const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown', code: '---', ssd: '---', prof: '---' };
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.innerHTML = `
+      <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd}</div></td>
+      <td>${c.prof}</td>
+      <td><strong style="color:var(--accent-blue);">${e.score}</strong></td>
+      <td>${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}</td>
+    `;
+   
+    attachLongPress(tr, () => requestDelete('eval', e.id));
+    tbody.appendChild(tr);
+  });
+}
 
-        const yearHead = document.createElement('h3');
-        yearHead.style.cssText = 'font-size:0.9rem; color:var(--accent-color); margin:12px 0 6px 0; border-bottom:1px solid var(--card-border); padding-bottom:4px;';
-        yearHead.textContent = `Year ${y}`;
-        tree.appendChild(yearHead);
+function renderStudyPlanView() {
+  document.getElementById('sp-univ-dept').textContent = `${state.profile.univ} • ${state.profile.dept}`;
+  document.getElementById('sp-course-full').textContent = `${state.profile.degree} — ${state.profile.degreeType}`;
 
-        [1, 2].forEach(s => {
-          const semCourses = yearCourses.filter(c => Number(c.sem) === s);
-          if (semCourses.length === 0) return;
+  const tree = document.getElementById('study-plan-tree');
+  tree.innerHTML = '';
 
-          const semWrap = document.createElement('div');
-          semWrap.className = 'semester-section';
-          semWrap.innerHTML = `<div class="semester-title">Semester ${s}</div>`;
+  if (state.studyPlan.length === 0) {
+    tree.innerHTML = '<div class="empty-state">No courses added to the study plan.</div>';
+    return;
+  }
 
-          semCourses.forEach(c => {
-            const card = document.createElement('div');
-            card.className = 'course-card';
-            card.innerHTML = `
-              <div>
-                <div class="course-code">${c.code} • <span class="course-ssd">${c.ssd}</span></div>
-                <div class="course-name">${c.name}</div>
-                <div class="course-prof">${c.prof} (${c.ay})</div>
-              </div>
-              <div class="course-cfu">${c.cfu} CFU</div>
-            `;
-            semWrap.appendChild(card);
-          });
-          tree.appendChild(semWrap);
-        });
+  const years = [1, 2, 3];
+  years.forEach(y => {
+    const yearCourses = state.studyPlan.filter(c => Number(c.year) === y);
+    if (yearCourses.length === 0) return;
+
+    const yearHead = document.createElement('h3');
+    yearHead.style.cssText = 'font-size:0.9rem; color:var(--accent-color); margin:12px 0 6px 0; border-bottom:1px solid var(--card-border); padding-bottom:4px;';
+    yearHead.textContent = `Year ${y}`;
+    tree.appendChild(yearHead);
+
+    [1, 2].forEach(s => {
+      const semCourses = yearCourses.filter(c => Number(c.sem) === s);
+      if (semCourses.length === 0) return;
+
+      const semWrap = document.createElement('div');
+      semWrap.className = 'semester-section';
+      semWrap.innerHTML = `<div class="semester-title">Semester ${s}</div>`;
+
+      semCourses.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'course-card';
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+          <div>
+            <div class="course-code">${c.code} • <span class="course-ssd">${c.ssd}</span></div>
+            <div class="course-name">${c.name}</div>
+            <div class="course-prof">${c.prof} (${c.ay})</div>
+          </div>
+          <div class="course-cfu">${c.cfu} CFU</div>
+        `;
+        
+        attachLongPress(card, () => requestDelete('course', c.id));
+        semWrap.appendChild(card);
       });
-    }
+      tree.appendChild(semWrap);
+    });
+  });
+}
 
     document.getElementById('open-add-course-btn').addEventListener('click', () => {
       openModal('modal-add-course');
@@ -1963,6 +1990,52 @@ fileInput.addEventListener('change', (e) => {
       renderStudyPlanView();
       renderProfileView();
     });
+
+
+    
+function attachLongPress(element, callback) {
+  let timer = null;
+  let startX = 0, startY = 0;
+  let isPressing = false;
+
+  const start = (e) => {
+    isPressing = true;
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+    timer = setTimeout(() => {
+      if (isPressing) {
+        if (navigator.vibrate) navigator.vibrate(50); 
+        callback();
+      }
+    }, 500); 
+  };
+
+  const cancel = () => {
+    isPressing = false;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  };
+
+  const move = (e) => {
+    if (!isPressing) return;
+    const touch = e.touches ? e.touches[0] : e;
+    const diffX = Math.abs(touch.clientX - startX);
+    const diffY = Math.abs(touch.clientY - startY);
+    if (diffX > 10 || diffY > 10) cancel(); // Annulla se si sta effettuando uno scroll
+  };
+
+  element.addEventListener('touchstart', start, { passive: true });
+  element.addEventListener('touchend', cancel);
+  element.addEventListener('touchmove', move, { passive: true });
+
+  element.addEventListener('mousedown', start);
+  element.addEventListener('mouseup', cancel);
+  element.addEventListener('mouseleave', cancel);
+  element.addEventListener('mousemove', move);
+}
 
     /* ==========================================================================
        10. INITIALIZATION
