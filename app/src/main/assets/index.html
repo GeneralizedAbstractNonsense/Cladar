@@ -15,7 +15,7 @@
 
   <style>
     :root {
-      /* Palette Ufficiale Cladar */
+      /* Palette */
       --c-MATE1: rgba(170, 201, 182, 0.45);
       --c-MATE2: rgba(170, 201, 182, 0.75);
       --c-MATE3: rgba(170, 201, 182, 0.95);
@@ -122,7 +122,7 @@
     .nav-btn.active { color: var(--accent-color); font-weight: 700; }
     .nav-btn svg { width: 20px; height: 20px; fill: currentColor; margin-bottom: 2px; }
 
-    /* --- TAB 1: DAILY JOURNAL (Infinite Dynamic Columns Grid) --- */
+    /* --- TAB 1: DAILY JOURNAL --- */
     .daily-header { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid var(--card-border); flex-shrink: 0; }
     .day-selector { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
     .day-chip { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--card-border); background: var(--bg-color); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
@@ -143,7 +143,6 @@
     /* --- TAB 2: TASKS, HOMEWORK & NOTES --- */
     .tasks-main-wrap { display: flex; flex-direction: column; min-height: 100%; padding-bottom: 90px; }
 
-    /* Top Homework Section with Horizontal Date Strip & Swipe Container */
     .section-homework {
       background: var(--bg-color);
       border-bottom: 1px solid var(--card-border);
@@ -165,14 +164,16 @@
     .date-chip-hw.active .day-name, .date-chip-hw.active .day-num { color: #ffffff; }
 
     .homework-list-container { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; touch-action: pan-y; }
-    .homework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-    .homework-card .subject-badge { align-self: flex-start; background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 14px; text-transform: uppercase; }
+    .homework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; position: relative; }
+    .homework-card .hw-header-row { display: flex; justify-content: space-between; align-items: center; }
+    .homework-card .subject-badge { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 14px; text-transform: uppercase; }
+    .edit-hint { font-size: 0.7rem; color: var(--accent-blue); font-weight: 600; }
 
     .markdown-content { font-size: 0.85rem; line-height: 1.4; color: var(--text-color); user-select: text; }
     .markdown-content p { margin-bottom: 4px; }
     .markdown-content p:last-child { margin-bottom: 0; }
 
-    /* Section Tasks & Notes (iOS Style) */
+    /* Section Tasks & Notes */
     .section-tasks, .section-notes { padding: 16px 16px 8px 16px; display: flex; flex-direction: column; }
     .ios-section-header { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text-color); letter-spacing: -0.01em; }
     .ios-group-list { background: var(--card-bg); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--card-border); }
@@ -180,15 +181,15 @@
     .swipe-item-wrapper { position: relative; overflow: hidden; border-bottom: 0.5px solid var(--separator); background: var(--accent-red); }
     .swipe-item-wrapper:last-child { border-bottom: none; }
     
-    .ios-task-item { background: var(--card-bg); padding: 12px 14px; display: flex; align-items: center; gap: 10px; transition: transform 0.2s ease; z-index: 2; position: relative; }
+    .ios-task-item { background: var(--card-bg); padding: 12px 14px; display: flex; align-items: center; gap: 10px; transition: transform 0.2s ease; z-index: 2; position: relative; cursor: pointer; }
     .task-checkbox { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
     .task-checkbox.completed { background: var(--accent-green); border-color: var(--accent-green); }
     .task-checkbox.completed::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
     .task-text { font-size: 0.9rem; color: var(--text-color); flex: 1; }
     .task-text.completed { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
 
-    .ios-note-item { background: var(--card-bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; transition: transform 0.2s ease; z-index: 2; position: relative; }
-    .note-title { font-size: 0.95rem; font-weight: 600; color: var(--text-color); }
+    .ios-note-item { background: var(--card-bg); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; transition: transform 0.2s ease; z-index: 2; position: relative; cursor: pointer; }
+    .note-title { font-size: 0.95rem; font-weight: 600; color: var(--text-color); display: flex; justify-content: space-between; }
 
     /* Floating Action Button (+) & Action Sheet */
     .fab-container { position: fixed; bottom: 80px; right: 20px; z-index: 90; }
@@ -229,6 +230,7 @@
     .profile-mat { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
     .profile-degree { font-size: 0.85rem; color: var(--accent-color); font-weight: 600; margin-top: 4px; }
     .profile-univ-line { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .profile-order-code { font-size: 0.75rem; color: var(--accent-blue); font-weight: 600; margin-top: 4px; }
 
     .dashboard-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
     .dash-top-bar { display: flex; justify-content: space-between; align-items: center; }
@@ -251,7 +253,7 @@
     .btn-link { background: none; border: none; color: var(--accent-blue); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
     .eval-list { display: flex; flex-direction: column; gap: 8px; }
-    .eval-item { background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .eval-item { background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     .eval-left { display: flex; align-items: center; gap: 10px; }
     .eval-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .eval-title { font-size: 0.85rem; font-weight: 600; color: var(--text-color); }
@@ -264,15 +266,23 @@
     .study-plan-header { background: var(--card-bg); padding: 14px; border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 14px; }
     .study-plan-header h2 { font-size: 1rem; font-weight: 700; color: var(--accent-color); }
     .study-plan-header p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .study-plan-header .sp-order-badge { font-size: 0.75rem; color: var(--accent-blue); font-weight: 700; margin-top: 4px; display: block; }
 
     .semester-section { margin-bottom: 14px; }
     .semester-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; padding-left: 4px; letter-spacing: 0.04em; }
-    .course-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .course-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     .course-code { font-size: 0.7rem; color: var(--text-muted); opacity: 0.75; font-weight: 600; }
     .course-ssd { font-size: 0.7rem; color: var(--accent-blue); font-weight: 600; opacity: 0.85; }
     .course-name { font-size: 0.88rem; font-weight: 700; color: var(--text-color); margin: 2px 0; }
     .course-prof { font-size: 0.75rem; color: var(--text-muted); }
+    .course-type-tag { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-weight: 700; margin-left: 4px; }
     .course-cfu { background: rgba(255, 255, 255, 0.08); padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; color: var(--accent-color); }
+    .course-cfu.no-credit { color: var(--text-muted); background: rgba(255, 255, 255, 0.03); }
+
+    /* Preset Quick Buttons */
+    .preset-btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .btn-preset { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--text-color); font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+    .btn-preset:hover { background: var(--card-border); }
 
     /* Modals & Overlays */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 300; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
@@ -295,7 +305,7 @@
     .markdown-render p { margin-bottom: 8px; }
     .markdown-render ul { padding-left: 20px; margin-bottom: 8px; }
 
-    .routine-item-card { background: var(--bg-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .routine-item-card { background: var(--bg-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
     .btn-primary-action { background: var(--accent-blue); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; margin-top: 6px; }
 
@@ -360,7 +370,7 @@
             <div class="date-nav-title" id="current-date-title">Homework Overview</div>
           </div>
           <div class="date-scroll-strip" id="date-strip-container"></div>
-          <!-- Homework List Container with Touch Swipe Gesture -->
+          <!-- Homework List Container -->
           <div class="homework-list-container" id="homework-list-container"></div>
         </div>
 
@@ -409,16 +419,17 @@
         <!-- Profile Header & Avatar Card -->
         <div class="profile-header-card">
           <div class="avatar-wrapper" id="profile-avatar-trigger" title="Click for Student Badge, Long Press to Edit">
-            <img id="profile-avatar-img" class="avatar-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Avatar">
+            <img id="profile-avatar-img" class="avatar-img" src="" alt="Avatar">
             <div class="avatar-badge-hint">🪪</div>
           </div>
-          <div class="profile-name" id="display-profile-name">Alex Taylor</div>
+          <div class="profile-name" id="display-profile-name">The Big Ducker</div>
           <div class="profile-mat" id="display-profile-mat">ID: 1984203</div>
           <div class="profile-degree" id="display-profile-degree">B.Sc. Computer Science (L-31)</div>
           <div class="profile-univ-line" id="display-profile-univ">Sapienza University of Rome • Dept. of Computer Science</div>
+          <div class="profile-order-code" id="display-profile-order">Course code: 33592</div>
         </div>
 
-        <!-- Academic Dashboard (ClasseViva Style) -->
+        <!-- Academic Dashboard -->
         <div class="dashboard-card">
           <div class="dash-top-bar">
             <div class="dash-title">Academic Overview</div>
@@ -439,7 +450,7 @@
                 <span class="gauge-val" id="val-provisional-avg">27.9</span>
                 <span class="gauge-scale">/ 30</span>
               </div>
-              <span class="gauge-label">Inc. Partials/Esoneri</span>
+              <span class="gauge-label">Temporary Average</span>
             </div>
           </div>
 
@@ -453,7 +464,7 @@
 
         <!-- Study Plan Action Button -->
         <button class="btn-study-plan" id="open-study-plan-btn">
-          <span>Study Plan (Piano di Studi)</span>
+          <span>Study Plan</span>
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </button>
 
@@ -482,7 +493,7 @@
     </button>
   </nav>
 
-  <!-- ACTION SHEETS & CREATION MODALS FOR HOMEWORK/TASK/NOTE -->
+  <!-- ACTION SHEETS & MODALS FOR HOMEWORK/TASK/NOTE -->
   <div class="action-sheet-overlay" id="action-sheet-overlay">
     <div class="action-sheet-menu">
       <button class="action-sheet-item" id="opt-add-homework">New Homework</button>
@@ -492,13 +503,15 @@
     <button class="action-sheet-cancel" id="action-sheet-cancel">Cancel</button>
   </div>
 
+  <!-- MODAL HOMEWORK (Add/Edit) -->
   <div class="modal-overlay" id="modal-homework">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Add Homework</h3>
+        <h3 id="modal-hw-title">Homework Details</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="hw-edit-id">
         <div class="form-group">
           <label>Subject</label>
           <input type="text" id="hw-subject-input" class="form-control" placeholder="e.g. Mathematics, Physics...">
@@ -508,50 +521,63 @@
           <input type="date" id="hw-date-input" class="form-control">
         </div>
         <div class="form-group">
-          <label>Homework Text (Markdown + LaTeX $...$ supported)</label>
+          <label>Homework Text</label>
           <textarea id="hw-text-input" class="form-control" rows="4" placeholder="e.g. Limits problem: $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$"></textarea>
         </div>
         <label style="font-size:0.72rem; font-weight:600; color:var(--text-muted);">Rendered Preview:</label>
         <div class="markdown-render" id="hw-live-preview"></div>
-        <button class="btn-primary-action" id="save-homework-btn">Save Homework</button>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <button type="button" id="delete-hw-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete</button>
+          <button type="button" class="btn-primary-action" id="save-homework-btn" style="margin-left:auto;">Save Homework</button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL TASK (Add/Edit) -->
   <div class="modal-overlay" id="modal-task">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Add Task</h3>
+        <h3 id="modal-task-title-txt">Task Details</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="task-edit-id">
         <div class="form-group">
           <label>Task Description</label>
           <input type="text" id="task-text-input" class="form-control" placeholder="Task details...">
         </div>
-        <button class="btn-primary-action" id="save-task-btn">Save Task</button>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <button type="button" id="delete-task-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete</button>
+          <button type="button" class="btn-primary-action" id="save-task-btn" style="margin-left:auto;">Save Task</button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL NOTE (Add/Edit) -->
   <div class="modal-overlay" id="modal-note">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Add Note</h3>
+        <h3 id="modal-note-title-txt">Note Details</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="note-edit-id">
         <div class="form-group">
           <label>Title</label>
           <input type="text" id="note-title-input" class="form-control" placeholder="Note title...">
         </div>
         <div class="form-group">
-          <label>Content (Markdown & LaTeX $$...$$)</label>
+          <label>Content</label>
           <textarea id="note-text-input" class="form-control" rows="5" placeholder="Note contents..."></textarea>
         </div>
         <label style="font-size:0.72rem; font-weight:600; color:var(--text-muted);">Rendered Preview:</label>
         <div class="markdown-render" id="note-live-preview"></div>
-        <button class="btn-primary-action" id="save-note-btn">Save Note</button>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <button type="button" id="delete-note-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete</button>
+          <button type="button" class="btn-primary-action" id="save-note-btn" style="margin-left:auto;">Save Note</button>
+        </div>
       </div>
     </div>
   </div>
@@ -570,14 +596,18 @@
             <label>Title</label>
             <input type="text" id="event-title" class="form-control" required placeholder="Event name...">
           </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="event-date" class="form-control" required>
+          </div>
           <div style="display:flex; gap:8px;">
             <div class="form-group" style="flex:1;">
-              <label>Date</label>
-              <input type="date" id="event-date" class="form-control" required>
+              <label>Start</label>
+              <input type="time" id="event-time" class="form-control" required>
             </div>
             <div class="form-group" style="flex:1;">
-              <label>Time</label>
-              <input type="time" id="event-time" class="form-control" required>
+              <label>End</label>
+              <input type="time" id="event-end-time" class="form-control">
             </div>
           </div>
           <div class="form-group">
@@ -590,7 +620,7 @@
             <input type="hidden" id="event-color" value="var(--c-MATE1)">
           </div>
           <div class="form-group">
-            <label>Lore & Description (Markdown & LaTeX $$...$$)</label>
+            <label>Lore & Description</label>
             <textarea id="event-notes" class="form-control" rows="4" placeholder="Description with LaTeX $$ \\int_{0}^{\\infty} x^2 dx $$"></textarea>
           </div>
           
@@ -623,14 +653,16 @@
     <div class="badge-card">
       <div class="badge-univ" id="badge-univ-name">Sapienza University of Rome</div>
       <img id="badge-avatar-img" class="badge-avatar" src="" alt="Student Avatar">
-      <div style="font-weight:700; font-size:1.1rem; color:#fff;" id="badge-student-name">Alex Taylor</div>
+      <div style="font-weight:700; font-size:1.1rem; color:#fff;" id="badge-student-name">The Big Ducker</div>
       <div style="font-size:0.8rem; color:var(--text-muted);" id="badge-mat-num">ID: 1984203</div>
       <div style="font-size:0.75rem; color:var(--accent-blue);" id="badge-course-name">B.Sc. Computer Science</div>
-      <img id="badge-qr-img" class="badge-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=1984203_SAPIENZA" alt="Student QR Code">
+      <div style="font-size:0.7rem; color:var(--text-muted);" id="badge-order-code">33592</div>
+      <img id="badge-qr-img" class="badge-qr" src="" alt="Student QR Code">
       <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:4px;">Edit Profile & Badge Data</button>
     </div>
   </div>
 
+  <!-- EDIT PROFILE MODAL WITH FILE UPLOAD FOR AVATAR & BADGE -->
   <div class="modal-overlay" id="modal-edit-profile">
     <div class="modal-card">
       <div class="modal-header">
@@ -643,11 +675,11 @@
           <input type="text" id="edit-name" class="form-control">
         </div>
         <div class="form-group">
-          <label>Student ID (Matricola)</label>
+          <label>Student ID</label>
           <input type="text" id="edit-mat" class="form-control">
         </div>
         <div class="form-group">
-          <label>University / Ateneo</label>
+          <label>University</label>
           <input type="text" id="edit-univ" class="form-control">
         </div>
         <div class="form-group">
@@ -667,22 +699,34 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Avatar Photo URL / Base64</label>
-          <input type="text" id="edit-avatar-url" class="form-control">
+          <label>Course Code</label>
+          <input type="text" id="edit-study-plan-code" class="form-control" placeholder="e.g. 33592">
         </div>
+        
+        <!-- Profile Picture Upload (PNG/JPEG) -->
         <div class="form-group">
-          <label>QR Code Data or Custom Image URL</label>
-          <input type="text" id="edit-qr-data" class="form-control">
+          <label>Profile Picture (Upload PNG/JPEG or URL)</label>
+          <input type="file" id="edit-avatar-file" accept="image/png, image/jpeg" class="form-control">
+          <input type="text" id="edit-avatar-url" class="form-control" style="margin-top:4px;" placeholder="https://... or Base64 Data URL">
         </div>
-        <button class="btn-primary-action" id="save-profile-btn">Save Profile Settings</button>
+
+        <!-- Badge Image / QR Code Upload (PNG/JPEG) -->
+        <div class="form-group">
+          <label>Badge Image / QR Code (Upload PNG/JPEG or Text/URL)</label>
+          <input type="file" id="edit-qr-file" accept="image/png, image/jpeg" class="form-control">
+          <input type="text" id="edit-qr-data" class="form-control" style="margin-top:4px;" placeholder="QR content string or image URL">
+        </div>
+        
+        <button class="btn-primary-action" id="save-profile-btn">Save Settings</button>
       </div>
     </div>
   </div>
 
+  <!-- EVALUATIONS DETAIL MODAL -->
   <div class="modal-overlay" id="modal-evaluations-detail">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>All Academic Evaluations</h3>
+        <h3>All Evaluations</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
@@ -707,58 +751,77 @@
     </div>
   </div>
 
+  <!-- ADD / EDIT GRADE MODAL -->
   <div class="modal-overlay" id="modal-add-grade">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Record New Grade</h3>
+        <h3 id="modal-grade-title">Record / Edit Grade</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="grade-edit-id">
         <div class="form-group">
           <label>Select Course from Study Plan</label>
           <select id="grade-course-select" class="form-control"></select>
         </div>
         <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between; margin:4px 0;">
-          <label style="margin:0;">Partial Evaluation (Esonero)</label>
+          <label style="margin:0;">Partial Evaluation</label>
           <input type="checkbox" id="grade-is-partial" style="width:20px; height:20px;">
         </div>
         <div class="form-group">
-          <label>Grade (e.g. 18-30 or 30L)</label>
-          <input type="text" id="grade-score-input" class="form-control" placeholder="30, 28, 30L...">
+          <label>Grade (Grade: 18-30, 30L, I = Pass, NI = Fail)</label>
+          <input type="text" id="grade-score-input" class="form-control" placeholder="e.g. 30, 28, 30L, I, NI">
+          <div class="preset-btn-row">
+            <button type="button" class="btn-preset" onclick="setGradePreset('18')">18</button>
+            <button type="button" class="btn-preset" onclick="setGradePreset('24')">24</button>
+            <button type="button" class="btn-preset" onclick="setGradePreset('28')">28</button>
+            <button type="button" class="btn-preset" onclick="setGradePreset('30')">30</button>
+            <button type="button" class="btn-preset" onclick="setGradePreset('30L')">30L</button>
+            <button type="button" class="btn-preset" style="color:var(--accent-green);" onclick="setGradePreset('I')">I</button>
+            <button type="button" class="btn-preset" style="color:var(--accent-red);" onclick="setGradePreset('NI')">NI</button>
+          </div>
+          <span style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">* Pass (I) and Fail (NI) grades do not count toward the weighted average.</span>
         </div>
         <div class="form-group">
           <label>Date of Evaluation</label>
           <input type="date" id="grade-date-input" class="form-control">
         </div>
-        <button class="btn-primary-action" id="save-grade-btn">Save Grade</button>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <button type="button" id="delete-grade-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete Grade</button>
+          <button type="button" class="btn-primary-action" id="save-grade-btn" style="margin-left:auto;">Save Grade</button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- STUDY PLAN MODAL -->
   <div class="modal-overlay" id="modal-study-plan">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Study Plan (Piano di Studi)</h3>
+        <h3>Study Plan</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
         <div class="study-plan-header">
           <h2 id="sp-univ-dept">Sapienza University • Dept. of Computer Science</h2>
           <p id="sp-course-full">B.Sc. in Computer Science (Class L-31) — Bachelor's Degree</p>
+          <span class="sp-order-badge" id="sp-order-code-header">Course code: 33592</span>
         </div>
-        <button class="btn-primary-action" id="open-add-course-btn" style="margin-bottom:12px;">+ Add Course to Plan</button>
+        <button class="btn-primary-action" id="open-add-course-btn" style="margin-bottom:12px;">+ Add Course / Seminar to Plan</button>
         <div id="study-plan-tree"></div>
       </div>
     </div>
   </div>
 
+  <!-- ADD / EDIT COURSE MODAL -->
   <div class="modal-overlay" id="modal-add-course">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Add Course to Study Plan</h3>
+        <h3 id="modal-course-title-txt">Add / Edit Course to Study Plan</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <input type="hidden" id="course-edit-id">
         <div style="display:flex; gap:8px;">
           <div class="form-group" style="flex:1;">
             <label>Course Code</label>
@@ -770,12 +833,30 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Course Name</label>
-          <input type="text" id="course-name-in" class="form-control" placeholder="Calculus I">
+          <label>Course / Activity Name</label>
+          <input type="text" id="course-name-in" class="form-control" placeholder="e.g. Calculus I or AI Seminar">
         </div>
         <div class="form-group">
-          <label>Professors</label>
+          <label>Professors / Speaker</label>
           <input type="text" id="course-prof-in" class="form-control" placeholder="Prof. A. Rossi">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label>Activity Type</label>
+            <select id="course-type-in" class="form-control">
+              <option value="Teaching">Teaching</option>
+              <option value="Course">Course</option>
+              <option value="Seminar">Seminar</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>CFU Count</label>
+            <input type="number" id="course-cfu-in" class="form-control" value="6">
+          </div>
+        </div>
+        <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between; margin:4px 0;">
+          <label style="margin:0;">Exclude from count</label>
+          <input type="checkbox" id="course-exclude-cfu-in" style="width:20px; height:20px;">
         </div>
         <div style="display:flex; gap:8px;">
           <div class="form-group" style="flex:1;">
@@ -790,8 +871,6 @@
               <option value="3">3rd Year</option>
             </select>
           </div>
-        </div>
-        <div style="display:flex; gap:8px;">
           <div class="form-group" style="flex:1;">
             <label>Semester</label>
             <select id="course-sem-in" class="form-control">
@@ -799,17 +878,16 @@
               <option value="2">2nd Semester</option>
             </select>
           </div>
-          <div class="form-group" style="flex:1;">
-            <label>CFU Count</label>
-            <input type="number" id="course-cfu-in" class="form-control" value="6">
-          </div>
         </div>
-        <button class="btn-primary-action" id="save-course-btn">Add to Study Plan</button>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <button type="button" id="delete-course-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete Course</button>
+          <button type="button" class="btn-primary-action" id="save-course-btn" style="margin-left:auto;">Save Course</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS MODAL WITH JSON BACKUP EXPORT & IMPORT -->
+  <!-- SETTINGS MODAL -->
   <div class="modal-overlay" id="modal-settings">
     <div class="modal-card">
       <div class="modal-header">
@@ -851,20 +929,25 @@
         </div>
         <div id="routine-items-list" style="margin-top: 6px;"></div>
         <hr style="border:none; border-top:1px solid var(--card-border); margin:10px 0;">
-        <h4 style="font-size:0.85rem; color:var(--accent-color);">Add Routine Activity</h4>
+        <h4 style="font-size:0.85rem; color:var(--accent-color);" id="routine-form-heading">Add / Edit Routine Activity</h4>
+        <input type="hidden" id="routine-edit-idx" value="-1">
         <div class="form-group">
           <label>Activity Name</label>
           <input type="text" id="routine-title" class="form-control" placeholder="Analysis Lecture">
         </div>
         <div style="display:flex; gap:8px;">
           <div class="form-group" style="flex:1;">
-            <label>Precise Time</label>
+            <label>Start</label>
             <input type="time" id="routine-time" class="form-control" value="09:30">
           </div>
           <div class="form-group" style="flex:1;">
-            <label>Location</label>
-            <input type="text" id="routine-location" class="form-control" placeholder="Aula Volterra">
+            <label>End</label>
+            <input type="time" id="routine-end-time" class="form-control" value="11:00">
           </div>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="routine-location" class="form-control" placeholder="Aula Volterra">
         </div>
         <div class="form-group">
           <label>Color</label>
@@ -872,10 +955,13 @@
           <input type="hidden" id="routine-color" value="var(--c-MATE1)">
         </div>
         <div class="form-group">
-          <label>Description (Markdown + LaTeX $$...$$)</label>
+          <label>Description</label>
           <textarea id="routine-notes" class="form-control" rows="3" placeholder="Description with LaTeX $$ f(x) = x^2 $$"></textarea>
         </div>
-        <button type="button" id="add-routine-btn" class="btn-primary-action">Add to Routine</button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" id="cancel-routine-edit-btn" class="btn-primary-action" style="background:var(--card-border); color:var(--text-color); display:none; flex:1;">Cancel Edit</button>
+          <button type="button" id="add-routine-btn" class="btn-primary-action" style="flex:2;">Save to Routine</button>
+        </div>
       </div>
     </div>
   </div>
@@ -922,21 +1008,24 @@
         dept: 'Dept. of Computer Science',
         degree: 'B.Sc. Computer Science (L-31)',
         degreeType: 'Bachelor\'s Degree (Triennale)',
+        studyPlanCode: 'ORD-2024/2025-INF',
         avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
         qrData: '1984203_SAPIENZA'
       })),
 
       studyPlan: JSON.parse(localStorage.getItem('cladar_study_plan') || JSON.stringify([
-        { id: 'c1', code: '1042918', ssd: 'INF/01', name: 'Calculus I', prof: 'Prof. Rossi', ay: '2025/2026', year: 1, sem: 1, cfu: 9 },
-        { id: 'c2', code: '1042919', ssd: 'INF/01', name: 'Linear Algebra', prof: 'Prof. Bianchi', ay: '2025/2026', year: 1, sem: 1, cfu: 6 },
-        { id: 'c3', code: '1042920', ssd: 'INF/01', name: 'Computer Programming', prof: 'Prof. Verdi', ay: '2025/2026', year: 1, sem: 2, cfu: 12 },
-        { id: 'c4', code: '1042921', ssd: 'FIS/01', name: 'Physics I', prof: 'Prof. Neri', ay: '2026/2027', year: 2, sem: 1, cfu: 6 }
+        { id: 'c1', code: '1042918', ssd: 'INF/01', name: 'Calculus I', prof: 'Prof. Rossi', ay: '2025/2026', year: 1, sem: 1, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c2', code: '1042919', ssd: 'INF/01', name: 'Linear Algebra', prof: 'Prof. Bianchi', ay: '2025/2026', year: 1, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c3', code: '1042920', ssd: 'INF/01', name: 'Computer Programming', prof: 'Prof. Verdi', ay: '2025/2026', year: 1, sem: 2, cfu: 12, type: 'Teaching', excludeCredits: false },
+        { id: 'c4', code: '1042921', ssd: 'FIS/01', name: 'Physics I', prof: 'Prof. Neri', ay: '2026/2027', year: 2, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c5', code: 'SEM01', ssd: 'INF/01', name: 'Seminar AI & Ethics', prof: 'Prof. Romano', ay: '2026/2027', year: 2, sem: 2, cfu: 0, type: 'Seminar', excludeCredits: true }
       ])),
 
       evaluations: JSON.parse(localStorage.getItem('cladar_evaluations') || JSON.stringify([
         { id: 'e1', courseId: 'c1', isPartial: false, score: '29', date: '2026-01-20' },
         { id: 'e2', courseId: 'c2', isPartial: false, score: '28', date: '2026-02-14' },
-        { id: 'e3', courseId: 'c3', isPartial: true, score: '30L', date: '2026-04-10' }
+        { id: 'e3', courseId: 'c3', isPartial: true, score: '30L', date: '2026-04-10' },
+        { id: 'e4', courseId: 'c5', isPartial: false, score: 'I', date: '2026-05-15' }
       ])),
 
       homeworks: JSON.parse(localStorage.getItem('cladar_homeworks') || JSON.stringify([
@@ -953,8 +1042,8 @@
       ])),
 
       weeklyPlan: JSON.parse(localStorage.getItem('cladar_weekly_plan') || JSON.stringify({
-        Monday: [{ id: 'r1', title: 'Analysis I', time: '09:30', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: 'Study limits:\n$$ \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 $$' }],
-        Wednesday: [{ id: 'r2', title: 'Linear Algebra', time: '14:15', location: 'Aula Enriques', color: 'var(--c-SMIA2)', notes: 'Matrix rank theorem.' }]
+        Monday: [{ id: 'r1', title: 'Analysis I', time: '09:30', endTime: '11:00', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: 'Study limits:\n$$ \\lim_{x \\to 0} \\frac{\\sin x}{x} = 1 $$' }],
+        Wednesday: [{ id: 'r2', title: 'Linear Algebra', time: '14:15', endTime: '16:00', location: 'Aula Enriques', color: 'var(--c-SMIA2)', notes: 'Matrix rank theorem.' }]
       })),
 
       pendingDelete: null
@@ -975,7 +1064,7 @@
     document.documentElement.setAttribute('data-theme', state.theme);
 
     /* ==========================================================================
-       2. GESTORE PRESSIONE PROLUNGATA (LONG-PRESS) & GESTURE HELPER
+       2. LONG PRESS & GESTURE HELPERS
        ========================================================================== */
     function attachLongPress(element, callback) {
       let timer = null;
@@ -1022,7 +1111,7 @@
     }
 
     /* ==========================================================================
-       3. UI NAVIGATION, MODALS & CLOCK
+       3. UI NAVIGATION, MODALS, CLOCK & FILE READERS
        ========================================================================== */
     function updateClock() {
       const now = new Date();
@@ -1061,7 +1150,7 @@
     });
     document.getElementById('open-settings-btn').addEventListener('click', () => openModal('modal-settings'));
 
-    // --- CARICAMENTO IMMAGINI LOCALI IN BASE64 (Se presenti input file) ---
+    // --- UPLOAD IMMAGINI PNG / JPEG PER AVATAR E BADGE ---
     const avatarFileInput = document.getElementById('edit-avatar-file');
     if (avatarFileInput) {
       avatarFileInput.addEventListener('change', (e) => {
@@ -1090,7 +1179,7 @@
       });
     }
 
-    // --- EXPORT JSON (Android Nativo o Browser Web) ---
+    // --- EXPORT JSON ---
     document.getElementById('btn-export-json').addEventListener('click', () => {
       const backupData = {
         cladar_events: state.events,
@@ -1174,11 +1263,23 @@
       notesPreview.innerHTML = renderMarkdownAndMath(notesTextarea.value);
     });
 
+    document.getElementById('hw-text-input').addEventListener('input', (e) => {
+      document.getElementById('hw-live-preview').innerHTML = renderMarkdownAndMath(e.target.value);
+    });
+    document.getElementById('note-text-input').addEventListener('input', (e) => {
+      document.getElementById('note-live-preview').innerHTML = renderMarkdownAndMath(e.target.value);
+    });
+
     /* ==========================================================================
-       5. TAB 1: DAILY JOURNAL (Dynamic Infinite Locations Grid)
+       5. TAB 1: DAILY JOURNAL (Dynamic Infinite Locations Grid with End Times)
        ========================================================================== */
     const daySelectorBar = document.getElementById('day-selector-bar');
     const dailyGridTable = document.getElementById('daily-grid-table');
+
+    function formatTimeRange(startTime, endTime) {
+      if (!startTime) return '';
+      return endTime ? `${startTime} - ${endTime}` : startTime;
+    }
 
     function getDynamicLocationsForDay(dayIdx) {
       const selectedDayName = DAYS_OF_WEEK[dayIdx];
@@ -1271,7 +1372,8 @@
             const evEl = document.createElement('div');
             evEl.className = 'gc-event';
             evEl.style.background = activeEv.color || 'var(--c-MATE1)';
-            evEl.innerHTML = `<span>${activeEv.title}</span><span class="time-lbl">${activeEv.time}</span>`;
+            const displayTime = formatTimeRange(activeEv.time, activeEv.endTime);
+            evEl.innerHTML = `<span>${activeEv.title}</span><span class="time-lbl">${displayTime}</span>`;
             evEl.addEventListener('click', () => openEventModal(activeEv));
             gridCell.appendChild(evEl);
           }
@@ -1287,7 +1389,7 @@
     }
 
     /* ==========================================================================
-       6. WEEKLY ROUTINE EDITOR MODAL CONTROLLER
+       6. WEEKLY ROUTINE EDITOR MODAL CONTROLLER (With Start & End Times)
        ========================================================================== */
     const routineDaySelect = document.getElementById('routine-day-select');
     const routineItemsList = document.getElementById('routine-items-list');
@@ -1312,56 +1414,103 @@
       items.forEach((item, idx) => {
         const card = document.createElement('div');
         card.className = 'routine-item-card';
+        const displayTime = formatTimeRange(item.time, item.endTime);
         card.innerHTML = `
           <div>
             <strong style="font-size:0.85rem;">${item.title}</strong>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${item.time} | ${item.location || 'Default'}</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${displayTime} | ${item.location || 'Default'}</div>
           </div>
-          <button class="btn-icon" style="color:#b3261e;" onclick="deleteRoutineItem('${day}', ${idx})">&times;</button>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn-icon" style="color:var(--accent-blue);" onclick="editRoutineItem('${day}', ${idx})">✎</button>
+            <button class="btn-icon" style="color:#b3261e;" onclick="deleteRoutineItem('${day}', ${idx})">&times;</button>
+          </div>
         `;
         routineItemsList.appendChild(card);
       });
     }
 
-    routineDaySelect.addEventListener('change', renderRoutineList);
+    routineDaySelect.addEventListener('change', () => {
+      resetRoutineForm();
+      renderRoutineList();
+    });
 
     document.getElementById('open-weekly-edit-btn').addEventListener('click', () => {
+      resetRoutineForm();
       renderRoutineList();
       openModal('modal-weekly-edit');
     });
+
+    function resetRoutineForm() {
+      document.getElementById('routine-edit-idx').value = "-1";
+      document.getElementById('routine-title').value = '';
+      document.getElementById('routine-time').value = '09:30';
+      document.getElementById('routine-end-time').value = '11:00';
+      document.getElementById('routine-location').value = '';
+      document.getElementById('routine-notes').value = '';
+      document.getElementById('routine-form-heading').textContent = "Add Routine Activity";
+      document.getElementById('cancel-routine-edit-btn').style.display = 'none';
+      document.getElementById('add-routine-btn').textContent = "Add to Routine";
+    }
+
+    window.editRoutineItem = function(day, idx) {
+      const item = state.weeklyPlan[day][idx];
+      if (!item) return;
+      document.getElementById('routine-edit-idx').value = idx;
+      document.getElementById('routine-title').value = item.title || '';
+      document.getElementById('routine-time').value = item.time || '';
+      document.getElementById('routine-end-time').value = item.endTime || '';
+      document.getElementById('routine-location').value = item.location || '';
+      document.getElementById('routine-color').value = item.color || 'var(--c-MATE1)';
+      document.getElementById('routine-notes').value = item.notes || '';
+
+      document.getElementById('routine-form-heading').textContent = "Edit Routine Activity";
+      document.getElementById('cancel-routine-edit-btn').style.display = 'block';
+      document.getElementById('add-routine-btn').textContent = "Update Routine Item";
+    };
+
+    document.getElementById('cancel-routine-edit-btn').addEventListener('click', resetRoutineForm);
 
     document.getElementById('add-routine-btn').addEventListener('click', () => {
       const day = routineDaySelect.value;
       const title = document.getElementById('routine-title').value;
       const time = document.getElementById('routine-time').value;
+      const endTime = document.getElementById('routine-end-time').value;
       const location = document.getElementById('routine-location').value || 'Aula Volterra';
       const color = document.getElementById('routine-color').value;
       const notes = document.getElementById('routine-notes').value;
+      const editIdx = parseInt(document.getElementById('routine-edit-idx').value);
 
       if (!title) return;
 
       if (!state.weeklyPlan[day]) state.weeklyPlan[day] = [];
-      state.weeklyPlan[day].push({
-        id: 'r_' + Date.now(),
-        title, time, location, color, notes
-      });
+
+      const itemData = {
+        id: editIdx >= 0 ? state.weeklyPlan[day][editIdx].id : 'r_' + Date.now(),
+        title, time, endTime, location, color, notes
+      };
+
+      if (editIdx >= 0) {
+        state.weeklyPlan[day][editIdx] = itemData;
+      } else {
+        state.weeklyPlan[day].push(itemData);
+      }
 
       saveAllState();
+      resetRoutineForm();
       renderRoutineList();
       renderDailyGrid();
-      document.getElementById('routine-title').value = '';
-      document.getElementById('routine-notes').value = '';
     });
 
     window.deleteRoutineItem = function(day, index) {
       state.weeklyPlan[day].splice(index, 1);
       saveAllState();
+      resetRoutineForm();
       renderRoutineList();
       renderDailyGrid();
     };
 
     /* ==========================================================================
-       7. TAB 2: HOMEWORK, TASKS & NOTES
+       7. TAB 2: HOMEWORK, TASKS & NOTES (With Full Edit Capabilities)
        ========================================================================== */
     const dateStripContainer = document.getElementById('date-strip-container');
     const homeworkListContainer = document.getElementById('homework-list-container');
@@ -1407,7 +1556,15 @@
       dayHws.forEach(hw => {
         const card = document.createElement('div');
         card.className = 'homework-card';
-        card.innerHTML = `<div class="subject-badge">${hw.subject}</div><div class="markdown-content">${renderMarkdownAndMath(hw.text)}</div>`;
+        card.innerHTML = `
+          <div class="hw-header-row">
+            <div class="subject-badge">${hw.subject}</div>
+            <span class="edit-hint">✎ Edit</span>
+          </div>
+          <div class="markdown-content">${renderMarkdownAndMath(hw.text)}</div>
+        `;
+        card.addEventListener('click', () => openHomeworkModal(hw));
+        attachLongPress(card, () => requestDelete('hw', hw.id));
         homeworkListContainer.appendChild(card);
       });
     }
@@ -1438,14 +1595,12 @@
         if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
           const currentIdx = dateList.findIndex(d => d.toISOString().split('T')[0] === state.selectedDateISO);
           if (diffX < 0) {
-            // Swipe Sinistra -> Giorno Successivo
             if (currentIdx >= 0 && currentIdx < dateList.length - 1) {
               state.selectedDateISO = dateList[currentIdx + 1].toISOString().split('T')[0];
               renderDateStrip();
               renderHomeworks();
             }
           } else {
-            // Swipe Destra -> Giorno Precedente
             if (currentIdx > 0) {
               state.selectedDateISO = dateList[currentIdx - 1].toISOString().split('T')[0];
               renderDateStrip();
@@ -1469,9 +1624,11 @@
         const item = document.createElement('div');
         item.className = 'ios-task-item';
         item.innerHTML = `
-          <div class="task-checkbox ${task.completed ? 'completed' : ''}" onclick="toggleTask('${task.id}')"></div>
+          <div class="task-checkbox ${task.completed ? 'completed' : ''}" onclick="event.stopPropagation(); toggleTask('${task.id}')"></div>
           <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
+          <span style="font-size:0.75rem; color:var(--accent-blue);">✎</span>
         `;
+        item.addEventListener('click', () => openTaskModal(task));
         attachSwipeLeft(item, () => requestDelete('task', task.id));
         wrapper.appendChild(item);
         tasksListContainer.appendChild(wrapper);
@@ -1494,7 +1651,14 @@
         wrapper.className = 'swipe-item-wrapper';
         const item = document.createElement('div');
         item.className = 'ios-note-item';
-        item.innerHTML = `<div class="note-title">${note.title}</div><div class="markdown-content">${renderMarkdownAndMath(note.text)}</div>`;
+        item.innerHTML = `
+          <div class="note-title">
+            <span>${note.title}</span>
+            <span style="font-size:0.75rem; color:var(--accent-blue);">✎ Edit</span>
+          </div>
+          <div class="markdown-content">${renderMarkdownAndMath(note.text)}</div>
+        `;
+        item.addEventListener('click', () => openNoteModal(note));
         attachSwipeLeft(item, () => requestDelete('note', note.id));
         wrapper.appendChild(item);
         notesListContainer.appendChild(wrapper);
@@ -1530,6 +1694,7 @@
     document.getElementById('confirm-delete-btn').addEventListener('click', () => {
       if (state.pendingDelete) {
         const { type, id } = state.pendingDelete;
+        if (type === 'hw') state.homeworks = state.homeworks.filter(h => h.id !== id);
         if (type === 'task') state.tasks = state.tasks.filter(t => t.id !== id);
         if (type === 'note') state.notes = state.notes.filter(n => n.id !== id);
         if (type === 'eval') state.evaluations = state.evaluations.filter(e => e.id !== id);
@@ -1539,6 +1704,7 @@
         }
         
         saveAllState();
+        renderHomeworks();
         renderTasks();
         renderNotes();
         renderProfileView();
@@ -1558,44 +1724,125 @@
 
     document.getElementById('opt-add-homework').addEventListener('click', () => {
       closeModal('action-sheet-overlay');
-      document.getElementById('hw-date-input').value = state.selectedDateISO;
-      openModal('modal-homework');
+      openHomeworkModal({});
     });
     document.getElementById('opt-add-task').addEventListener('click', () => {
       closeModal('action-sheet-overlay');
-      openModal('modal-task');
+      openTaskModal({});
     });
     document.getElementById('opt-add-note').addEventListener('click', () => {
       closeModal('action-sheet-overlay');
-      openModal('modal-note');
+      openNoteModal({});
     });
 
+    // --- HOMEWORK MODAL OPEN & SAVE ---
+    function openHomeworkModal(hw = {}) {
+      document.getElementById('hw-edit-id').value = hw.id || '';
+      document.getElementById('modal-hw-title').textContent = hw.id ? 'Edit Homework' : 'Add Homework';
+      document.getElementById('hw-subject-input').value = hw.subject || '';
+      document.getElementById('hw-date-input').value = hw.date || state.selectedDateISO;
+      document.getElementById('hw-text-input').value = hw.text || '';
+      document.getElementById('hw-live-preview').innerHTML = renderMarkdownAndMath(hw.text || '');
+      document.getElementById('delete-hw-btn').style.display = hw.id ? 'block' : 'none';
+      openModal('modal-homework');
+    }
+
     document.getElementById('save-homework-btn').addEventListener('click', () => {
+      const id = document.getElementById('hw-edit-id').value;
       const subject = document.getElementById('hw-subject-input').value.trim() || 'General';
       const date = document.getElementById('hw-date-input').value || state.selectedDateISO;
       const text = document.getElementById('hw-text-input').value.trim();
       if (!text) return;
-      state.homeworks.push({ id: 'hw_' + Date.now(), subject, date, text });
+
+      if (id) {
+        const idx = state.homeworks.findIndex(h => h.id === id);
+        if (idx >= 0) state.homeworks[idx] = { id, subject, date, text };
+      } else {
+        state.homeworks.push({ id: 'hw_' + Date.now(), subject, date, text });
+      }
+
       saveAllState();
       closeModal('modal-homework');
       renderHomeworks();
     });
+
+    document.getElementById('delete-hw-btn').addEventListener('click', () => {
+      const id = document.getElementById('hw-edit-id').value;
+      if (id) {
+        closeModal('modal-homework');
+        requestDelete('hw', id);
+      }
+    });
+
+    // --- TASK MODAL OPEN & SAVE ---
+    function openTaskModal(task = {}) {
+      document.getElementById('task-edit-id').value = task.id || '';
+      document.getElementById('modal-task-title-txt').textContent = task.id ? 'Edit Task' : 'Add Task';
+      document.getElementById('task-text-input').value = task.text || '';
+      document.getElementById('delete-task-btn').style.display = task.id ? 'block' : 'none';
+      openModal('modal-task');
+    }
+
     document.getElementById('save-task-btn').addEventListener('click', () => {
+      const id = document.getElementById('task-edit-id').value;
       const text = document.getElementById('task-text-input').value.trim();
       if (!text) return;
-      state.tasks.push({ id: 't_' + Date.now(), text, completed: false });
+
+      if (id) {
+        const t = state.tasks.find(x => x.id === id);
+        if (t) t.text = text;
+      } else {
+        state.tasks.push({ id: 't_' + Date.now(), text, completed: false });
+      }
+
       saveAllState();
       closeModal('modal-task');
       renderTasks();
     });
+
+    document.getElementById('delete-task-btn').addEventListener('click', () => {
+      const id = document.getElementById('task-edit-id').value;
+      if (id) {
+        closeModal('modal-task');
+        requestDelete('task', id);
+      }
+    });
+
+    // --- NOTE MODAL OPEN & SAVE ---
+    function openNoteModal(note = {}) {
+      document.getElementById('note-edit-id').value = note.id || '';
+      document.getElementById('modal-note-title-txt').textContent = note.id ? 'Edit Note' : 'Add Note';
+      document.getElementById('note-title-input').value = note.title || '';
+      document.getElementById('note-text-input').value = note.text || '';
+      document.getElementById('note-live-preview').innerHTML = renderMarkdownAndMath(note.text || '');
+      document.getElementById('delete-note-btn').style.display = note.id ? 'block' : 'none';
+      openModal('modal-note');
+    }
+
     document.getElementById('save-note-btn').addEventListener('click', () => {
+      const id = document.getElementById('note-edit-id').value;
       const title = document.getElementById('note-title-input').value.trim() || 'Untitled Note';
       const text = document.getElementById('note-text-input').value.trim();
       if (!text) return;
-      state.notes.push({ id: 'n_' + Date.now(), title, text });
+
+      if (id) {
+        const n = state.notes.find(x => x.id === id);
+        if (n) { n.title = title; n.text = text; }
+      } else {
+        state.notes.push({ id: 'n_' + Date.now(), title, text });
+      }
+
       saveAllState();
       closeModal('modal-note');
       renderNotes();
+    });
+
+    document.getElementById('delete-note-btn').addEventListener('click', () => {
+      const id = document.getElementById('note-edit-id').value;
+      if (id) {
+        closeModal('modal-note');
+        requestDelete('note', id);
+      }
     });
 
     /* ==========================================================================
@@ -1640,7 +1887,7 @@
         if (hasEvent) cell.classList.add('has-event');
 
         cell.addEventListener('click', () => {
-          openEventModal({ date: dateStr, time: '10:00', location: 'Aula Volterra', color: INTUITIVE_PALETTE[0].var });
+          openEventModal({ date: dateStr, time: '10:00', endTime: '11:00', location: 'Aula Volterra', color: INTUITIVE_PALETTE[0].var });
         });
 
         monthGrid.appendChild(cell);
@@ -1680,10 +1927,11 @@
 
         const card = document.createElement('div');
         card.className = 'countdown-card';
+        const displayTime = formatTimeRange(e.time, e.endTime);
         card.innerHTML = `
           <div>
             <strong style="font-size:0.85rem;">${e.title}</strong>
-            <div style="font-size:0.7rem; color:var(--text-muted);">${e.date} at ${e.time} • ${e.location || 'General'}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${e.date} (${displayTime}) • ${e.location || 'General'}</div>
           </div>
           <div class="cd-timer">${days}d ${hours}h ${mins}m ${secs}s</div>
         `;
@@ -1723,9 +1971,11 @@
 
     function openEventModal(ev = {}) {
       document.getElementById('event-id').value = ev.id || '';
+      document.getElementById('modal-event-title-text').textContent = ev.id ? 'Edit Event' : 'Add Event';
       document.getElementById('event-title').value = ev.title || '';
       document.getElementById('event-date').value = ev.date || new Date().toISOString().split('T')[0];
       document.getElementById('event-time').value = ev.time || '10:00';
+      document.getElementById('event-end-time').value = ev.endTime || '';
       document.getElementById('event-location').value = ev.location || '';
       document.getElementById('event-notes').value = ev.notes || '';
       document.getElementById('event-color').value = ev.color || INTUITIVE_PALETTE[0].var;
@@ -1746,6 +1996,7 @@
         title: document.getElementById('event-title').value,
         date: document.getElementById('event-date').value,
         time: document.getElementById('event-time').value,
+        endTime: document.getElementById('event-end-time').value,
         location: document.getElementById('event-location').value,
         color: document.getElementById('event-color').value,
         notes: document.getElementById('event-notes').value
@@ -1779,36 +2030,62 @@
     /* ==========================================================================
        10. TAB 4: PROFILE, DASHBOARD, EVALUATIONS & STUDY PLAN
        ========================================================================== */
+    function parseScore(s) {
+      if (!s) return null;
+      const upper = String(s).trim().toUpperCase();
+      if (upper === 'I' || upper === 'NI') return null; // Non fa media ponderata
+      if (upper.includes('30L')) return 30;
+      const val = parseFloat(upper);
+      return isNaN(val) ? null : val;
+    }
+
     function renderProfileView() {
       document.getElementById('display-profile-name').textContent = state.profile.name;
       document.getElementById('display-profile-mat').textContent = `ID: ${state.profile.mat}`;
       document.getElementById('display-profile-degree').textContent = state.profile.degree;
       document.getElementById('display-profile-univ').textContent = `${state.profile.univ} • ${state.profile.dept}`;
+      document.getElementById('display-profile-order').textContent = `Codice Ordine di Studi: ${state.profile.studyPlanCode || 'Non specificato'}`;
       document.getElementById('profile-avatar-img').src = state.profile.avatarUrl;
 
-      const totalCFU = state.studyPlan.reduce((acc, c) => acc + Number(c.cfu || 0), 0);
-      const passedCourseIds = state.evaluations.filter(e => !e.isPartial).map(e => e.courseId);
-      const completedCFU = state.studyPlan.filter(c => passedCourseIds.includes(c.id)).reduce((acc, c) => acc + Number(c.cfu || 0), 0);
+      // CFU Calculation (excluding non-credit courses & non-passed exams)
+      const totalCFU = state.studyPlan
+        .filter(c => !c.excludeCredits)
+        .reduce((acc, c) => acc + Number(c.cfu || 0), 0);
+
+      const passedCourseIds = state.evaluations
+        .filter(e => !e.isPartial && String(e.score).trim().toUpperCase() !== 'NI')
+        .map(e => e.courseId);
+
+      const completedCFU = state.studyPlan
+        .filter(c => !c.excludeCredits && passedCourseIds.includes(c.id))
+        .reduce((acc, c) => acc + Number(c.cfu || 0), 0);
+
       document.getElementById('display-cfu-progress').textContent = `${completedCFU} / ${totalCFU} CFU`;
 
-      const parseScore = (s) => (s.toUpperCase().includes('30L') ? 30 : parseFloat(s) || 0);
-
+      // Official Average (Final exams, numeric grades only)
       const officialEvals = state.evaluations.filter(e => !e.isPartial);
       let sumOfficial = 0, cfuOfficial = 0;
       officialEvals.forEach(e => {
-        const c = state.studyPlan.find(x => x.id === e.courseId);
-        const weight = c ? Number(c.cfu) : 6;
-        sumOfficial += parseScore(e.score) * weight;
-        cfuOfficial += weight;
+        const scoreNum = parseScore(e.score);
+        if (scoreNum !== null) {
+          const c = state.studyPlan.find(x => x.id === e.courseId);
+          const weight = (c && !c.excludeCredits && Number(c.cfu) > 0) ? Number(c.cfu) : 6;
+          sumOfficial += scoreNum * weight;
+          cfuOfficial += weight;
+        }
       });
       const officialAvg = cfuOfficial > 0 ? (sumOfficial / cfuOfficial).toFixed(1) : '--';
       
+      // Provisional Average (Includes partials)
       let sumProv = 0, cfuProv = 0;
       state.evaluations.forEach(e => {
-        const c = state.studyPlan.find(x => x.id === e.courseId);
-        const weight = c ? Number(c.cfu) : 6;
-        sumProv += parseScore(e.score) * weight;
-        cfuProv += weight;
+        const scoreNum = parseScore(e.score);
+        if (scoreNum !== null) {
+          const c = state.studyPlan.find(x => x.id === e.courseId);
+          const weight = (c && !c.excludeCredits && Number(c.cfu) > 0) ? Number(c.cfu) : 6;
+          sumProv += scoreNum * weight;
+          cfuProv += weight;
+        }
       });
       const provAvg = cfuProv > 0 ? (sumProv / cfuProv).toFixed(1) : '--';
 
@@ -1839,17 +2116,24 @@
         return;
       }
       
-      const recent = [...state.evaluations].reverse().slice(0, 3);
+      const recent = [...state.evaluations].reverse().slice(0, 4);
       recent.forEach(e => {
         const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---' };
-        const scoreNum = e.score.toUpperCase().includes('30L') ? 30 : parseFloat(e.score);
-        let colorClass = 'var(--accent-green)';
-        if (scoreNum < 22) colorClass = 'var(--accent-red)';
-        else if (scoreNum < 26) colorClass = 'var(--accent-yellow)';
+        const upper = String(e.score).trim().toUpperCase();
+        let colorClass = 'var(--accent-blue)';
+        if (upper === 'NI') colorClass = 'var(--accent-red)';
+        else if (upper === 'I') colorClass = 'var(--accent-green)';
+        else {
+          const scoreNum = parseScore(e.score);
+          if (scoreNum !== null) {
+            if (scoreNum < 22) colorClass = 'var(--accent-red)';
+            else if (scoreNum < 26) colorClass = 'var(--accent-yellow)';
+            else colorClass = 'var(--accent-green)';
+          }
+        }
 
         const item = document.createElement('div');
         item.className = 'eval-item';
-        item.style.cursor = 'pointer';
         item.innerHTML = `
           <div class="eval-left">
             <div class="eval-dot" style="background:${colorClass};"></div>
@@ -1858,8 +2142,12 @@
               <div class="eval-sub">${e.date}</div>
             </div>
           </div>
-          <div class="eval-score">${e.score}</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="eval-score" style="color:${colorClass};">${e.score}</div>
+            <span style="font-size:0.75rem; color:var(--accent-blue);">✎</span>
+          </div>
         `;
+        item.addEventListener('click', () => openGradeModal(e));
         attachLongPress(item, () => requestDelete('eval', e.id));
         container.appendChild(item);
       });
@@ -1874,8 +2162,11 @@
       document.getElementById('badge-student-name').textContent = state.profile.name;
       document.getElementById('badge-mat-num').textContent = `ID: ${state.profile.mat}`;
       document.getElementById('badge-course-name').textContent = state.profile.degree;
+      document.getElementById('badge-order-code').textContent = `Codice Ordine: ${state.profile.studyPlanCode || 'N/A'}`;
       document.getElementById('badge-avatar-img').src = state.profile.avatarUrl;
-      document.getElementById('badge-qr-img').src = state.profile.qrData.startsWith('http') ? state.profile.qrData : `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(state.profile.qrData)}`;
+      document.getElementById('badge-qr-img').src = state.profile.qrData.startsWith('http') || state.profile.qrData.startsWith('data:image') 
+        ? state.profile.qrData 
+        : `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(state.profile.qrData)}`;
       openModal('modal-student-badge');
     });
 
@@ -1885,14 +2176,15 @@
     });
 
     function openEditProfileModal() {
-      document.getElementById('edit-name').value = state.profile.name;
-      document.getElementById('edit-mat').value = state.profile.mat;
-      document.getElementById('edit-univ').value = state.profile.univ;
-      document.getElementById('edit-dept').value = state.profile.dept;
-      document.getElementById('edit-degree').value = state.profile.degree;
+      document.getElementById('edit-name').value = state.profile.name || '';
+      document.getElementById('edit-mat').value = state.profile.mat || '';
+      document.getElementById('edit-univ').value = state.profile.univ || '';
+      document.getElementById('edit-dept').value = state.profile.dept || '';
+      document.getElementById('edit-degree').value = state.profile.degree || '';
       document.getElementById('edit-degree-type').value = state.profile.degreeType || 'Bachelor\'s Degree (Triennale)';
-      document.getElementById('edit-avatar-url').value = state.profile.avatarUrl;
-      document.getElementById('edit-qr-data').value = state.profile.qrData;
+      document.getElementById('edit-study-plan-code').value = state.profile.studyPlanCode || '';
+      document.getElementById('edit-avatar-url').value = state.profile.avatarUrl || '';
+      document.getElementById('edit-qr-data').value = state.profile.qrData || '';
       openModal('modal-edit-profile');
     }
 
@@ -1903,6 +2195,7 @@
       state.profile.dept = document.getElementById('edit-dept').value;
       state.profile.degree = document.getElementById('edit-degree').value;
       state.profile.degreeType = document.getElementById('edit-degree-type').value;
+      state.profile.studyPlanCode = document.getElementById('edit-study-plan-code').value;
       state.profile.avatarUrl = document.getElementById('edit-avatar-url').value;
       state.profile.qrData = document.getElementById('edit-qr-data').value;
       saveAllState();
@@ -1921,58 +2214,91 @@
       document.getElementById('eval-count-lbl').textContent = `${state.evaluations.length} evaluation(s) recorded`;
 
       state.evaluations.forEach(e => {
-        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown', code: '---', ssd: '---', prof: '---' };
+        const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---', ssd: '---', prof: '---' };
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
         tr.innerHTML = `
           <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd}</div></td>
           <td>${c.prof}</td>
           <td><strong style="color:var(--accent-blue);">${e.score}</strong></td>
-          <td>${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}</td>
+          <td>
+            ${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}
+            <span style="font-size:0.75rem; color:var(--accent-blue); margin-left:6px;">✎</span>
+          </td>
         `;
+        tr.addEventListener('click', () => {
+          closeModal('modal-evaluations-detail');
+          openGradeModal(e);
+        });
         attachLongPress(tr, () => requestDelete('eval', e.id));
         tbody.appendChild(tr);
       });
     }
 
     document.getElementById('open-add-grade-modal-btn').addEventListener('click', () => {
-      populateCourseSelect();
-      openModal('modal-add-grade');
+      closeModal('modal-evaluations-detail');
+      openGradeModal({});
     });
 
-    function populateCourseSelect() {
+    function populateCourseSelect(selectedCourseId) {
       const sel = document.getElementById('grade-course-select');
       sel.innerHTML = '';
-      const passedFinalCourseIds = state.evaluations.filter(e => !e.isPartial).map(e => e.courseId);
-      const eligibleCourses = state.studyPlan.filter(c => !passedFinalCourseIds.includes(c.id));
-
-      if (eligibleCourses.length === 0) {
-        sel.innerHTML = '<option value="">No available courses to grade</option>';
-        return;
-      }
-      eligibleCourses.forEach(c => {
+      
+      state.studyPlan.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = `${c.name} (${c.code})`;
+        if (c.id === selectedCourseId) opt.selected = true;
         sel.appendChild(opt);
       });
     }
 
+    window.setGradePreset = function(val) {
+      document.getElementById('grade-score-input').value = val;
+    };
+
+    function openGradeModal(grade = {}) {
+      document.getElementById('grade-edit-id').value = grade.id || '';
+      document.getElementById('modal-grade-title').textContent = grade.id ? 'Edit Grade' : 'Record Grade';
+      populateCourseSelect(grade.courseId);
+      document.getElementById('grade-is-partial').checked = !!grade.isPartial;
+      document.getElementById('grade-score-input').value = grade.score || '';
+      document.getElementById('grade-date-input').value = grade.date || new Date().toISOString().split('T')[0];
+      document.getElementById('delete-grade-btn').style.display = grade.id ? 'block' : 'none';
+      openModal('modal-add-grade');
+    }
+
     document.getElementById('save-grade-btn').addEventListener('click', () => {
+      const id = document.getElementById('grade-edit-id').value;
       const courseId = document.getElementById('grade-course-select').value;
       const isPartial = document.getElementById('grade-is-partial').checked;
-      const score = document.getElementById('grade-score-input').value.trim();
+      const score = document.getElementById('grade-score-input').value.trim().toUpperCase();
       const date = document.getElementById('grade-date-input').value || new Date().toISOString().split('T')[0];
 
       if (!courseId || !score) return;
 
-      state.evaluations.push({ id: 'e_' + Date.now(), courseId, isPartial, score, date });
+      if (id) {
+        const idx = state.evaluations.findIndex(e => e.id === id);
+        if (idx >= 0) state.evaluations[idx] = { id, courseId, isPartial, score, date };
+      } else {
+        state.evaluations.push({ id: 'e_' + Date.now(), courseId, isPartial, score, date });
+      }
+
       saveAllState();
       closeModal('modal-add-grade');
       renderEvaluationsTable();
       renderProfileView();
     });
 
+    document.getElementById('delete-grade-btn').addEventListener('click', () => {
+      const id = document.getElementById('grade-edit-id').value;
+      if (id) {
+        closeModal('modal-add-grade');
+        requestDelete('eval', id);
+      }
+    });
+
+    // --- STUDY PLAN MODAL & COURSE ADD/EDIT ---
     document.getElementById('open-study-plan-btn').addEventListener('click', () => {
       renderStudyPlanView();
       openModal('modal-study-plan');
@@ -1981,6 +2307,7 @@
     function renderStudyPlanView() {
       document.getElementById('sp-univ-dept').textContent = `${state.profile.univ} • ${state.profile.dept}`;
       document.getElementById('sp-course-full').textContent = `${state.profile.degree} — ${state.profile.degreeType}`;
+      document.getElementById('sp-order-code-header').textContent = `Codice Ordine di Studi: ${state.profile.studyPlanCode || 'Non specificato'}`;
 
       const tree = document.getElementById('study-plan-tree');
       tree.innerHTML = '';
@@ -2011,15 +2338,24 @@
           semCourses.forEach(c => {
             const card = document.createElement('div');
             card.className = 'course-card';
-            card.style.cursor = 'pointer';
+            const typeLabel = c.type && c.type !== 'Teaching' ? `<span class="course-type-tag">${c.type}</span>` : '';
+            const cfuLabel = c.excludeCredits ? `<div class="course-cfu no-credit">0 CFU (Extra)</div>` : `<div class="course-cfu">${c.cfu} CFU</div>`;
+            
             card.innerHTML = `
               <div>
-                <div class="course-code">${c.code} • <span class="course-ssd">${c.ssd}</span></div>
+                <div class="course-code">${c.code} • <span class="course-ssd">${c.ssd}</span> ${typeLabel}</div>
                 <div class="course-name">${c.name}</div>
                 <div class="course-prof">${c.prof} (${c.ay})</div>
               </div>
-              <div class="course-cfu">${c.cfu} CFU</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${cfuLabel}
+                <span style="font-size:0.75rem; color:var(--accent-blue);">✎</span>
+              </div>
             `;
+            card.addEventListener('click', () => {
+              closeModal('modal-study-plan');
+              openCourseModal(c);
+            });
             attachLongPress(card, () => requestDelete('course', c.id));
             semWrap.appendChild(card);
           });
@@ -2029,26 +2365,64 @@
     }
 
     document.getElementById('open-add-course-btn').addEventListener('click', () => {
-      openModal('modal-add-course');
+      closeModal('modal-study-plan');
+      openCourseModal({});
     });
 
+    function openCourseModal(course = {}) {
+      document.getElementById('course-edit-id').value = course.id || '';
+      document.getElementById('modal-course-title-txt').textContent = course.id ? 'Edit Course / Activity' : 'Add Course / Activity';
+      document.getElementById('course-code-in').value = course.code || '';
+      document.getElementById('course-ssd-in').value = course.ssd || '';
+      document.getElementById('course-name-in').value = course.name || '';
+      document.getElementById('course-prof-in').value = course.prof || '';
+      document.getElementById('course-type-in').value = course.type || 'Teaching';
+      document.getElementById('course-cfu-in').value = course.cfu !== undefined ? course.cfu : 6;
+      document.getElementById('course-exclude-cfu-in').checked = !!course.excludeCredits;
+      document.getElementById('course-ay-in').value = course.ay || '2026/2027';
+      document.getElementById('course-year-in').value = course.year || 1;
+      document.getElementById('course-sem-in').value = course.sem || 1;
+      document.getElementById('delete-course-btn').style.display = course.id ? 'block' : 'none';
+      openModal('modal-add-course');
+    }
+
     document.getElementById('save-course-btn').addEventListener('click', () => {
+      const id = document.getElementById('course-edit-id').value;
       const code = document.getElementById('course-code-in').value.trim() || 'CODE';
       const ssd = document.getElementById('course-ssd-in').value.trim() || 'SSD';
       const name = document.getElementById('course-name-in').value.trim();
       const prof = document.getElementById('course-prof-in').value.trim() || 'Prof.';
+      const type = document.getElementById('course-type-in').value;
+      const cfu = Number(document.getElementById('course-cfu-in').value) || 0;
+      const excludeCredits = document.getElementById('course-exclude-cfu-in').checked;
       const ay = document.getElementById('course-ay-in').value.trim() || '2026/2027';
       const year = Number(document.getElementById('course-year-in').value);
       const sem = Number(document.getElementById('course-sem-in').value);
-      const cfu = Number(document.getElementById('course-cfu-in').value) || 6;
 
       if (!name) return;
 
-      state.studyPlan.push({ id: 'c_' + Date.now(), code, ssd, name, prof, ay, year, sem, cfu });
+      const courseData = { id: id || 'c_' + Date.now(), code, ssd, name, prof, type, cfu, excludeCredits, ay, year, sem };
+
+      if (id) {
+        const idx = state.studyPlan.findIndex(c => c.id === id);
+        if (idx >= 0) state.studyPlan[idx] = courseData;
+      } else {
+        state.studyPlan.push(courseData);
+      }
+
       saveAllState();
       closeModal('modal-add-course');
       renderStudyPlanView();
       renderProfileView();
+      openModal('modal-study-plan');
+    });
+
+    document.getElementById('delete-course-btn').addEventListener('click', () => {
+      const id = document.getElementById('course-edit-id').value;
+      if (id) {
+        closeModal('modal-add-course');
+        requestDelete('course', id);
+      }
     });
 
     /* ==========================================================================
