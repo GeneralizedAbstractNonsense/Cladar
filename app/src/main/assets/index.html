@@ -2033,7 +2033,7 @@
     function parseScore(s) {
       if (!s) return null;
       const upper = String(s).trim().toUpperCase();
-      if (upper === 'I' || upper === 'NI') return null; // Non fa media ponderata
+      if (upper === 'I' || upper === 'NI') return null; 
       if (upper.includes('30L')) return 30;
       const val = parseFloat(upper);
       return isNaN(val) ? null : val;
@@ -2044,7 +2044,7 @@
       document.getElementById('display-profile-mat').textContent = `ID: ${state.profile.mat}`;
       document.getElementById('display-profile-degree').textContent = state.profile.degree;
       document.getElementById('display-profile-univ').textContent = `${state.profile.univ} • ${state.profile.dept}`;
-      document.getElementById('display-profile-order').textContent = `Codice Ordine di Studi: ${state.profile.studyPlanCode || 'Non specificato'}`;
+      document.getElementById('display-profile-order').textContent = `Course code: ${state.profile.studyPlanCode || 'Unspecified'}`;
       document.getElementById('profile-avatar-img').src = state.profile.avatarUrl;
 
       // CFU Calculation (excluding non-credit courses & non-passed exams)
