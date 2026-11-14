@@ -1,6 +1,28 @@
-# Cladar
+<p align="center">
+  <img src="icon-512.png" width="120" height="120" alt="Logo">
+</p>
 
-Cladar is a lightweight, offline-first web application optimized for mobile devices and Android WebView. Built for university students, it unifies academic tracking, course planning, daily scheduling, and task management into a single responsive interface.
+<h1 align="center">Cladar</h1>
+
+<p align="center">
+  <strong>All you need, where it should be.</strong>
+</p>
+
+<p align="center">
+  Cladar is a lightweight, offline-first web application optimized for mobile devices and Android WebView. Built for university students, it unifies academic tracking, course planning, daily scheduling, and task management into a single responsive interface.
+</p>
+
+<p align="center">
+  <a href="https://generalizedabstractnonsense.github.io/Cladar/">Website</a> ·
+  <a href="#">Latest release</a> ·
+  <a href="#">Issues</a>
+</p>
+<div align="center">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/GeneralizedAbstractNonsense/Cladar?display_name=release">
+    <img alt="License" src="https://img.shields.io/github/license/GeneralizedAbstractNonsense/Cladar">
+    <img alt="Platforms" src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux-2ea44f">
+</div>
+
 
 ## Core Features
 
