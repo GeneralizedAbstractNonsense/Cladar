@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon-512.png" width="120" height="120" alt="Logo">
+  <img src="app/src/main/res/drawable/icon.png" width="120" height="120" alt="Logo">
 </p>
 
 <h1 align="center">Cladar</h1>
