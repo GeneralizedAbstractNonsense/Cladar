@@ -30,7 +30,7 @@
       --c-BORDR: rgba(255, 255, 255, 0.12);
       --c-BAGRO: rgba(211, 222, 228, 0.5);
 
-      --row-height: 48px;
+      --row-height: 54px;
       --nav-height: 62px;
 
       --accent-blue: #0a84ff;
@@ -306,13 +306,17 @@
       color: var(--accent-blue);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 15;
       padding: 0 8px;
       text-align: center;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       box-shadow: 0 1px 3px var(--shadow-color);
+    }
+    .gh-cell:first-child {
+      left: 0;
+      z-index: 20;
     }
     .gc-time {
       background: var(--card-bg);
@@ -321,13 +325,14 @@
       font-size: 0.72rem;
       font-weight: 600;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
+      padding-top: 4px;
       padding-right: 8px;
       color: var(--text-muted);
       position: sticky;
       left: 0;
-      z-index: 5;
+      z-index: 10;
     }
     .gc-empty {
       background: var(--cell-empty);
@@ -336,36 +341,69 @@
       position: relative;
     }
     
-    /* Scritta negli eventi/routine impostata a BIANCO (#ffffff) */
+    /* Eventi posizionati con minutaggio e durata esatti */
     .gc-event {
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      position: absolute;
+      left: 3px;
+      right: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
       border-radius: var(--radius-sm);
       padding: 4px 8px;
-      margin: 2px;
       font-size: 0.75rem;
       font-weight: 700;
       overflow: hidden;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      z-index: 2;
+      justify-content: flex-start;
+      z-index: 5;
       color: #ffffff !important;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-      box-shadow: 0 3px 6px var(--shadow-color);
-      height: calc(100% - 4px);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 3px 8px var(--shadow-color);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .gc-event:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 10px var(--shadow-color);
+      box-shadow: 0 5px 12px var(--shadow-color);
+      z-index: 8;
+    }
+    .gc-event .ev-title-txt {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
     }
     .gc-event .time-lbl {
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.9) !important;
+      font-size: 0.66rem;
+      color: rgba(255, 255, 255, 0.92) !important;
       font-weight: 500;
-      margin-top: 1px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      margin-top: 2px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Linea indicatrice dell'ora corrente (stile Google Calendar) */
+    .current-time-line {
+      position: absolute;
+      left: 55px;
+      right: 0;
+      height: 2px;
+      background: var(--accent-red);
+      z-index: 12;
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(255, 69, 58, 0.6);
+    }
+    .current-time-line::before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      top: -4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-red);
     }
 
     /* --- TAB 2: TASKS, HOMEWORK & NOTES --- */
@@ -381,8 +419,6 @@
       border-bottom: 1px solid var(--card-border);
       display: flex;
       flex-direction: column;
-      height: 38vh;
-      min-height: 260px;
       flex-shrink: 0;
     }
     .date-nav-bar {
@@ -392,6 +428,9 @@
       padding: 10px 16px;
       background: var(--card-bg);
       border-bottom: 1px solid var(--separator);
+      position: sticky;
+      top: 0;
+      z-index: 15;
     }
     .date-nav-title {
       font-size: 1.05rem;
@@ -399,14 +438,25 @@
       color: var(--text-color);
       letter-spacing: -0.01em;
     }
+    .btn-today-jump {
+      background: rgba(10, 132, 255, 0.14);
+      color: var(--accent-blue);
+      border: 1px solid rgba(10, 132, 255, 0.3);
+      border-radius: 14px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
     
     .date-scroll-strip {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       padding: 10px 16px;
-      scroll-snap-type: x mandatory;
+      scroll-snap-type: x proximity;
       scrollbar-width: none;
+      background: var(--bg-color);
     }
     .date-scroll-strip::-webkit-scrollbar { display: none; }
     .date-chip-hw {
@@ -422,6 +472,21 @@
       cursor: pointer;
       min-width: 62px;
       transition: all 0.2s ease;
+      position: relative;
+    }
+    .date-chip-hw.is-today {
+      border-color: var(--accent-blue);
+    }
+    .date-chip-hw.is-today::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      margin-top: 3px;
+    }
+    .date-chip-hw.active.is-today::after {
+      background: #ffffff;
     }
     .date-chip-hw .day-name {
       font-size: 0.65rem;
@@ -446,10 +511,9 @@
       color: #ffffff;
     }
 
+    /* Tutti gli homeworks visibili senza scroll interno che blocchi la pagina */
     .homework-list-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px 16px;
+      padding: 12px 16px 16px 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -787,6 +851,7 @@
       background: rgba(10, 132, 255, 0.1);
       padding: 4px 10px;
       border-radius: 8px;
+      white-space: nowrap;
     }
 
     /* --- TAB 4: PROFILE & ACADEMIC DASHBOARD --- */
@@ -952,14 +1017,33 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 2px 6px var(--shadow-color);
+      gap: 10px;
     }
     .course-code { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
     .course-ssd { font-size: 0.72rem; color: var(--accent-blue); font-weight: 700; }
     .course-name { font-size: 0.92rem; font-weight: 800; color: var(--text-color); margin: 3px 0; }
     .course-prof { font-size: 0.78rem; color: var(--text-muted); }
     .course-type-tag { font-size: 0.68rem; padding: 2px 8px; border-radius: 6px; background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); font-weight: 800; margin-left: 4px; }
-    .course-cfu { background: rgba(10, 132, 255, 0.1); padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; color: var(--accent-blue); }
-    .course-cfu.no-credit { color: var(--text-muted); background: rgba(255, 255, 255, 0.05); }
+    .course-cfu {
+      background: rgba(10, 132, 255, 0.1);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+      text-align: center;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .course-cfu.no-credit {
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .course-cfu.no-credit small {
+      font-size: 0.66rem;
+      font-weight: 700;
+      display: block;
+    }
 
     /* Preset Quick Buttons */
     .preset-btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
@@ -986,6 +1070,10 @@
     .modal-overlay.active {
       display: flex;
       opacity: 1;
+    }
+    /* Overlay di conferma sempre in primo piano sopra ogni altro modale */
+    #modal-confirm {
+      z-index: 2500 !important;
     }
     .modal-card {
       background: var(--card-bg);
@@ -1016,15 +1104,30 @@
     .modal-body {
       padding: 20px;
       overflow-y: auto;
+      overflow-x: hidden;
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 14px;
     }
     
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    /* Riga form flessibile con wrap per evitare overflow orizzontale */
+    .form-row-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+    }
+    .form-row-wrap .form-group {
+      flex: 1 1 130px;
+      min-width: 0;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
     .form-group label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
     .form-control {
+      width: 100%;
+      min-width: 0;
       padding: 12px 14px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--card-border);
@@ -1183,9 +1286,10 @@
         <div class="section-homework">
           <div class="date-nav-bar">
             <div class="date-nav-title" id="current-date-title">Homework Overview</div>
+            <button type="button" class="btn-today-jump" id="btn-jump-today">Today</button>
           </div>
           <div class="date-scroll-strip" id="date-strip-container"></div>
-          <!-- Homework List Container -->
+          <!-- Homework List Container (Tutti visibili, nessuno scroll bloccante) -->
           <div class="homework-list-container" id="homework-list-container"></div>
         </div>
 
@@ -1415,12 +1519,12 @@
             <label>Date</label>
             <input type="date" id="event-date" class="form-control" required>
           </div>
-          <div style="display:flex; gap:8px;">
-            <div class="form-group" style="flex:1;">
+          <div class="form-row-wrap">
+            <div class="form-group">
               <label>Start</label>
               <input type="time" id="event-time" class="form-control" required>
             </div>
-            <div class="form-group" style="flex:1;">
+            <div class="form-group">
               <label>End</label>
               <input type="time" id="event-end-time" class="form-control">
             </div>
@@ -1451,7 +1555,7 @@
     </div>
   </div>
 
-  <!-- DELETE CONFIRMATION OVERLAY -->
+  <!-- DELETE CONFIRMATION OVERLAY (Z-Index superiore) -->
   <div class="modal-overlay" id="modal-confirm">
     <div class="confirm-card">
       <h4>Confirm Deletion</h4>
@@ -1628,7 +1732,7 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT COURSE MODAL -->
+  <!-- ADD / EDIT COURSE MODAL (Con layout flex-wrap senza scroll orizzontale) -->
   <div class="modal-overlay" id="modal-add-course">
     <div class="modal-card">
       <div class="modal-header">
@@ -1637,12 +1741,12 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="course-edit-id">
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;">
+        <div class="form-row-wrap">
+          <div class="form-group">
             <label>Course Code</label>
             <input type="text" id="course-code-in" class="form-control" placeholder="1042918">
           </div>
-          <div class="form-group" style="flex:1;">
+          <div class="form-group">
             <label>SSD</label>
             <input type="text" id="course-ssd-in" class="form-control" placeholder="INF/01">
           </div>
@@ -1655,8 +1759,8 @@
           <label>Professors / Speaker</label>
           <input type="text" id="course-prof-in" class="form-control" placeholder="Prof. A. Rossi">
         </div>
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;">
+        <div class="form-row-wrap">
+          <div class="form-group">
             <label>Activity Type</label>
             <select id="course-type-in" class="form-control">
               <option value="Teaching">Teaching</option>
@@ -1664,7 +1768,7 @@
               <option value="Seminar">Seminar</option>
             </select>
           </div>
-          <div class="form-group" style="flex:1;">
+          <div class="form-group">
             <label>CFU Count</label>
             <input type="number" id="course-cfu-in" class="form-control" value="6">
           </div>
@@ -1673,12 +1777,12 @@
           <label style="margin:0;">Exclude from count</label>
           <input type="checkbox" id="course-exclude-cfu-in" style="width:20px; height:20px;">
         </div>
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;">
+        <div class="form-row-wrap">
+          <div class="form-group">
             <label>Academic Year</label>
             <input type="text" id="course-ay-in" class="form-control" placeholder="2026/2027">
           </div>
-          <div class="form-group" style="flex:1;">
+          <div class="form-group">
             <label>Program Year</label>
             <select id="course-year-in" class="form-control">
               <option value="1">1st Year</option>
@@ -1686,7 +1790,7 @@
               <option value="3">3rd Year</option>
             </select>
           </div>
-          <div class="form-group" style="flex:1;">
+          <div class="form-group">
             <label>Semester</label>
             <select id="course-sem-in" class="form-control">
               <option value="1">1st Semester</option>
@@ -1694,9 +1798,9 @@
             </select>
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; margin-top:6px;">
-          <button type="button" id="delete-course-btn" class="btn-primary-action" style="background:var(--accent-red); display:none;">Delete Course</button>
-          <button type="button" class="btn-primary-action" id="save-course-btn" style="margin-left:auto;">Save Course</button>
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:6px;">
+          <button type="button" id="delete-course-btn" class="btn-primary-action" style="background:var(--accent-red); display:none; flex:1;">Delete Course</button>
+          <button type="button" class="btn-primary-action" id="save-course-btn" style="margin-left:auto; flex:2;">Save Course</button>
         </div>
       </div>
     </div>
@@ -1750,12 +1854,12 @@
           <label>Activity Name</label>
           <input type="text" id="routine-title" class="form-control" placeholder="Analysis Lecture">
         </div>
-        <div style="display:flex; gap:8px;">
-          <div class="form-group" style="flex:1;">
+        <div class="form-row-wrap">
+          <div class="form-group">
             <label>Start</label>
             <input type="time" id="routine-time" class="form-control" value="09:30">
           </div>
-          <div class="form-group" style="flex:1;">
+          <div class="form-group">
             <label>End</label>
             <input type="time" id="routine-end-time" class="form-control" value="11:00">
           </div>
@@ -1798,19 +1902,34 @@
       { name: 'Sand Stone',     var: 'var(--c-UNATA)', hex: 'rgba(215, 211, 199, 0.80)' }
     ];
 
+    function toLocalISODate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
     const today = new Date();
+    const todayISO = toLocalISODate(today);
     const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+    // Range dinamico infinito per la barra dei giorni Homeworks
+    let hwMinOffset = -30;
+    let hwMaxOffset = 60;
     const dateList = [];
-    for (let i = -7; i <= 30; i++) {
-      const d = new Date();
-      d.setDate(today.getDate() + i);
-      dateList.push(d);
+
+    function buildDateList(minOff, maxOff) {
+      dateList.length = 0;
+      for (let i = minOff; i <= maxOff; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        dateList.push(d);
+      }
     }
+    buildDateList(hwMinOffset, hwMaxOffset);
 
     const state = {
       theme: localStorage.getItem('cladar_theme') || 'dark',
-      selectedDateISO: today.toISOString().split('T')[0],
+      selectedDateISO: todayISO,
       selectedDayIdx: (today.getDay() + 6) % 7,
       calendarDate: new Date(),
       
@@ -1833,7 +1952,7 @@
         { id: 'c2', code: '1042919', ssd: 'INF/01', name: 'Linear Algebra', prof: 'Prof. Bianchi', ay: '2025/2026', year: 1, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
         { id: 'c3', code: '1042920', ssd: 'INF/01', name: 'Computer Programming', prof: 'Prof. Verdi', ay: '2025/2026', year: 1, sem: 2, cfu: 12, type: 'Teaching', excludeCredits: false },
         { id: 'c4', code: '1042921', ssd: 'FIS/01', name: 'Physics I', prof: 'Prof. Neri', ay: '2026/2027', year: 2, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
-        { id: 'c5', code: 'SEM01', ssd: 'INF/01', name: 'Seminar Ethics', prof: 'Prof. Romano', ay: '2026/2027', year: 2, sem: 2, cfu: 0, type: 'Seminar', excludeCredits: true }
+        { id: 'c5', code: 'SEM01', ssd: 'INF/01', name: 'Seminar Ethics', prof: 'Prof. Romano', ay: '2026/2027', year: 2, sem: 2, cfu: 3, type: 'Seminar', excludeCredits: true }
       ])),
 
       evaluations: JSON.parse(localStorage.getItem('cladar_evaluations') || JSON.stringify([
@@ -1844,7 +1963,7 @@
       ])),
 
       homeworks: JSON.parse(localStorage.getItem('cladar_homeworks') || JSON.stringify([
-        { id: 'hw1', subject: 'Mathematics', date: today.toISOString().split('T')[0], text: 'Solve limits exercise on page 24:\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$' }
+        { id: 'hw1', subject: 'Mathematics', date: todayISO, text: 'Solve limits exercise on page 24:\n$$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$' }
       ])),
 
       tasks: JSON.parse(localStorage.getItem('cladar_tasks') || JSON.stringify([
@@ -1932,9 +2051,9 @@
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
       document.getElementById('clock-display').textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      updateCurrentTimeLine();
     }
     setInterval(updateClock, 1000);
-    updateClock();
 
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1945,7 +2064,11 @@
         document.getElementById(target).classList.add('active');
 
         if(target === 'tab-daily') {
+          renderDailyGrid();
           scrollToCurrentHour();
+        }
+        if(target === 'tab-tasks') {
+          centerActiveDateChip(false);
         }
       });
     });
@@ -2009,7 +2132,7 @@
       };
       
       const jsonStr = JSON.stringify(backupData, null, 2);
-      const fileName = `cladar_backup_${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `cladar_backup_${toLocalISODate(new Date())}.json`;
 
       if (window.AndroidBridge && window.AndroidBridge.saveJson) {
         window.AndroidBridge.saveJson(jsonStr, fileName);
@@ -2086,14 +2209,22 @@
     });
 
     /* ==========================================================================
-       5. TAB 1: DAILY JOURNAL (Dynamic Infinite Locations Grid with End Times)
+       5. TAB 1: DAILY JOURNAL (Proportional Event Blocks & Current Time Line)
        ========================================================================== */
     const daySelectorBar = document.getElementById('day-selector-bar');
     const dailyGridTable = document.getElementById('daily-grid-table');
+    const ROW_HEIGHT_PX = 54;
+    const HEADER_HEIGHT_PX = 38;
 
     function formatTimeRange(startTime, endTime) {
       if (!startTime) return '';
       return endTime ? `${startTime} - ${endTime}` : startTime;
+    }
+
+    function parseMinutesFromTime(timeStr) {
+      if (!timeStr || !timeStr.includes(':')) return 0;
+      const [h, m] = timeStr.split(':').map(Number);
+      return (h * 60) + (m || 0);
     }
 
     function getDynamicLocationsForDay(dayIdx) {
@@ -2135,7 +2266,7 @@
       dailyGridTable.innerHTML = '';
       const locations = getDynamicLocationsForDay(state.selectedDayIdx);
 
-      dailyGridTable.style.gridTemplateColumns = `55px repeat(${locations.length}, minmax(130px, 1fr))`;
+      dailyGridTable.style.gridTemplateColumns = `55px repeat(${locations.length}, minmax(135px, 1fr))`;
 
       const timeHead = document.createElement('div');
       timeHead.className = 'gh-cell';
@@ -2150,9 +2281,8 @@
         dailyGridTable.appendChild(cell);
       });
 
-      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
-      const dayRoutineEvents = state.weeklyPlan[selectedDayName] || [];
-
+      // Costruzione della griglia base 24 ore x N colonne
+      const columnCellRefs = [];
       for (let h = 0; h < 24; h++) {
         const hourStr = `${String(h).padStart(2, '0')}:00`;
 
@@ -2165,36 +2295,83 @@
         locations.forEach((loc, locIdx) => {
           const gridCell = document.createElement('div');
           gridCell.className = 'gc-empty';
-
-          const matchCalendarEv = state.events.find(e => {
-            const d = new Date(e.date + 'T00:00:00');
-            const dayIdx = (d.getDay() + 6) % 7;
-            const matchesHour = parseInt(e.time.split(':')[0]) === h;
-            const matchesLoc = e.location ? e.location.trim() === loc : locIdx === 0;
-            return dayIdx === state.selectedDayIdx && matchesHour && matchesLoc;
-          });
-
-          const matchRoutineEv = dayRoutineEvents.find(r => {
-            const rHour = parseInt(r.time.split(':')[0]);
-            const matchesHour = rHour === h;
-            const matchesLoc = r.location ? r.location.trim() === loc : locIdx === 0;
-            return matchesHour && matchesLoc;
-          });
-
-          const activeEv = matchCalendarEv || matchRoutineEv;
-
-          if (activeEv) {
-            const evEl = document.createElement('div');
-            evEl.className = 'gc-event';
-            evEl.style.background = activeEv.color || 'var(--c-MATE1)';
-            const displayTime = formatTimeRange(activeEv.time, activeEv.endTime);
-            evEl.innerHTML = `<span>${activeEv.title}</span><span class="time-lbl">${displayTime}</span>`;
-            evEl.addEventListener('click', () => openEventModal(activeEv));
-            gridCell.appendChild(evEl);
+          if (h === 0) {
+            columnCellRefs[locIdx] = gridCell;
           }
           dailyGridTable.appendChild(gridCell);
         });
       }
+
+      // Raccolta eventi del giorno (Routine + Eventi Calendario)
+      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
+      const dayRoutineEvents = (state.weeklyPlan[selectedDayName] || []).map(r => ({ ...r, isRoutine: true }));
+      const dayCalendarEvents = state.events.filter(e => {
+        const d = new Date(e.date + 'T00:00:00');
+        const dayIdx = (d.getDay() + 6) % 7;
+        return dayIdx === state.selectedDayIdx;
+      }).map(e => ({ ...e, isRoutine: false }));
+
+      const allDayEvents = [...dayRoutineEvents, ...dayCalendarEvents];
+
+      // Posizionamento proporzionale ai minuti di inizio e alla durata effettiva
+      allDayEvents.forEach(ev => {
+        const locIdx = ev.location && ev.location.trim()
+          ? locations.indexOf(ev.location.trim())
+          : 0;
+        const targetColCell = columnCellRefs[locIdx >= 0 ? locIdx : 0];
+        if (!targetColCell) return;
+
+        const startMins = parseMinutesFromTime(ev.time);
+        let endMins = ev.endTime ? parseMinutesFromTime(ev.endTime) : startMins + 60;
+        if (endMins <= startMins) endMins = startMins + 30; // Durata minima visiva 30 min
+
+        const durationMins = endMins - startMins;
+        const topPx = (startMins / 60) * ROW_HEIGHT_PX;
+        const heightPx = Math.max((durationMins / 60) * ROW_HEIGHT_PX - 2, 22);
+
+        const evEl = document.createElement('div');
+        evEl.className = 'gc-event';
+        evEl.style.background = ev.color || 'var(--c-MATE1)';
+        evEl.style.top = `${topPx}px`;
+        evEl.style.height = `${heightPx}px`;
+
+        const displayTime = formatTimeRange(ev.time, ev.endTime);
+        if (durationMins <= 35) {
+          evEl.innerHTML = `<span class="ev-title-txt">${ev.title} <span style="font-weight:400; opacity:0.9;">(${ev.time})</span></span>`;
+        } else {
+          evEl.innerHTML = `<span class="ev-title-txt">${ev.title}</span><span class="time-lbl">${displayTime}</span>`;
+        }
+
+        evEl.addEventListener('click', () => {
+          if (ev.isRoutine) {
+            routineDaySelect.value = selectedDayName;
+            renderRoutineList();
+            const rIdx = (state.weeklyPlan[selectedDayName] || []).findIndex(item => item.id === ev.id);
+            if (rIdx >= 0) editRoutineItem(selectedDayName, rIdx);
+            openModal('modal-weekly-edit');
+          } else {
+            openEventModal(ev);
+          }
+        });
+
+        targetColCell.appendChild(evEl);
+      });
+
+      // Aggiungi barra dell'ora corrente
+      const timeLine = document.createElement('div');
+      timeLine.className = 'current-time-line';
+      timeLine.id = 'daily-current-time-line';
+      dailyGridTable.appendChild(timeLine);
+      updateCurrentTimeLine();
+    }
+
+    function updateCurrentTimeLine() {
+      const line = document.getElementById('daily-current-time-line');
+      if (!line) return;
+      const now = new Date();
+      const totalMins = now.getHours() * 60 + now.getMinutes();
+      const topPos = HEADER_HEIGHT_PX + (totalMins / 60) * ROW_HEIGHT_PX;
+      line.style.top = `${topPos}px`;
     }
 
     function scrollToCurrentHour() {
@@ -2325,42 +2502,116 @@
     };
 
     /* ==========================================================================
-       7. TAB 2: HOMEWORK, TASKS & NOTES (With Full Edit Capabilities)
+       7. TAB 2: HOMEWORK (Infinite Strip + Fixed Today), TASKS & NOTES
        ========================================================================== */
     const dateStripContainer = document.getElementById('date-strip-container');
     const homeworkListContainer = document.getElementById('homework-list-container');
     const tasksListContainer = document.getElementById('tasks-list-container');
     const notesListContainer = document.getElementById('notes-list-container');
 
-    function renderDateStrip() {
+    function createDateChipElement(d) {
+      const iso = toLocalISODate(d);
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      const dayNum = d.getDate();
+
+      const chip = document.createElement('div');
+      chip.dataset.iso = iso;
+      chip.className = `date-chip-hw ${iso === state.selectedDateISO ? 'active' : ''} ${iso === todayISO ? 'is-today' : ''}`;
+      chip.innerHTML = `<span class="day-name">${dayName}</span><span class="day-num">${dayNum}</span>`;
+      chip.addEventListener('click', () => {
+        state.selectedDateISO = iso;
+        updateActiveDateChipUI();
+        renderHomeworks();
+        centerActiveDateChip(true);
+      });
+      return chip;
+    }
+
+    function updateActiveDateChipUI() {
+      dateStripContainer.querySelectorAll('.date-chip-hw').forEach(c => {
+        c.classList.toggle('active', c.dataset.iso === state.selectedDateISO);
+      });
+    }
+
+    function centerActiveDateChip(smooth = true) {
+      const activeChip = dateStripContainer.querySelector('.date-chip-hw.active');
+      if (activeChip) {
+        const containerWidth = dateStripContainer.clientWidth;
+        const targetScrollLeft = activeChip.offsetLeft - (containerWidth / 2) + (activeChip.offsetWidth / 2);
+        dateStripContainer.scrollTo({
+          left: targetScrollLeft,
+          behavior: smooth ? 'smooth' : 'auto'
+        });
+      }
+    }
+
+    function prependMoreDates(count = 20) {
+      const prevScrollWidth = dateStripContainer.scrollWidth;
+      const frag = document.createDocumentFragment();
+      for (let i = hwMinOffset - count; i < hwMinOffset; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        frag.appendChild(createDateChipElement(d));
+      }
+      hwMinOffset -= count;
+      buildDateList(hwMinOffset, hwMaxOffset);
+      dateStripContainer.insertBefore(frag, dateStripContainer.firstChild);
+      const newScrollWidth = dateStripContainer.scrollWidth;
+      dateStripContainer.scrollLeft += (newScrollWidth - prevScrollWidth);
+    }
+
+    function appendMoreDates(count = 20) {
+      const frag = document.createDocumentFragment();
+      for (let i = hwMaxOffset + 1; i <= hwMaxOffset + count; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        frag.appendChild(createDateChipElement(d));
+      }
+      hwMaxOffset += count;
+      buildDateList(hwMinOffset, hwMaxOffset);
+      dateStripContainer.appendChild(frag);
+    }
+
+    function ensureDateInList(isoStr) {
+      const targetDate = new Date(isoStr + 'T00:00:00');
+      const baseToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const diffDays = Math.round((targetDate - baseToday) / (1000 * 60 * 60 * 24));
+      if (diffDays < hwMinOffset + 5) {
+        prependMoreDates(Math.abs(diffDays - hwMinOffset) + 20);
+      } else if (diffDays > hwMaxOffset - 5) {
+        appendMoreDates(Math.abs(diffDays - hwMaxOffset) + 20);
+      }
+    }
+
+    function renderDateStrip(smoothCenter = false) {
       dateStripContainer.innerHTML = '';
       dateList.forEach(d => {
-        const iso = d.toISOString().split('T')[0];
-        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-        const dayNum = d.getDate();
-
-        const chip = document.createElement('div');
-        chip.className = `date-chip-hw ${iso === state.selectedDateISO ? 'active' : ''}`;
-        chip.innerHTML = `<span class="day-name">${dayName}</span><span class="day-num">${dayNum}</span>`;
-        chip.addEventListener('click', () => {
-          state.selectedDateISO = iso;
-          renderDateStrip();
-          renderHomeworks();
-        });
-        dateStripContainer.appendChild(chip);
+        dateStripContainer.appendChild(createDateChipElement(d));
       });
-
-      setTimeout(() => {
-        const activeChip = dateStripContainer.querySelector('.date-chip-hw.active');
-        if (activeChip) {
-          activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-      }, 50);
+      setTimeout(() => centerActiveDateChip(smoothCenter), 30);
     }
+
+    // Scorrimento infinito della barra giorni Homeworks
+    dateStripContainer.addEventListener('scroll', () => {
+      if (dateStripContainer.scrollLeft < 180) {
+        prependMoreDates(25);
+      }
+      if (dateStripContainer.scrollLeft + dateStripContainer.clientWidth > dateStripContainer.scrollWidth - 180) {
+        appendMoreDates(25);
+      }
+    }, { passive: true });
+
+    document.getElementById('btn-jump-today').addEventListener('click', () => {
+      state.selectedDateISO = todayISO;
+      ensureDateInList(todayISO);
+      updateActiveDateChipUI();
+      renderHomeworks();
+      centerActiveDateChip(true);
+    });
 
     function renderHomeworks() {
       const selectedDate = new Date(state.selectedDateISO + 'T00:00:00');
-      document.getElementById('current-date-title').textContent = selectedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', weekday: 'short' });
+      const isToday = state.selectedDateISO === todayISO;
+      const formattedTitle = selectedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', weekday: 'short' });
+      document.getElementById('current-date-title').textContent = isToday ? `${formattedTitle} • Today` : formattedTitle;
       
       homeworkListContainer.innerHTML = '';
       const dayHws = state.homeworks.filter(h => h.date === state.selectedDateISO);
@@ -2384,7 +2635,7 @@
       });
     }
 
-    // Gesture di Swipe Orizzontale sulla sezione Homework
+    // Gesture di Swipe Orizzontale sulla sezione Homework (supporta anche giorni infiniti)
     (function attachHomeworkContainerSwipe() {
       let startX = 0, startY = 0, currentX = 0, currentY = 0;
       let isSwiping = false;
@@ -2408,20 +2659,14 @@
         const diffY = currentY - startY;
 
         if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
-          const currentIdx = dateList.findIndex(d => d.toISOString().split('T')[0] === state.selectedDateISO);
-          if (diffX < 0) {
-            if (currentIdx >= 0 && currentIdx < dateList.length - 1) {
-              state.selectedDateISO = dateList[currentIdx + 1].toISOString().split('T')[0];
-              renderDateStrip();
-              renderHomeworks();
-            }
-          } else {
-            if (currentIdx > 0) {
-              state.selectedDateISO = dateList[currentIdx - 1].toISOString().split('T')[0];
-              renderDateStrip();
-              renderHomeworks();
-            }
-          }
+          const curDate = new Date(state.selectedDateISO + 'T00:00:00');
+          curDate.setDate(curDate.getDate() + (diffX < 0 ? 1 : -1));
+          const nextISO = toLocalISODate(curDate);
+          state.selectedDateISO = nextISO;
+          ensureDateInList(nextISO);
+          updateActiveDateChipUI();
+          renderHomeworks();
+          centerActiveDateChip(true);
         }
         startX = 0; startY = 0; currentX = 0; currentY = 0;
       });
@@ -2661,7 +2906,7 @@
     });
 
     /* ==========================================================================
-       8. TAB 3: CALENDAR & LIVE COUNTDOWNS
+       8. TAB 3: CALENDAR & COUNTDOWNS (Senza secondi)
        ========================================================================== */
     const monthTitle = document.getElementById('cal-month-title');
     const monthGrid = document.getElementById('month-grid-container');
@@ -2687,14 +2932,14 @@
         monthGrid.appendChild(document.createElement('div'));
       }
 
-      const today = new Date();
+      const now = new Date();
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'month-cell';
         cell.textContent = day;
 
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+        if (now.getFullYear() === year && now.getMonth() === month && now.getDate() === day) {
           cell.classList.add('today');
         }
 
@@ -2738,7 +2983,6 @@
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const mins = Math.floor((diff / 1000 / 60) % 60);
-        const secs = Math.floor((diff / 1000) % 60);
 
         const card = document.createElement('div');
         card.className = 'countdown-card';
@@ -2748,13 +2992,13 @@
             <strong style="font-size:0.85rem;">${e.title}</strong>
             <div style="font-size:0.7rem; color:var(--text-muted);">${e.date} (${displayTime}) • ${e.location || 'General'}</div>
           </div>
-          <div class="cd-timer">${days}d ${hours}h ${mins}m ${secs}s</div>
+          <div class="cd-timer">${days}d ${hours}h ${mins}m</div>
         `;
         card.addEventListener('click', () => openEventModal(e));
         container.appendChild(card);
       });
     }
-    setInterval(renderCountdowns, 1000);
+    setInterval(renderCountdowns, 15000);
 
     /* ==========================================================================
        9. COLOR PICKER & EVENT MODAL CONTROLLER
@@ -2788,7 +3032,7 @@
       document.getElementById('event-id').value = ev.id || '';
       document.getElementById('modal-event-title-text').textContent = ev.id ? 'Edit Event' : 'Add Event';
       document.getElementById('event-title').value = ev.title || '';
-      document.getElementById('event-date').value = ev.date || new Date().toISOString().split('T')[0];
+      document.getElementById('event-date').value = ev.date || toLocalISODate(new Date());
       document.getElementById('event-time').value = ev.time || '10:00';
       document.getElementById('event-end-time').value = ev.endTime || '';
       document.getElementById('event-location').value = ev.location || '';
@@ -3078,7 +3322,7 @@
       populateCourseSelect(grade.courseId);
       document.getElementById('grade-is-partial').checked = !!grade.isPartial;
       document.getElementById('grade-score-input').value = grade.score || '';
-      document.getElementById('grade-date-input').value = grade.date || new Date().toISOString().split('T')[0];
+      document.getElementById('grade-date-input').value = grade.date || toLocalISODate(new Date());
       document.getElementById('delete-grade-btn').style.display = grade.id ? 'block' : 'none';
       openModal('modal-add-grade');
     }
@@ -3088,7 +3332,7 @@
       const courseId = document.getElementById('grade-course-select').value;
       const isPartial = document.getElementById('grade-is-partial').checked;
       const score = document.getElementById('grade-score-input').value.trim().toUpperCase();
-      const date = document.getElementById('grade-date-input').value || new Date().toISOString().split('T')[0];
+      const date = document.getElementById('grade-date-input').value || toLocalISODate(new Date());
 
       if (!courseId || !score) return;
 
@@ -3154,7 +3398,10 @@
             const card = document.createElement('div');
             card.className = 'course-card';
             const typeLabel = c.type && c.type !== 'Teaching' ? `<span class="course-type-tag">${c.type}</span>` : '';
-            const cfuLabel = c.excludeCredits ? `<div class="course-cfu no-credit">0 CFU (Extra)</div>` : `<div class="course-cfu">${c.cfu} CFU</div>`;
+            const cfuVal = c.cfu !== undefined ? c.cfu : 0;
+            const cfuLabel = c.excludeCredits 
+              ? `<div class="course-cfu no-credit">${cfuVal} CFU<small>(Extra)</small></div>` 
+              : `<div class="course-cfu">${cfuVal} CFU</div>`;
             
             card.innerHTML = `
               <div>
@@ -3243,6 +3490,7 @@
     /* ==========================================================================
        11. INITIALIZATION
        ========================================================================== */
+    updateClock();
     renderDayChips();
     renderDailyGrid();
     renderDateStrip();
