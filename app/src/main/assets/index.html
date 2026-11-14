@@ -242,6 +242,7 @@
       padding-bottom: 2px;
       scrollbar-width: none;
       flex: 1;
+      min-width: 0;
     }
     .day-selector::-webkit-scrollbar {
       display: none;
@@ -261,6 +262,7 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0;
     }
     .day-chip.has-cal-dot::after {
       content: '';
@@ -1323,7 +1325,7 @@
   <header>
     <div class="header-titles">
       <h1>Cladar</h1>
-      <p>Thy Academic & Daily Record</p>
+      <p>Stay determined.</p>
     </div>
     <div class="header-actions">
       <div id="clock-display">00:00:00</div>
@@ -1468,11 +1470,11 @@
   <nav class="bottom-nav">
     <button class="nav-btn active" data-target="tab-daily">
       <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-      Daily Journal
+      Daily
     </button>
     <button class="nav-btn" data-target="tab-tasks">
       <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-      Tasks & Notes
+      Homeworks
     </button>
     <button class="nav-btn" data-target="tab-calendar">
       <svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
@@ -2157,7 +2159,7 @@
         document.getElementById(target).classList.add('active');
 
         if(target === 'tab-daily') {
-          renderDayChips();
+          renderDayChips(false);
           renderDailyGrid();
           scrollToCurrentHour();
         }
@@ -2311,13 +2313,22 @@
     });
 
     /* ==========================================================================
-       5. TAB 1: DAILY JOURNAL (Routine + Colonna Rossa Eventi del Giorno + Swipe Giorni)
+       5. TAB 1: DAILY JOURNAL (Routine con Giorni Infiniti Destra/Sinistra + Colonna Rossa Eventi)
        ========================================================================== */
     const daySelectorBar = document.getElementById('day-selector-bar');
     const dailyGridTable = document.getElementById('daily-grid-table');
     const routineDatePill = document.getElementById('routine-date-pill');
     const ROW_HEIGHT_PX = 54;
     const HEADER_HEIGHT_PX = 38;
+
+    // Range dinamico infinito per la barra dei giorni nella Routine
+    let routineMinOffset = -30;
+    let routineMaxOffset = 60;
+    let routineStripInitialized = false;
+
+    function getRoutineDayDateByOffset(offset) {
+      return new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset);
+    }
 
     function formatTimeRange(startTime, endTime) {
       if (!startTime) return '';
@@ -2344,14 +2355,112 @@
       return locList;
     }
 
+    function createRoutineDayChip(chipDate) {
+      const chipISO = toLocalISODate(chipDate);
+      const dayIdx = (chipDate.getDay() + 6) % 7;
+      const dayName = DAYS_OF_WEEK[dayIdx];
+      const hasCalEvent = state.events.some(e => e.date === chipISO);
+
+      const chip = document.createElement('div');
+      chip.dataset.iso = chipISO;
+      chip.className = `day-chip ${chipISO === getRoutineDateISO() ? 'active' : ''} ${hasCalEvent ? 'has-cal-dot' : ''}`;
+      const monthLabel = chipDate.getDate() === 1
+        ? ` ${chipDate.toLocaleDateString('en-US', { month: 'short' })}`
+        : '';
+      chip.textContent = `${dayName.substring(0, 3)} ${chipDate.getDate()}${monthLabel}`;
+      chip.addEventListener('click', () => {
+        state.routineDate = new Date(chipDate.getFullYear(), chipDate.getMonth(), chipDate.getDate());
+        updateRoutineHeaderUI();
+        renderDailyGrid();
+        centerActiveRoutineChip(true);
+        const wrapper = document.getElementById('daily-grid-wrapper');
+        if (wrapper) wrapper.scrollLeft = 0;
+      });
+      return chip;
+    }
+
+    function prependMoreRoutineDays(count = 25) {
+      const prevScrollWidth = daySelectorBar.scrollWidth;
+      const frag = document.createDocumentFragment();
+      for (let i = routineMinOffset - count; i < routineMinOffset; i++) {
+        frag.appendChild(createRoutineDayChip(getRoutineDayDateByOffset(i)));
+      }
+      routineMinOffset -= count;
+      daySelectorBar.insertBefore(frag, daySelectorBar.firstChild);
+      const newScrollWidth = daySelectorBar.scrollWidth;
+      daySelectorBar.scrollLeft += (newScrollWidth - prevScrollWidth);
+    }
+
+    function appendMoreRoutineDays(count = 25) {
+      const frag = document.createDocumentFragment();
+      for (let i = routineMaxOffset + 1; i <= routineMaxOffset + count; i++) {
+        frag.appendChild(createRoutineDayChip(getRoutineDayDateByOffset(i)));
+      }
+      routineMaxOffset += count;
+      daySelectorBar.appendChild(frag);
+    }
+
+    function ensureRoutineDateInStrip(targetDate) {
+      const baseToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const cleanTarget = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+      const diffDays = Math.round((cleanTarget - baseToday) / (1000 * 60 * 60 * 24));
+      if (diffDays < routineMinOffset + 5) {
+        prependMoreRoutineDays(Math.abs(diffDays - routineMinOffset) + 25);
+      } else if (diffDays > routineMaxOffset - 5) {
+        appendMoreRoutineDays(Math.abs(diffDays - routineMaxOffset) + 25);
+      }
+    }
+
+    function centerActiveRoutineChip(smooth = true) {
+      const activeChip = daySelectorBar.querySelector('.day-chip.active');
+      if (activeChip) {
+        const containerWidth = daySelectorBar.clientWidth;
+        const targetScrollLeft = activeChip.offsetLeft - (containerWidth / 2) + (activeChip.offsetWidth / 2);
+        daySelectorBar.scrollTo({
+          left: targetScrollLeft,
+          behavior: smooth ? 'smooth' : 'auto'
+        });
+      }
+    }
+
+    function updateRoutineHeaderUI() {
+      const activeISO = getRoutineDateISO();
+      daySelectorBar.querySelectorAll('.day-chip').forEach(chip => {
+        const iso = chip.dataset.iso;
+        chip.classList.toggle('active', iso === activeISO);
+        const hasCalEvent = state.events.some(e => e.date === iso);
+        chip.classList.toggle('has-cal-dot', hasCalEvent);
+      });
+
+      if (activeISO === todayISO) {
+        routineDatePill.textContent = 'Today';
+      } else if (state.routineDate.getFullYear() !== today.getFullYear()) {
+        routineDatePill.textContent = state.routineDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+      } else {
+        routineDatePill.textContent = state.routineDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      }
+    }
+
+    // Scorrimento infinito destra/sinistra nella barra dei giorni della Routine
+    daySelectorBar.addEventListener('scroll', () => {
+      if (daySelectorBar.scrollLeft < 180) {
+        prependMoreRoutineDays(25);
+      }
+      if (daySelectorBar.scrollLeft + daySelectorBar.clientWidth > daySelectorBar.scrollWidth - 180) {
+        appendMoreRoutineDays(25);
+      }
+    }, { passive: true });
+
     function changeRoutineDay(delta) {
       state.routineDate = new Date(
         state.routineDate.getFullYear(),
         state.routineDate.getMonth(),
         state.routineDate.getDate() + delta
       );
-      renderDayChips();
+      ensureRoutineDateInStrip(state.routineDate);
+      updateRoutineHeaderUI();
       renderDailyGrid();
+      centerActiveRoutineChip(true);
       const wrapper = document.getElementById('daily-grid-wrapper');
       if (wrapper) wrapper.scrollLeft = 0;
     }
@@ -2359,53 +2468,26 @@
     routineDatePill.addEventListener('click', () => {
       const now = new Date();
       state.routineDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      renderDayChips();
+      ensureRoutineDateInStrip(state.routineDate);
+      updateRoutineHeaderUI();
       renderDailyGrid();
+      centerActiveRoutineChip(true);
       const wrapper = document.getElementById('daily-grid-wrapper');
       if (wrapper) wrapper.scrollLeft = 0;
       scrollToCurrentHour();
     });
 
-    function renderDayChips() {
-      daySelectorBar.innerHTML = '';
-      const activeDayIdx = getRoutineDayIdx();
-      const activeISO = getRoutineDateISO();
-
-      // Calcola il lunedì della settimana corrente visualizzata
-      const mondayOfWeek = new Date(
-        state.routineDate.getFullYear(),
-        state.routineDate.getMonth(),
-        state.routineDate.getDate() - activeDayIdx
-      );
-
-      DAYS_OF_WEEK.forEach((day, idx) => {
-        const chipDate = new Date(
-          mondayOfWeek.getFullYear(),
-          mondayOfWeek.getMonth(),
-          mondayOfWeek.getDate() + idx
-        );
-        const chipISO = toLocalISODate(chipDate);
-        const hasCalEvent = state.events.some(e => e.date === chipISO);
-
-        const chip = document.createElement('div');
-        chip.className = `day-chip ${idx === activeDayIdx ? 'active' : ''} ${hasCalEvent ? 'has-cal-dot' : ''}`;
-        chip.textContent = `${day.substring(0, 3)} ${chipDate.getDate()}`;
-        chip.addEventListener('click', () => {
-          state.routineDate = chipDate;
-          renderDayChips();
-          renderDailyGrid();
-          const wrapper = document.getElementById('daily-grid-wrapper');
-          if (wrapper) wrapper.scrollLeft = 0;
-        });
-        daySelectorBar.appendChild(chip);
-      });
-
-      // Aggiorna la pillola data nell'header della routine
-      if (activeISO === todayISO) {
-        routineDatePill.textContent = 'Today';
-      } else {
-        routineDatePill.textContent = state.routineDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+    function renderDayChips(smoothCenter = false) {
+      if (!routineStripInitialized) {
+        daySelectorBar.innerHTML = '';
+        for (let i = routineMinOffset; i <= routineMaxOffset; i++) {
+          daySelectorBar.appendChild(createRoutineDayChip(getRoutineDayDateByOffset(i)));
+        }
+        routineStripInitialized = true;
       }
+      ensureRoutineDateInStrip(state.routineDate);
+      updateRoutineHeaderUI();
+      setTimeout(() => centerActiveRoutineChip(smoothCenter), 30);
     }
 
     function renderDailyGrid() {
@@ -2519,7 +2601,6 @@
       if (dayCalendarEvents.length > 0) {
         const sortedCal = [...dayCalendarEvents].sort((a, b) => parseMinutesFromTime(a.time) - parseMinutesFromTime(b.time));
         sortedCal.forEach((ev, idx) => {
-          // Calcola eventuali sovrapposizioni nella stessa fascia oraria
           const sA = parseMinutesFromTime(ev.time);
           const eA = ev.endTime ? Math.max(parseMinutesFromTime(ev.endTime), sA + 30) : sA + 60;
           const overlapping = sortedCal.filter(other => {
@@ -3347,7 +3428,7 @@
       saveAllState();
       closeModal('modal-event');
       renderCalendarMonth();
-      renderDayChips();
+      updateRoutineHeaderUI();
       renderDailyGrid();
       renderCountdowns();
     });
@@ -3359,7 +3440,7 @@
       saveAllState();
       closeModal('modal-event');
       renderCalendarMonth();
-      renderDayChips();
+      updateRoutineHeaderUI();
       renderDailyGrid();
       renderCountdowns();
     });
@@ -3591,11 +3672,40 @@
       openGradeModal({});
     });
 
-    function populateCourseSelect(selectedCourseId) {
+    function populateCourseSelect(selectedCourseId, editingGradeId = '') {
       const sel = document.getElementById('grade-course-select');
+      const saveBtn = document.getElementById('save-grade-btn');
       sel.innerHTML = '';
-      
-      state.studyPlan.forEach(c => {
+
+      // Esclude i corsi che hanno già un voto definitivo (non partial), tranne il voto attualmente in modifica
+      const finalizedCourseIds = new Set(
+        state.evaluations
+          .filter(e => !e.isPartial && e.id !== editingGradeId)
+          .map(e => e.courseId)
+      );
+
+      const availableCourses = state.studyPlan.filter(c => !finalizedCourseIds.has(c.id));
+
+      if (availableCourses.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.disabled = true;
+        opt.selected = true;
+        opt.textContent = 'All courses already have a final grade';
+        sel.appendChild(opt);
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.style.opacity = '0.5';
+        }
+        return;
+      }
+
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+      }
+
+      availableCourses.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = `${c.name} (${c.code})`;
@@ -3609,13 +3719,14 @@
     };
 
     function openGradeModal(grade = {}) {
-      document.getElementById('grade-edit-id').value = grade.id || '';
-      document.getElementById('modal-grade-title').textContent = grade.id ? 'Edit Grade' : 'Record Grade';
-      populateCourseSelect(grade.courseId);
+      const editId = grade.id || '';
+      document.getElementById('grade-edit-id').value = editId;
+      document.getElementById('modal-grade-title').textContent = editId ? 'Edit Grade' : 'Record Grade';
+      populateCourseSelect(grade.courseId, editId);
       document.getElementById('grade-is-partial').checked = !!grade.isPartial;
       document.getElementById('grade-score-input').value = grade.score || '';
       document.getElementById('grade-date-input').value = grade.date || toLocalISODate(new Date());
-      document.getElementById('delete-grade-btn').style.display = grade.id ? 'block' : 'none';
+      document.getElementById('delete-grade-btn').style.display = editId ? 'block' : 'none';
       openModal('modal-add-grade');
     }
 
@@ -3627,6 +3738,15 @@
       const date = document.getElementById('grade-date-input').value || toLocalISODate(new Date());
 
       if (!courseId || !score) return;
+
+      // Impedisce di registrare due volte un voto definitivo per lo stesso esame
+      const alreadyHasFinal = state.evaluations.some(
+        e => e.courseId === courseId && !e.isPartial && e.id !== id
+      );
+      if (alreadyHasFinal) {
+        alert('This exam already has a recorded grade.');
+        return;
+      }
 
       if (id) {
         const idx = state.evaluations.findIndex(e => e.id === id);
