@@ -226,36 +226,49 @@
 
     /* --- TAB 1: DAILY JOURNAL --- */
     .daily-header {
-      padding: 10px 16px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: var(--card-bg);
       border-bottom: 1px solid var(--card-border);
       flex-shrink: 0;
-      gap: 12px;
+      gap: 8px;
     }
     .day-selector {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
       scrollbar-width: none;
+      flex: 1;
     }
     .day-selector::-webkit-scrollbar {
       display: none;
     }
     .day-chip {
-      padding: 6px 14px;
+      padding: 6px 11px;
       border-radius: 20px;
       border: 1px solid var(--card-border);
       background: var(--bg-color);
       color: var(--text-color);
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s ease;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .day-chip.has-cal-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      display: inline-block;
     }
     .day-chip.active {
       background: var(--accent-blue);
@@ -263,9 +276,24 @@
       border-color: var(--accent-blue);
       box-shadow: 0 2px 8px rgba(10, 132, 255, 0.3);
     }
+    .day-chip.active.has-cal-dot::after {
+      background: #ffffff;
+    }
+    .routine-date-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.28);
+      padding: 4px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
     
     .btn-edit-discrete {
-      opacity: 0.6;
+      opacity: 0.75;
       transition: opacity 0.2s ease;
       background: none;
       border: none;
@@ -307,16 +335,23 @@
       position: sticky;
       top: 0;
       z-index: 15;
-      padding: 0 8px;
+      padding: 2px 6px;
       text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.15;
       box-shadow: 0 1px 3px var(--shadow-color);
     }
     .gh-cell:first-child {
       left: 0;
       z-index: 20;
+    }
+    /* Prima colonna rossa dedicata agli eventi del calendario del giorno */
+    .gh-cell.gh-cal-events {
+      background: rgba(255, 69, 58, 0.22);
+      color: var(--accent-red);
+      border-bottom: 2px solid var(--accent-red);
+      border-right: 1px solid rgba(255, 69, 58, 0.35);
     }
     .gc-time {
       background: var(--card-bg);
@@ -340,18 +375,22 @@
       border-bottom: 1px solid var(--card-border);
       position: relative;
     }
+    .gc-empty.gc-cal-event-col {
+      background: rgba(255, 69, 58, 0.06);
+      border-right: 1px solid rgba(255, 69, 58, 0.25);
+    }
     
-    /* Eventi posizionati con minutaggio e durata esatti */
+    /* Eventi posizionati con minutaggio, durata esatta e wrap completo del testo */
     .gc-event {
       position: absolute;
       left: 3px;
       right: 3px;
       border: 1px solid rgba(255, 255, 255, 0.28);
       border-radius: var(--radius-sm);
-      padding: 4px 8px;
-      font-size: 0.75rem;
+      padding: 4px 6px;
+      font-size: 0.74rem;
       font-weight: 700;
-      overflow: hidden;
+      overflow: visible;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -362,26 +401,30 @@
       box-shadow: 0 3px 8px var(--shadow-color);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
+    .gc-event.is-cal-event {
+      background: linear-gradient(145deg, rgba(255, 69, 58, 0.92), rgba(210, 35, 50, 0.94)) !important;
+      border: 1px solid rgba(255, 160, 150, 0.65);
+    }
     .gc-event:hover {
       transform: translateY(-1px);
       box-shadow: 0 5px 12px var(--shadow-color);
       z-index: 8;
     }
     .gc-event .ev-title-txt {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: anywhere;
       line-height: 1.2;
     }
     .gc-event .time-lbl {
-      font-size: 0.66rem;
+      font-size: 0.65rem;
       color: rgba(255, 255, 255, 0.92) !important;
       font-weight: 500;
       margin-top: 2px;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.15;
     }
 
     /* Linea indicatrice dell'ora corrente (stile Google Calendar) */
@@ -743,32 +786,32 @@
       box-shadow: 0 4px 15px var(--shadow-color);
     }
 
-    /* --- TAB 3: CALENDAR & COUNTDOWNS --- */
+    /* --- TAB 3: CALENDAR & COUNTDOWNS (Calendario completo + Countdown naturali sotto) --- */
     .calendar-split-container {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      min-height: 100%;
       width: 100%;
     }
     .cal-top-half {
-      height: 52%;
-      padding: 14px;
+      padding: 12px 14px 14px 14px;
       border-bottom: 1px solid var(--card-border);
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
+      background: var(--bg-color);
+      touch-action: pan-y;
     }
     .cal-bottom-half {
-      height: 48%;
-      padding: 14px;
-      overflow-y: auto;
+      padding: 14px 14px 30px 14px;
       background: var(--bg-color);
+      flex: 1;
     }
     .month-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .month-title {
       font-size: 1.05rem;
@@ -778,18 +821,19 @@
     .month-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
+      gap: 5px;
       text-align: center;
     }
     .month-day-head {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 800;
       color: var(--text-muted);
-      padding: 6px 0;
+      padding: 4px 0;
       text-transform: uppercase;
     }
     .month-cell {
-      aspect-ratio: 1.1;
+      min-height: 38px;
+      aspect-ratio: 1.15;
       border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
       display: flex;
@@ -813,12 +857,12 @@
     }
     .month-cell.has-event::after {
       content: '';
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       background: var(--accent-blue);
       border-radius: 50%;
       position: absolute;
-      bottom: 4px;
+      bottom: 3px;
     }
     .countdown-title {
       font-size: 0.95rem;
@@ -840,6 +884,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
       cursor: pointer;
       box-shadow: 0 2px 8px var(--shadow-color);
     }
@@ -852,6 +897,7 @@
       padding: 4px 10px;
       border-radius: 8px;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* --- TAB 4: PROFILE & ACADEMIC DASHBOARD --- */
@@ -973,13 +1019,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
       cursor: pointer;
     }
-    .eval-left { display: flex; align-items: center; gap: 10px; }
+    .eval-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .eval-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .eval-title { font-size: 0.88rem; font-weight: 700; color: var(--text-color); }
+    .eval-title { font-size: 0.88rem; font-weight: 700; color: var(--text-color); word-break: break-word; }
     .eval-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
-    .eval-score { font-size: 1rem; font-weight: 800; color: var(--text-color); }
+    .eval-score { font-size: 1rem; font-weight: 800; color: var(--text-color); white-space: nowrap; }
 
     .btn-study-plan {
       background: var(--card-bg);
@@ -1102,7 +1149,7 @@
     }
     .modal-header h3 { font-size: 1.05rem; color: var(--text-color); font-weight: 800; letter-spacing: -0.01em; }
     .modal-body {
-      padding: 20px;
+      padding: 18px;
       overflow-y: auto;
       overflow-x: hidden;
       flex: 1;
@@ -1220,10 +1267,34 @@
     .badge-avatar { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; }
     .badge-qr { width: 135px; height: 135px; background: #ffffff; padding: 8px; border-radius: 14px; object-fit: contain; }
 
-    .eval-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .eval-table th, .eval-table td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--card-border); }
-    .eval-table th { color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 800; }
-    .sub-code-col { color: var(--text-muted); font-size: 0.72rem; font-weight: 600; }
+    /* Tabella Evaluations con wrap completo senza scroll orizzontale */
+    .eval-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .eval-table th, .eval-table td {
+      padding: 10px 4px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      vertical-align: middle;
+    }
+    .eval-table th {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .sub-code-col {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
 
     .confirm-card {
       background: var(--card-bg);
@@ -1269,6 +1340,7 @@
     <section id="tab-daily" class="tab-content active">
       <div class="daily-header">
         <div class="day-selector" id="day-selector-bar"></div>
+        <button type="button" class="routine-date-pill" id="routine-date-pill" title="Return to Today">Today</button>
         <button class="btn-edit-discrete" id="open-weekly-edit-btn" title="Configure Routine">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         </button>
@@ -1316,7 +1388,7 @@
     <!-- TAB 3: CALENDAR & COUNTDOWNS -->
     <section id="tab-calendar" class="tab-content">
       <div class="calendar-split-container">
-        <div class="cal-top-half">
+        <div class="cal-top-half" id="cal-top-swipe-area">
           <div class="month-header">
             <button class="btn-icon" id="cal-prev-month">&lt;</button>
             <div class="month-title" id="cal-month-title">Month Year</div>
@@ -1641,7 +1713,7 @@
     </div>
   </div>
 
-  <!-- EVALUATIONS DETAIL MODAL -->
+  <!-- EVALUATIONS DETAIL MODAL (Wrap completo senza scorrimento orizzontale) -->
   <div class="modal-overlay" id="modal-evaluations-detail">
     <div class="modal-card">
       <div class="modal-header">
@@ -1649,16 +1721,22 @@
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
           <span style="font-size:0.8rem; color:var(--text-muted);" id="eval-count-lbl">0 exams taken</span>
-          <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:6px 12px; font-size:0.8rem;">+ Add Grade</button>
+          <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:6px 12px; font-size:0.8rem; margin-top:0;">+ Add Grade</button>
         </div>
-        <div style="overflow-x:auto;">
+        <div style="width:100%;">
           <table class="eval-table">
+            <colgroup>
+              <col style="width: 38%;">
+              <col style="width: 24%;">
+              <col style="width: 16%;">
+              <col style="width: 22%;">
+            </colgroup>
             <thead>
               <tr>
-                <th>Code / SSD</th>
-                <th>Course & Professors</th>
+                <th>Course / SSD</th>
+                <th>Professor</th>
                 <th>Grade</th>
                 <th>Type</th>
               </tr>
@@ -1830,6 +1908,13 @@
           <button class="btn-primary-action" id="btn-import-json" style="background: var(--card-border); color: var(--text-color); margin-top: 6px;">Import Data (JSON)</button>
           <input type="file" id="file-import-input" accept=".json" style="display: none;">
         </div>
+
+        <hr style="border:none; border-top:1px solid var(--card-border); margin:8px 0;">
+
+        <div class="form-group">
+          <label>Application</label>
+          <a href="https://github.com/GeneralizedAbstractNonsense/Cladar/releases" target="_blank" rel="noopener noreferrer" class="btn-primary-action" style="text-decoration:none; display:block; background: var(--accent-green); color: #ffffff;">Update</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1930,7 +2015,7 @@
     const state = {
       theme: localStorage.getItem('cladar_theme') || 'dark',
       selectedDateISO: todayISO,
-      selectedDayIdx: (today.getDay() + 6) % 7,
+      routineDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
       calendarDate: new Date(),
       
       events: JSON.parse(localStorage.getItem('cladar_events') || '[]'),
@@ -1982,6 +2067,14 @@
 
       pendingDelete: null
     };
+
+    function getRoutineDateISO() {
+      return toLocalISODate(state.routineDate);
+    }
+
+    function getRoutineDayIdx() {
+      return (state.routineDate.getDay() + 6) % 7;
+    }
 
     function saveAllState() {
       localStorage.setItem('cladar_theme', state.theme);
@@ -2064,6 +2157,7 @@
         document.getElementById(target).classList.add('active');
 
         if(target === 'tab-daily') {
+          renderDayChips();
           renderDailyGrid();
           scrollToCurrentHour();
         }
@@ -2077,6 +2171,14 @@
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     document.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', (e) => e.target.closest('.modal-overlay').classList.remove('active'));
+    });
+
+    // Chiudi l'overlay del badge profilo cliccando sullo sfondo sfocato
+    const studentBadgeOverlay = document.getElementById('modal-student-badge');
+    studentBadgeOverlay.addEventListener('click', (e) => {
+      if (e.target === studentBadgeOverlay) {
+        closeModal('modal-student-badge');
+      }
     });
 
     const themeSelect = document.getElementById('theme-select');
@@ -2209,10 +2311,11 @@
     });
 
     /* ==========================================================================
-       5. TAB 1: DAILY JOURNAL (Proportional Event Blocks & Current Time Line)
+       5. TAB 1: DAILY JOURNAL (Routine + Colonna Rossa Eventi del Giorno + Swipe Giorni)
        ========================================================================== */
     const daySelectorBar = document.getElementById('day-selector-bar');
     const dailyGridTable = document.getElementById('daily-grid-table');
+    const routineDatePill = document.getElementById('routine-date-pill');
     const ROW_HEIGHT_PX = 54;
     const HEADER_HEIGHT_PX = 38;
 
@@ -2227,18 +2330,12 @@
       return (h * 60) + (m || 0);
     }
 
-    function getDynamicLocationsForDay(dayIdx) {
+    function getRoutineLocationsForDay(dayIdx) {
       const selectedDayName = DAYS_OF_WEEK[dayIdx];
       const routineEvents = state.weeklyPlan[selectedDayName] || [];
-      const dayEvents = state.events.filter(e => {
-        const d = new Date(e.date + 'T00:00:00');
-        const dIdx = (d.getDay() + 6) % 7;
-        return dIdx === dayIdx;
-      });
 
       const uniqueLocs = new Set();
       routineEvents.forEach(r => { if (r.location && r.location.trim()) uniqueLocs.add(r.location.trim()); });
-      dayEvents.forEach(e => { if (e.location && e.location.trim()) uniqueLocs.add(e.location.trim()); });
 
       const locList = Array.from(uniqueLocs);
       if (locList.length === 0) {
@@ -2247,41 +2344,111 @@
       return locList;
     }
 
+    function changeRoutineDay(delta) {
+      state.routineDate = new Date(
+        state.routineDate.getFullYear(),
+        state.routineDate.getMonth(),
+        state.routineDate.getDate() + delta
+      );
+      renderDayChips();
+      renderDailyGrid();
+      const wrapper = document.getElementById('daily-grid-wrapper');
+      if (wrapper) wrapper.scrollLeft = 0;
+    }
+
+    routineDatePill.addEventListener('click', () => {
+      const now = new Date();
+      state.routineDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      renderDayChips();
+      renderDailyGrid();
+      const wrapper = document.getElementById('daily-grid-wrapper');
+      if (wrapper) wrapper.scrollLeft = 0;
+      scrollToCurrentHour();
+    });
+
     function renderDayChips() {
       daySelectorBar.innerHTML = '';
+      const activeDayIdx = getRoutineDayIdx();
+      const activeISO = getRoutineDateISO();
+
+      // Calcola il lunedì della settimana corrente visualizzata
+      const mondayOfWeek = new Date(
+        state.routineDate.getFullYear(),
+        state.routineDate.getMonth(),
+        state.routineDate.getDate() - activeDayIdx
+      );
+
       DAYS_OF_WEEK.forEach((day, idx) => {
+        const chipDate = new Date(
+          mondayOfWeek.getFullYear(),
+          mondayOfWeek.getMonth(),
+          mondayOfWeek.getDate() + idx
+        );
+        const chipISO = toLocalISODate(chipDate);
+        const hasCalEvent = state.events.some(e => e.date === chipISO);
+
         const chip = document.createElement('div');
-        chip.className = `day-chip ${idx === state.selectedDayIdx ? 'active' : ''}`;
-        chip.textContent = day.substring(0, 3);
+        chip.className = `day-chip ${idx === activeDayIdx ? 'active' : ''} ${hasCalEvent ? 'has-cal-dot' : ''}`;
+        chip.textContent = `${day.substring(0, 3)} ${chipDate.getDate()}`;
         chip.addEventListener('click', () => {
-          state.selectedDayIdx = idx;
+          state.routineDate = chipDate;
           renderDayChips();
           renderDailyGrid();
+          const wrapper = document.getElementById('daily-grid-wrapper');
+          if (wrapper) wrapper.scrollLeft = 0;
         });
         daySelectorBar.appendChild(chip);
       });
+
+      // Aggiorna la pillola data nell'header della routine
+      if (activeISO === todayISO) {
+        routineDatePill.textContent = 'Today';
+      } else {
+        routineDatePill.textContent = state.routineDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      }
     }
 
     function renderDailyGrid() {
       dailyGridTable.innerHTML = '';
-      const locations = getDynamicLocationsForDay(state.selectedDayIdx);
+      const currentISO = getRoutineDateISO();
+      const dayIdx = getRoutineDayIdx();
+      const selectedDayName = DAYS_OF_WEEK[dayIdx];
 
-      dailyGridTable.style.gridTemplateColumns = `55px repeat(${locations.length}, minmax(135px, 1fr))`;
+      // Eventi fissati nel Calendar ESCLUSIVAMENTE per questa data precisa
+      const dayCalendarEvents = state.events
+        .filter(e => e.date === currentISO)
+        .map(e => ({ ...e, isRoutine: false }));
+
+      const dayRoutineEvents = (state.weeklyPlan[selectedDayName] || [])
+        .map(r => ({ ...r, isRoutine: true }));
+
+      const routineLocs = getRoutineLocationsForDay(dayIdx);
+
+      // Costruzione colonne: se ci sono eventi Calendar per questo giorno, la prima colonna è dedicata in rosso
+      const columns = [];
+      if (dayCalendarEvents.length > 0) {
+        columns.push({ type: 'calendar', title: 'Events' });
+      }
+      routineLocs.forEach(loc => {
+        columns.push({ type: 'location', title: loc });
+      });
+
+      dailyGridTable.style.gridTemplateColumns = `55px repeat(${columns.length}, minmax(135px, 1fr))`;
 
       const timeHead = document.createElement('div');
       timeHead.className = 'gh-cell';
       timeHead.textContent = 'Hour';
       dailyGridTable.appendChild(timeHead);
 
-      locations.forEach(loc => {
+      columns.forEach(col => {
         const cell = document.createElement('div');
-        cell.className = 'gh-cell';
-        cell.textContent = loc;
-        cell.title = loc;
+        cell.className = col.type === 'calendar' ? 'gh-cell gh-cal-events' : 'gh-cell';
+        cell.textContent = col.title;
+        cell.title = col.title;
         dailyGridTable.appendChild(cell);
       });
 
-      // Costruzione della griglia base 24 ore x N colonne
+      // Costruzione griglia base 24 ore x N colonne
       const columnCellRefs = [];
       for (let h = 0; h < 24; h++) {
         const hourStr = `${String(h).padStart(2, '0')}:00`;
@@ -2292,55 +2459,46 @@
         timeCell.textContent = hourStr;
         dailyGridTable.appendChild(timeCell);
 
-        locations.forEach((loc, locIdx) => {
+        columns.forEach((col, colIdx) => {
           const gridCell = document.createElement('div');
-          gridCell.className = 'gc-empty';
+          gridCell.className = col.type === 'calendar' ? 'gc-empty gc-cal-event-col' : 'gc-empty';
           if (h === 0) {
-            columnCellRefs[locIdx] = gridCell;
+            columnCellRefs[colIdx] = gridCell;
           }
           dailyGridTable.appendChild(gridCell);
         });
       }
 
-      // Raccolta eventi del giorno (Routine + Eventi Calendario)
-      const selectedDayName = DAYS_OF_WEEK[state.selectedDayIdx];
-      const dayRoutineEvents = (state.weeklyPlan[selectedDayName] || []).map(r => ({ ...r, isRoutine: true }));
-      const dayCalendarEvents = state.events.filter(e => {
-        const d = new Date(e.date + 'T00:00:00');
-        const dayIdx = (d.getDay() + 6) % 7;
-        return dayIdx === state.selectedDayIdx;
-      }).map(e => ({ ...e, isRoutine: false }));
-
-      const allDayEvents = [...dayRoutineEvents, ...dayCalendarEvents];
-
-      // Posizionamento proporzionale ai minuti di inizio e alla durata effettiva
-      allDayEvents.forEach(ev => {
-        const locIdx = ev.location && ev.location.trim()
-          ? locations.indexOf(ev.location.trim())
-          : 0;
-        const targetColCell = columnCellRefs[locIdx >= 0 ? locIdx : 0];
+      // Funzione helper per renderizzare un singolo blocco evento con testo a capo (wrap)
+      function mountEventBlock(ev, targetColCell, isCalCol, overlapIndex = 0, overlapCount = 1) {
         if (!targetColCell) return;
 
         const startMins = parseMinutesFromTime(ev.time);
         let endMins = ev.endTime ? parseMinutesFromTime(ev.endTime) : startMins + 60;
-        if (endMins <= startMins) endMins = startMins + 30; // Durata minima visiva 30 min
+        if (endMins <= startMins) endMins = startMins + 30;
 
         const durationMins = endMins - startMins;
         const topPx = (startMins / 60) * ROW_HEIGHT_PX;
-        const heightPx = Math.max((durationMins / 60) * ROW_HEIGHT_PX - 2, 22);
+        const heightPx = Math.max((durationMins / 60) * ROW_HEIGHT_PX - 2, 26);
 
         const evEl = document.createElement('div');
-        evEl.className = 'gc-event';
-        evEl.style.background = ev.color || 'var(--c-MATE1)';
+        evEl.className = `gc-event ${isCalCol ? 'is-cal-event' : ''}`;
+        if (!isCalCol) {
+          evEl.style.background = ev.color || 'var(--c-MATE1)';
+        }
         evEl.style.top = `${topPx}px`;
-        evEl.style.height = `${heightPx}px`;
+        evEl.style.height = 'auto';
+        evEl.style.minHeight = `${heightPx}px`;
+
+        if (overlapCount > 1) {
+          const widthPct = 100 / overlapCount;
+          evEl.style.left = `calc(${overlapIndex * widthPct}% + 2px)`;
+          evEl.style.right = `calc(${(overlapCount - 1 - overlapIndex) * widthPct}% + 2px)`;
+        }
 
         const displayTime = formatTimeRange(ev.time, ev.endTime);
-        if (durationMins <= 35) {
-          evEl.innerHTML = `<span class="ev-title-txt">${ev.title} <span style="font-weight:400; opacity:0.9;">(${ev.time})</span></span>`;
-        } else {
-          evEl.innerHTML = `<span class="ev-title-txt">${ev.title}</span><span class="time-lbl">${displayTime}</span>`;
-        }
+        const locTag = isCalCol && ev.location ? ` • ${ev.location}` : '';
+        evEl.innerHTML = `<span class="ev-title-txt">${ev.title}</span><span class="time-lbl">${displayTime}${locTag}</span>`;
 
         evEl.addEventListener('click', () => {
           if (ev.isRoutine) {
@@ -2355,14 +2513,43 @@
         });
 
         targetColCell.appendChild(evEl);
+      }
+
+      // 1. Monta gli eventi Calendar nella prima colonna rossa (se presenti per questa data)
+      if (dayCalendarEvents.length > 0) {
+        const sortedCal = [...dayCalendarEvents].sort((a, b) => parseMinutesFromTime(a.time) - parseMinutesFromTime(b.time));
+        sortedCal.forEach((ev, idx) => {
+          // Calcola eventuali sovrapposizioni nella stessa fascia oraria
+          const sA = parseMinutesFromTime(ev.time);
+          const eA = ev.endTime ? Math.max(parseMinutesFromTime(ev.endTime), sA + 30) : sA + 60;
+          const overlapping = sortedCal.filter(other => {
+            const sB = parseMinutesFromTime(other.time);
+            const eB = other.endTime ? Math.max(parseMinutesFromTime(other.endTime), sB + 30) : sB + 60;
+            return sA < eB && eA > sB;
+          });
+          const posInGroup = overlapping.indexOf(ev);
+          mountEventBlock(ev, columnCellRefs[0], true, posInGroup, overlapping.length);
+        });
+      }
+
+      // 2. Monta le attività della Routine nelle rispettive colonne aula/luogo
+      const locationOffset = dayCalendarEvents.length > 0 ? 1 : 0;
+      dayRoutineEvents.forEach(ev => {
+        const locIdx = ev.location && ev.location.trim()
+          ? routineLocs.indexOf(ev.location.trim())
+          : 0;
+        const targetColIdx = locationOffset + (locIdx >= 0 ? locIdx : 0);
+        mountEventBlock(ev, columnCellRefs[targetColIdx], false, 0, 1);
       });
 
-      // Aggiungi barra dell'ora corrente
-      const timeLine = document.createElement('div');
-      timeLine.className = 'current-time-line';
-      timeLine.id = 'daily-current-time-line';
-      dailyGridTable.appendChild(timeLine);
-      updateCurrentTimeLine();
+      // Barra dell'ora corrente (visibile solo se si sta visualizzando Oggi)
+      if (currentISO === todayISO) {
+        const timeLine = document.createElement('div');
+        timeLine.className = 'current-time-line';
+        timeLine.id = 'daily-current-time-line';
+        dailyGridTable.appendChild(timeLine);
+        updateCurrentTimeLine();
+      }
     }
 
     function updateCurrentTimeLine() {
@@ -2379,6 +2566,57 @@
       const targetEl = document.getElementById(`hour-row-${currentHour}`);
       if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+
+    // Scorrimento continuo destra/sinistra sulla tabella Routine per passare al giorno successivo/precedente
+    (function attachDailyGridSwipe() {
+      const wrapper = document.getElementById('daily-grid-wrapper');
+      if (!wrapper) return;
+      let startX = 0, startY = 0, lastX = 0, lastY = 0;
+      let startScrollLeft = 0;
+      let isTracking = false;
+
+      wrapper.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startX = lastX = e.touches[0].clientX;
+        startY = lastY = e.touches[0].clientY;
+        startScrollLeft = wrapper.scrollLeft;
+        isTracking = true;
+      }, { passive: true });
+
+      wrapper.addEventListener('touchmove', (e) => {
+        if (!isTracking) return;
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+      }, { passive: true });
+
+      wrapper.addEventListener('touchend', () => {
+        if (!isTracking) return;
+        isTracking = false;
+        const diffX = lastX - startX;
+        const diffY = lastY - startY;
+
+        if (Math.abs(diffX) < 55 || Math.abs(diffX) < Math.abs(diffY) * 1.25) return;
+
+        const maxScrollLeft = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
+        const currentScrollLeft = wrapper.scrollLeft;
+
+        if (diffX < 0) {
+          // Swipe verso sinistra -> giorno dopo
+          const startedAtEnd = startScrollLeft >= maxScrollLeft - 6;
+          const overscrolledPastEnd = (currentScrollLeft >= maxScrollLeft - 6) && (Math.abs(diffX) > (maxScrollLeft - startScrollLeft) + 55);
+          if (maxScrollLeft <= 4 || startedAtEnd || overscrolledPastEnd) {
+            changeRoutineDay(1);
+          }
+        } else {
+          // Swipe verso destra -> giorno prima
+          const startedAtStart = startScrollLeft <= 6;
+          const overscrolledPastStart = (currentScrollLeft <= 6) && (diffX > startScrollLeft + 55);
+          if (maxScrollLeft <= 4 || startedAtStart || overscrolledPastStart) {
+            changeRoutineDay(-1);
+          }
+        }
+      });
+    })();
 
     /* ==========================================================================
        6. WEEKLY ROUTINE EDITOR MODAL CONTROLLER (With Start & End Times)
@@ -2427,6 +2665,7 @@
     });
 
     document.getElementById('open-weekly-edit-btn').addEventListener('click', () => {
+      routineDaySelect.value = DAYS_OF_WEEK[getRoutineDayIdx()];
       resetRoutineForm();
       renderRoutineList();
       openModal('modal-weekly-edit');
@@ -2635,7 +2874,7 @@
       });
     }
 
-    // Gesture di Swipe Orizzontale sulla sezione Homework (supporta anche giorni infiniti)
+    // Gesture di Swipe Orizzontale sulla sezione Homework
     (function attachHomeworkContainerSwipe() {
       let startX = 0, startY = 0, currentX = 0, currentY = 0;
       let isSwiping = false;
@@ -2906,7 +3145,7 @@
     });
 
     /* ==========================================================================
-       8. TAB 3: CALENDAR & COUNTDOWNS (Senza secondi)
+       8. TAB 3: CALENDAR & COUNTDOWNS (Swipe Mese + Layout Completo)
        ========================================================================== */
     const monthTitle = document.getElementById('cal-month-title');
     const monthGrid = document.getElementById('month-grid-container');
@@ -2963,6 +3202,43 @@
       renderCalendarMonth();
     });
 
+    // Swipe destra/sinistra sul calendario mensile per cambiare mese
+    (function attachCalendarMonthSwipe() {
+      const swipeArea = document.getElementById('cal-top-swipe-area');
+      if (!swipeArea) return;
+      let startX = 0, startY = 0, endX = 0, endY = 0;
+      let tracking = false;
+
+      swipeArea.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startX = endX = e.touches[0].clientX;
+        startY = endY = e.touches[0].clientY;
+        tracking = true;
+      }, { passive: true });
+
+      swipeArea.addEventListener('touchmove', (e) => {
+        if (!tracking) return;
+        endX = e.touches[0].clientX;
+        endY = e.touches[0].clientY;
+      }, { passive: true });
+
+      swipeArea.addEventListener('touchend', () => {
+        if (!tracking) return;
+        tracking = false;
+        const diffX = endX - startX;
+        const diffY = endY - startY;
+
+        if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
+          if (diffX < 0) {
+            state.calendarDate.setMonth(state.calendarDate.getMonth() + 1);
+          } else {
+            state.calendarDate.setMonth(state.calendarDate.getMonth() - 1);
+          }
+          renderCalendarMonth();
+        }
+      });
+    })();
+
     function renderCountdowns() {
       const container = document.getElementById('countdown-list-container');
       container.innerHTML = '';
@@ -2988,8 +3264,8 @@
         card.className = 'countdown-card';
         const displayTime = formatTimeRange(e.time, e.endTime);
         card.innerHTML = `
-          <div>
-            <strong style="font-size:0.85rem;">${e.title}</strong>
+          <div style="min-width:0;">
+            <strong style="font-size:0.85rem; word-break:break-word;">${e.title}</strong>
             <div style="font-size:0.7rem; color:var(--text-muted);">${e.date} (${displayTime}) • ${e.location || 'General'}</div>
           </div>
           <div class="cd-timer">${days}d ${hours}h ${mins}m</div>
@@ -3071,6 +3347,7 @@
       saveAllState();
       closeModal('modal-event');
       renderCalendarMonth();
+      renderDayChips();
       renderDailyGrid();
       renderCountdowns();
     });
@@ -3082,6 +3359,7 @@
       saveAllState();
       closeModal('modal-event');
       renderCalendarMonth();
+      renderDayChips();
       renderDailyGrid();
       renderCountdowns();
     });
@@ -3096,6 +3374,18 @@
       if (upper.includes('30L')) return 30;
       const val = parseFloat(upper);
       return isNaN(val) ? null : val;
+    }
+
+    function getSortedEvaluationsByDateDesc() {
+      return [...state.evaluations]
+        .map((item, idx) => ({ item, idx }))
+        .sort((a, b) => {
+          const dateA = a.item.date || '';
+          const dateB = b.item.date || '';
+          if (dateB !== dateA) return dateB.localeCompare(dateA);
+          return b.idx - a.idx;
+        })
+        .map(x => x.item);
     }
 
     function renderProfileView() {
@@ -3175,7 +3465,8 @@
         return;
       }
       
-      const recent = [...state.evaluations].reverse().slice(0, 4);
+      // Ordina per data inserita decrescente (dall'ultimo voto ricevuto)
+      const recent = getSortedEvaluationsByDateDesc().slice(0, 4);
       recent.forEach(e => {
         const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---' };
         const upper = String(e.score).trim().toUpperCase();
@@ -3201,7 +3492,7 @@
               <div class="eval-sub">${e.date}</div>
             </div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
             <div class="eval-score" style="color:${colorClass};">${e.score}</div>
             <span style="font-size:0.75rem; color:var(--accent-blue);">✎</span>
           </div>
@@ -3272,17 +3563,18 @@
       tbody.innerHTML = '';
       document.getElementById('eval-count-lbl').textContent = `${state.evaluations.length} evaluation(s) recorded`;
 
-      state.evaluations.forEach(e => {
+      const sortedEvals = getSortedEvaluationsByDateDesc();
+      sortedEvals.forEach(e => {
         const c = state.studyPlan.find(x => x.id === e.courseId) || { name: 'Unknown Course', code: '---', ssd: '---', prof: '---' };
         const tr = document.createElement('tr');
         tr.style.cursor = 'pointer';
         tr.innerHTML = `
-          <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd}</div></td>
+          <td><div><strong>${c.name}</strong></div><div class="sub-code-col">${c.code} • ${c.ssd} • ${e.date}</div></td>
           <td>${c.prof}</td>
           <td><strong style="color:var(--accent-blue);">${e.score}</strong></td>
           <td>
             ${e.isPartial ? '<span style="color:var(--accent-yellow);">Partial</span>' : '<span style="color:var(--accent-green);">Final</span>'}
-            <span style="font-size:0.75rem; color:var(--accent-blue); margin-left:6px;">✎</span>
+            <span style="font-size:0.75rem; color:var(--accent-blue); margin-left:4px;">✎</span>
           </td>
         `;
         tr.addEventListener('click', () => {
