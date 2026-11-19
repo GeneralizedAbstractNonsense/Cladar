@@ -3398,10 +3398,14 @@
     function renderHomeworks() {
       const selectedDate = parseSlashDate(state.selectedDateSlash);
       const isToday = state.selectedDateSlash === todaySlash;
-      const weekdayShort = selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
+      const formattedTitle = selectedDate.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
       document.getElementById('current-date-title').textContent = isToday
-        ? `${state.selectedDateSlash} (${weekdayShort}) • Today`
-        : `${state.selectedDateSlash} (${weekdayShort})`;
+        ? `${formattedTitle} • Today`
+        : formattedTitle;
       
       homeworkListContainer.innerHTML = '';
       const dayHws = state.homeworks.filter(h => normalizeDateToSlash(h.date) === state.selectedDateSlash);
