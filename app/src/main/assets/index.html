@@ -1825,7 +1825,7 @@
           </div>
           <div class="form-group">
             <label>Location</label>
-            <input type="text" id="event-location" class="form-control" placeholder="e.g. Aula Volterra...">
+            <input type="text" id="event-location" class="form-control" placeholder="e.g. Ruins...">
           </div>
           <div class="form-group">
             <label>Color Palette</label>
@@ -2181,7 +2181,7 @@
         </div>
         <div class="form-group">
           <label>Location</label>
-          <input type="text" id="routine-location" class="form-control" placeholder="Aula Volterra">
+          <input type="text" id="routine-location" class="form-control" placeholder="Snowdin">
         </div>
         <div class="form-group">
           <label>Color</label>
@@ -2344,8 +2344,8 @@
       ])),
 
       weeklyPlan: JSON.parse(localStorage.getItem('cladar_weekly_plan') || JSON.stringify({
-        Monday: [{ id: 'r1', title: 'Analysis I', time: '09:30', endTime: '11:00', location: 'Aula Volterra', color: 'var(--c-MATE1)', notes: 'Study limits:\n$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$' }],
-        Wednesday: [{ id: 'r2', title: 'Linear Algebra', time: '14:15', endTime: '16:00', location: 'Aula Enriques', color: 'var(--c-SMIA2)', notes: 'Matrix rank theorem.' }]
+        Monday: [{ id: 'r1', title: 'Analysis I', time: '09:30', endTime: '11:00', location: 'CORE', color: 'var(--c-MATE1)', notes: 'Study limits:\n$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$' }],
+        Wednesday: [{ id: 'r2', title: 'Linear Algebra', time: '14:15', endTime: '16:00', location: 'Ruins', color: 'var(--c-SMIA2)', notes: 'Matrix rank theorem.' }]
       })),
 
       pendingDelete: null
@@ -3273,7 +3273,7 @@
       const title = document.getElementById('routine-title').value;
       const time = document.getElementById('routine-time').value;
       const endTime = document.getElementById('routine-end-time').value;
-      const location = document.getElementById('routine-location').value || 'Aula Volterra';
+      const location = document.getElementById('routine-location').value || 'Snowdin';
       const color = document.getElementById('routine-color').value;
       const notes = document.getElementById('routine-notes').value;
       const editIdx = parseInt(document.getElementById('routine-edit-idx').value);
@@ -3757,7 +3757,7 @@
         if (hasEvent) cell.classList.add('has-event');
 
         cell.addEventListener('click', () => {
-          openEventModal({ date: dateStr, time: '10:00', endTime: '11:00', location: 'Aula Volterra', color: INTUITIVE_PALETTE[0].var });
+          openEventModal({ date: dateStr, time: '10:00', endTime: '11:00', location: 'Waterfalls', color: INTUITIVE_PALETTE[0].var });
         });
 
         monthGrid.appendChild(cell);
