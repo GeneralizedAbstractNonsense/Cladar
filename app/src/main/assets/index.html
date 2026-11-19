@@ -2302,7 +2302,7 @@
         degree: 'B.Sc. Computer Engineering, Robotics and Bio-inspired Systems (L-8)',
         degreeType: 'Bachelor\'s Degree (3-year program)',
         studyPlanCode: '29415',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        avatarUrl: 'data:image/svg+xml;utf8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20200%20200%22%20width=%22300%22%20height=%22300%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22bg%22%20x1=%220%25%22%20y1=%220%25%22%20x2=%22100%25%22%20y2=%22100%25%22%3E%3Cstop%20offset=%220%25%22%20stop-color=%22%231e293b%22/%3E%3Cstop%20offset=%22100%25%22%20stop-color=%22%23334155%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%22200%22%20height=%22200%22%20fill=%22url(%23bg)%22/%3E%3Cpath%20d=%22M40%20200%20C40%20155,%2065%20142,%20100%20142%20C135%20142,%20160%20155,%20160%20200%20Z%22%20fill=%22%23f8fafc%22/%3E%3Cpath%20d=%22M82%20142%20L100%20175%20L118%20142%20Z%22%20fill=%22%23cbd5e1%22/%3E%3Cpath%20d=%22M74%20144%20L94%20182%20L84%20186%20L66%20150%20Z%22%20fill=%22%23e2e8f0%22/%3E%3Cpath%20d=%22M126%20144%20L106%20182%20L116%20186%20L134%20150%20Z%22%20fill=%22%23e2e8f0%22/%3E%3Crect%20x=%2286%22%20y=%22122%22%20width=%2228%22%20height=%2226%22%20rx=%228%22%20fill=%22%23eab308%22/%3E%3Cpolygon%20points=%2256,74%2036,62%2054,92%22%20fill=%22%23eab308%22/%3E%3Cpolygon%20points=%22144,74%20164,62%20146,92%22%20fill=%22%23eab308%22/%3E%3Cpolygon%20points=%2278,46%2072,26%2092,44%22%20fill=%22%23facc15%22/%3E%3Cpolygon%20points=%22122,46%20128,26%20108,44%22%20fill=%22%23facc15%22/%3E%3Cellipse%20cx=%22100%22%20cy=%2288%22%20rx=%2248%22%20ry=%2244%22%20fill=%22%23facc15%22/%3E%3Cellipse%20cx=%22100%22%20cy=%22104%22%20rx=%2240%22%20ry=%2226%22%20fill=%22%23fde047%22/%3E%3Cellipse%20cx=%2266%22%20cy=%22102%22%20rx=%227%22%20ry=%224%22%20fill=%22%23fb7185%22%20opacity=%220.65%22/%3E%3Cellipse%20cx=%22134%22%20cy=%22102%22%20rx=%227%22%20ry=%224%22%20fill=%22%23fb7185%22%20opacity=%220.65%22/%3E%3Cpath%20d=%22M84%20112%20Q100%20123%20116%20112%22%20stroke=%22%23713f12%22%20stroke-width=%223.5%22%20fill=%22none%22%20stroke-linecap=%22round%22/%3E%3Crect%20x=%2294%22%20y=%22116%22%20width=%225%22%20height=%226%22%20rx=%221%22%20fill=%22%23ffffff%22%20stroke=%22%23713f12%22%20stroke-width=%221%22/%3E%3Crect%20x=%22101%22%20y=%22116%22%20width=%225%22%20height=%226%22%20rx=%221%22%20fill=%22%23ffffff%22%20stroke=%22%23713f12%22%20stroke-width=%221%22/%3E%3Cline%20x1=%2294%22%20y1=%2284%22%20x2=%22106%22%20y2=%2284%22%20stroke=%22%230f172a%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%2276%22%20cy=%2284%22%20r=%2218%22%20fill=%22%23e0f2fe%22%20stroke=%22%230f172a%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%22124%22%20cy=%2284%22%20r=%2218%22%20fill=%22%23e0f2fe%22%20stroke=%22%230f172a%22%20stroke-width=%224%22/%3E%3Ccircle%20cx=%2278%22%20cy=%2284%22%20r=%224.5%22%20fill=%22%230f172a%22/%3E%3Ccircle%20cx=%22122%22%20cy=%2284%22%20r=%224.5%22%20fill=%22%230f172a%22/%3E%3Cline%20x1=%2266%22%20y1=%2276%22%20x2=%2272%22%20y2=%2270%22%20stroke=%22%23ffffff%22%20stroke-width=%222.5%22%20stroke-linecap=%22round%22/%3E%3Cline%20x1=%22114%22%20y1=%2276%22%20x2=%22120%22%20y2=%2270%22%20stroke=%22%23ffffff%22%20stroke-width=%222.5%22%20stroke-linecap=%22round%22/%3E%3C/svg%3E',
         qrData: '2015915_UNIMEB'
       })),
 
@@ -4089,7 +4089,7 @@
       document.getElementById('badge-student-name').textContent = state.profile.name;
       document.getElementById('badge-mat-num').textContent = `ID: ${state.profile.mat}`;
       document.getElementById('badge-course-name').textContent = state.profile.degree;
-      document.getElementById('badge-order-code').textContent = `Codice Ordine: ${state.profile.studyPlanCode || 'N/A'}`;
+      document.getElementById('badge-order-code').textContent = `Course code: ${state.profile.studyPlanCode || 'N/A'}`;
       document.getElementById('badge-avatar-img').src = state.profile.avatarUrl;
       document.getElementById('badge-qr-img').src = state.profile.qrData.startsWith('http') || state.profile.qrData.startsWith('data:image') 
         ? state.profile.qrData 
@@ -4274,7 +4274,7 @@
     function renderStudyPlanView() {
       document.getElementById('sp-univ-dept').textContent = `${state.profile.univ} • ${state.profile.dept}`;
       document.getElementById('sp-course-full').textContent = `${state.profile.degree} — ${state.profile.degreeType}`;
-      document.getElementById('sp-order-code-header').textContent = `Codice Ordine di Studi: ${state.profile.studyPlanCode || 'Non specificato'}`;
+      document.getElementById('sp-order-code-header').textContent = `Course Code: ${state.profile.studyPlanCode || 'Non specificato'}`;
 
       const tree = document.getElementById('study-plan-tree');
       tree.innerHTML = '';
