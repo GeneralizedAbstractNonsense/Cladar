@@ -2295,23 +2295,40 @@
       events: rawEvents,
       
       profile: JSON.parse(localStorage.getItem('cladar_profile') || JSON.stringify({
-        name: 'Alex Taylor',
-        mat: '1984203',
-        univ: 'Sapienza University of Rome',
-        dept: 'Dept. of Computer Science',
-        degree: 'B.Sc. Computer Science (L-31)',
-        degreeType: 'Bachelor\'s Degree (Triennale)',
-        studyPlanCode: '33592',
+        name: 'Dr. Alphys',
+        mat: '2015915',
+        univ: 'Mount Ebott University',
+        dept: 'Dept. of Information Engineering, Robotics and Bioengineering (DIIRB)',
+        degree: 'B.Sc. Computer Engineering, Robotics and Bio-inspired Systems (L-8)',
+        degreeType: 'Bachelor\'s Degree (3-year program)',
+        studyPlanCode: '29415',
         avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-        qrData: '1984203_SAPIENZA'
+        qrData: '2015915_UNIMEB'
       })),
 
       studyPlan: JSON.parse(localStorage.getItem('cladar_study_plan') || JSON.stringify([
-        { id: 'c1', code: '1042918', ssd: 'INF/01', name: 'Calculus I', prof: 'Prof. Rossi', ay: '2025/2026', year: 1, sem: 1, cfu: 9, type: 'Teaching', excludeCredits: false },
-        { id: 'c2', code: '1042919', ssd: 'INF/01', name: 'Linear Algebra', prof: 'Prof. Bianchi', ay: '2025/2026', year: 1, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
-        { id: 'c3', code: '1042920', ssd: 'INF/01', name: 'Computer Programming', prof: 'Prof. Verdi', ay: '2025/2026', year: 1, sem: 2, cfu: 12, type: 'Teaching', excludeCredits: false },
-        { id: 'c4', code: '1042921', ssd: 'FIS/01', name: 'Physics I', prof: 'Prof. Neri', ay: '2026/2027', year: 2, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
-        { id: 'c5', code: 'SEM01', ssd: 'INF/01', name: 'Seminar Ethics', prof: 'Prof. Romano', ay: '2026/2027', year: 2, sem: 2, cfu: 3, type: 'Seminar', excludeCredits: true }
+        { id: 'c1', code: '2941501', ssd: 'MAT/05', name: 'Mathematical Analysis I', prof: 'Prof. Toriel Dreemurr', ay: '2024/2025', year: 1, sem: 1, cfu: 12, type: 'Teaching', excludeCredits: false },
+        { id: 'c2', code: '2941502', ssd: 'MAT/03', name: 'Linear Algebra and Geometry', prof: 'Prof. W.D. Gaster', ay: '2024/2025', year: 1, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c3', code: '2941503', ssd: 'ING-INF/05', name: 'Fundamentals of Computer Science and Programming', prof: 'Prof. Sans', ay: '2024/2025', year: 1, sem: 1, cfu: 12, type: 'Teaching', excludeCredits: false },
+        { id: 'c4', code: '2941504', ssd: 'FIS/01', name: 'General Physics I', prof: 'Prof. W.D. Gaster', ay: '2024/2025', year: 1, sem: 2, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c5', code: '2941505', ssd: 'CHIM/07', name: 'Chemistry and Structure of Matter', prof: 'Prof. Asgore Dreemurr', ay: '2024/2025', year: 1, sem: 2, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c6', code: '2941506', ssd: 'ING-INF/04', name: 'Fundamentals of Control Systems', prof: 'Prof. Undyne', ay: '2024/2025', year: 1, sem: 2, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c7', code: '2941507', ssd: 'L-LIN/12', name: 'English Language Proficiency B2', prof: 'Prof. Toriel Dreemurr', ay: '2024/2025', year: 1, sem: 2, cfu: 6, type: 'Seminar', excludeCredits: true },
+        { id: 'c8', code: '2941508', ssd: 'MAT/05', name: 'Mathematical Analysis II', prof: 'Prof. Toriel Dreemurr', ay: '2025/2026', year: 2, sem: 1, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c9', code: '2941509', ssd: 'FIS/01', name: 'General Physics II and Electromagnetism', prof: 'Prof. W.D. Gaster', ay: '2025/2026', year: 2, sem: 1, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c10', code: '2941510', ssd: 'INF/01', name: 'Algorithms, Data Structures and Artificial Intelligence', prof: 'Prof. Sans', ay: '2025/2026', year: 2, sem: 1, cfu: 12, type: 'Teaching', excludeCredits: false },
+        { id: 'c11', code: '2941511', ssd: 'ING-INF/01', name: 'Digital Electronics and Microcontrollers', prof: 'Prof. Napstablook', ay: '2025/2026', year: 2, sem: 2, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c12', code: '2941512', ssd: 'ING-INF/05', name: 'Operating Systems and Computer Networks', prof: 'Prof. Papyrus', ay: '2025/2026', year: 2, sem: 2, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c13', code: '2941513', ssd: 'ING-INF/04', name: 'Fundamentals of Robotics and Automatic Control', prof: 'Prof. Undyne', ay: '2025/2026', year: 2, sem: 2, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c14', code: 'AAF1042', ssd: 'ING-INF/05', name: 'Interdisciplinary Robotics Labs', prof: 'Prof. W.D. Gaster', ay: '2025/2026', year: 2, sem: 2, cfu: 3, type: 'Seminar', excludeCredits: true },
+        { id: 'c15', code: 'SEM01', ssd: 'L-ART/06', name: 'Film Club: Mew Mew Kissy Cutie Analysis', prof: 'Prof. Shyren', ay: '2025/2026', year: 2, sem: 2, cfu: 3, type: 'Seminar', excludeCredits: true },
+        { id: 'c16', code: '2941514', ssd: 'ING-IND/34', name: 'Cellular Bioengineering and Biomaterials', prof: 'Prof. Asgore Dreemurr', ay: '2026/2027', year: 3, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c17', code: '2941515', ssd: 'ING-IND/13', name: 'Mechatronics and Actuators for Humanoid Systems', prof: 'Prof. Mettaton', ay: '2026/2027', year: 3, sem: 1, cfu: 9, type: 'Teaching', excludeCredits: false },
+        { id: 'c18', code: '2941516', ssd: 'ING-INF/05', name: 'Human-Computer Interaction and Entertainment Systems', prof: 'Prof. Mettaton', ay: '2026/2027', year: 3, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c19', code: '2941517', ssd: 'FIS/07', name: 'Biophysics and Signal Transduction', prof: 'Prof. W.D. Gaster', ay: '2026/2027', year: 3, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c20', code: '2941518', ssd: 'ING-INF/01', name: 'High Thermal-Resistance Embedded Systems', prof: 'Prof. Grillby', ay: '2026/2027', year: 3, sem: 2, cfu: 6, type: 'Teaching', excludeCredits: false },
+        { id: 'c21', code: 'INT01', ssd: 'ING-INF/04', name: 'Curricular Internship at Hotland Royal Lab', prof: 'Prof. Asgore Dreemurr', ay: '2026/2027', year: 3, sem: 2, cfu: 18, type: 'Seminar', excludeCredits: true },
+        { id: 'c22', code: 'THS01', ssd: 'ING-INF/04', name: 'Final Thesis: Autonomous Robotic Prototype', prof: 'Prof. W.D. Gaster', ay: '2026/2027', year: 3, sem: 2, cfu: 9, type: 'Seminar', excludeCredits: true }
       ])),
 
       evaluations: rawEvaluations,
