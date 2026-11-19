@@ -2221,26 +2221,26 @@
       { name: 'Sand Stone',     var: 'var(--c-UNATA)', hex: 'rgba(215, 211, 199, 0.80)' }
     ];
 
-    function toSlashDate(d) {
+   function toSlashDate(d) {
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
-      return `${y}/${m}/${day}`;
+      return `${y}-${m}-${day}`;
     }
 
     function normalizeDateToSlash(str) {
       if (!str) return '';
-      const cleaned = String(str).trim().replace(/-/g, '/');
-      const match = cleaned.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+      const cleaned = String(str).trim().replace(/\//g, '-');
+      const match = cleaned.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       if (match) {
-        return `${match[1]}/${match[2].padStart(2, '0')}/${match[3].padStart(2, '0')}`;
+        return `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}`;
       }
       return cleaned;
     }
 
     function parseSlashDate(str) {
       const norm = normalizeDateToSlash(str);
-      const parts = norm.split('/').map(Number);
+      const parts = norm.split('-').map(Number);
       if (parts.length === 3 && !parts.some(isNaN)) {
         return new Date(parts[0], parts[1] - 1, parts[2]);
       }
@@ -2248,8 +2248,11 @@
     }
 
     function slashToIsoInput(str) {
-      return normalizeDateToSlash(str).replace(/\//g, '-');
+      return normalizeDateToSlash(str);
     }
+
+
+
 
     const today = new Date();
     const todaySlash = toSlashDate(today);
@@ -2356,11 +2359,11 @@
     /* ==========================================================================
        2. CAMPI DATA COMPILABILI IN FORMATO YYYY/MM/DD
        ========================================================================== */
-    function formatDigitsAsSlashDate(rawVal) {
+   function formatDigitsAsSlashDate(rawVal) {
       const digits = String(rawVal || '').replace(/\D/g, '').slice(0, 8);
       if (digits.length <= 4) return digits;
-      if (digits.length <= 6) return `${digits.slice(0, 4)}/${digits.slice(4)}`;
-      return `${digits.slice(0, 4)}/${digits.slice(4, 6)}/${digits.slice(6, 8)}`;
+      if (digits.length <= 6) return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+      return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6, 8)}`;
     }
 
     function setSlashDateField(textInputId, proxyInputId, dateValue) {
@@ -3724,7 +3727,7 @@
         cell.className = 'month-cell';
         cell.textContent = day;
 
-        const dateStr = `${year}/${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         if (now.getFullYear() === year && now.getMonth() === month && now.getDate() === day) {
           cell.classList.add('today');
         }
