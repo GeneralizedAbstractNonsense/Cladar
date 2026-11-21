@@ -1607,9 +1607,9 @@
     }
 
     /* ==========================================================================
-       OBSIDIAN-STYLE SINGLE-PANE LIVE MARKDOWN EDITOR
+       markup-STYLE SINGLE-PANE LIVE MARKDOWN EDITOR
        ========================================================================== */
-    .obsidian-editor {
+    .markup-editor {
       position: relative;
       border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
@@ -1617,11 +1617,11 @@
       min-height: 112px;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .obsidian-editor.is-editing {
+    .markup-editor.is-editing {
       border-color: var(--accent-blue);
       box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.22);
     }
-    .obsidian-mode-pill {
+    .markup-mode-pill {
       position: absolute;
       top: 8px;
       right: 8px;
@@ -1636,10 +1636,10 @@
       cursor: pointer;
       transition: background 0.15s ease;
     }
-    .obsidian-mode-pill:hover {
+    .markup-mode-pill:hover {
       background: rgba(10, 132, 255, 0.24);
     }
-    .obsidian-rendered {
+    .markup-rendered {
       padding: 12px 68px 12px 14px;
       min-height: 110px;
       font-size: 0.9rem;
@@ -1649,14 +1649,14 @@
       word-break: break-word;
       user-select: text;
     }
-    .obsidian-rendered p { margin-bottom: 8px; }
-    .obsidian-rendered p:last-child { margin-bottom: 0; }
-    .obsidian-rendered ul, .obsidian-rendered ol { padding-left: 20px; margin-bottom: 8px; }
-    .obsidian-rendered.is-placeholder {
+    .markup-rendered p { margin-bottom: 8px; }
+    .markup-rendered p:last-child { margin-bottom: 0; }
+    .markup-rendered ul, .markup-rendered ol { padding-left: 20px; margin-bottom: 8px; }
+    .markup-rendered.is-placeholder {
       color: var(--text-muted);
       font-style: italic;
     }
-    .obsidian-textarea {
+    .markup-textarea {
       width: 100%;
       min-height: 110px;
       padding: 12px 68px 12px 14px;
@@ -1670,10 +1670,10 @@
       display: none;
       user-select: text;
     }
-    .obsidian-editor.is-editing .obsidian-textarea {
+    .markup-editor.is-editing .markup-textarea {
       display: block;
     }
-    .obsidian-editor.is-editing .obsidian-rendered {
+    .markup-editor.is-editing .markup-rendered {
       display: none;
     }
 
@@ -2043,10 +2043,10 @@
         </div>
         <div class="form-group">
           <label>Homework Text (Markdown &amp; $...$)</label>
-          <div class="obsidian-editor" id="hw-obsidian-editor">
-            <button type="button" class="obsidian-mode-pill" tabindex="-1">Preview</button>
-            <div class="obsidian-rendered"></div>
-            <textarea id="hw-text-input" class="obsidian-textarea" rows="4" placeholder="e.g. Limits problem: $\lim_{x \to 0} \frac{\sin x}{x} = 1$"></textarea>
+          <div class="markup-editor" id="hw-markup-editor">
+            <button type="button" class="markup-mode-pill" tabindex="-1">Preview</button>
+            <div class="markup-rendered"></div>
+            <textarea id="hw-text-input" class="markup-textarea" rows="4" placeholder="e.g. Limits problem: $\lim_{x \to 0} \frac{\sin x}{x} = 1$"></textarea>
           </div>
         </div>
         <div style="display:flex; justify-content:space-between; margin-top:6px;">
@@ -2105,10 +2105,10 @@
         </div>
         <div class="form-group">
           <label>Content (Markdown &amp; $...$)</label>
-          <div class="obsidian-editor" id="note-obsidian-editor">
-            <button type="button" class="obsidian-mode-pill" tabindex="-1">Preview</button>
-            <div class="obsidian-rendered"></div>
-            <textarea id="note-text-input" class="obsidian-textarea" rows="5" placeholder="Write Markdown and formulas like $\int x^n dx = \frac{x^{n+1}}{n+1} + C$"></textarea>
+          <div class="markup-editor" id="note-markup-editor">
+            <button type="button" class="markup-mode-pill" tabindex="-1">Preview</button>
+            <div class="markup-rendered"></div>
+            <textarea id="note-text-input" class="markup-textarea" rows="5" placeholder="Write Markdown and formulas like $\int x^n dx = \frac{x^{n+1}}{n+1} + C$"></textarea>
           </div>
         </div>
         <div style="display:flex; justify-content:flex-end; margin-top:6px;">
@@ -2163,10 +2163,10 @@
           </div>
           <div class="form-group">
             <label>Description (Markdown &amp; $...$)</label>
-            <div class="obsidian-editor" id="event-obsidian-editor">
-              <button type="button" class="obsidian-mode-pill" tabindex="-1">Preview</button>
-              <div class="obsidian-rendered"></div>
-              <textarea id="event-notes" class="obsidian-textarea" rows="4" placeholder="Description with LaTeX $\int_{0}^{\infty} x^2 dx$"></textarea>
+            <div class="markup-editor" id="event-markup-editor">
+              <button type="button" class="markup-mode-pill" tabindex="-1">Preview</button>
+              <div class="markup-rendered"></div>
+              <textarea id="event-notes" class="markup-textarea" rows="4" placeholder="Description with LaTeX $\int_{0}^{\infty} x^2 dx$"></textarea>
             </div>
           </div>
 
@@ -2656,10 +2656,10 @@
         </div>
         <div class="form-group">
           <label>Description (Markdown &amp; $...$)</label>
-          <div class="obsidian-editor" id="routine-obsidian-editor">
-            <button type="button" class="obsidian-mode-pill" tabindex="-1">Preview</button>
-            <div class="obsidian-rendered"></div>
-            <textarea id="routine-notes" class="obsidian-textarea" rows="3" placeholder="Description with LaTeX $f(x) = x^2$"></textarea>
+          <div class="markup-editor" id="routine-markup-editor">
+            <button type="button" class="markup-mode-pill" tabindex="-1">Preview</button>
+            <div class="markup-rendered"></div>
+            <textarea id="routine-notes" class="markup-textarea" rows="3" placeholder="Description with LaTeX $f(x) = x^2$"></textarea>
           </div>
         </div>
         <div style="display:flex; gap:8px;">
@@ -3358,14 +3358,14 @@
     }
 
     /* ==========================================================================
-       6. OBSIDIAN-STYLE UNIFIED MARKDOWN EDITOR
+       6. markup-STYLE UNIFIED MARKDOWN EDITOR
        ========================================================================== */
-    function initObsidianEditor(wrapperId, onBlurSaveCallback = null) {
+    function initmarkupEditor(wrapperId, onBlurSaveCallback = null) {
       const wrapper = typeof wrapperId === 'string' ? document.getElementById(wrapperId) : wrapperId;
       if (!wrapper) return;
-      const pill = wrapper.querySelector('.obsidian-mode-pill');
-      const rendered = wrapper.querySelector('.obsidian-rendered');
-      const textarea = wrapper.querySelector('.obsidian-textarea');
+      const pill = wrapper.querySelector('.markup-mode-pill');
+      const rendered = wrapper.querySelector('.markup-rendered');
+      const textarea = wrapper.querySelector('.markup-textarea');
 
       function enterEditMode() {
         wrapper.classList.add('is-editing');
@@ -3407,7 +3407,7 @@
         enterRenderMode();
       });
 
-      wrapper._syncObsidian = (startInEdit = false) => {
+      wrapper._syncmarkup = (startInEdit = false) => {
         if (startInEdit) {
           enterEditMode();
         } else {
@@ -3425,15 +3425,15 @@
       };
     }
 
-    initObsidianEditor('hw-obsidian-editor');
-    initObsidianEditor('note-obsidian-editor');
-    initObsidianEditor('event-obsidian-editor');
-    initObsidianEditor('routine-obsidian-editor');
+    initmarkupEditor('hw-markup-editor');
+    initmarkupEditor('note-markup-editor');
+    initmarkupEditor('event-markup-editor');
+    initmarkupEditor('routine-markup-editor');
 
-    function syncObsidianField(wrapperId, startInEdit = false) {
+    function syncmarkupField(wrapperId, startInEdit = false) {
       const wrapper = document.getElementById(wrapperId);
-      if (wrapper && typeof wrapper._syncObsidian === 'function') {
-        wrapper._syncObsidian(startInEdit);
+      if (wrapper && typeof wrapper._syncmarkup === 'function') {
+        wrapper._syncmarkup(startInEdit);
       }
     }
 
@@ -3875,7 +3875,7 @@
       document.getElementById('routine-end-time').value = '11:00';
       document.getElementById('routine-location').value = '';
       document.getElementById('routine-notes').value = '';
-      syncObsidianField('routine-obsidian-editor', true);
+      syncmarkupField('routine-markup-editor', true);
       document.getElementById('routine-form-heading').textContent = "Add Routine Activity";
       document.getElementById('cancel-routine-edit-btn').style.display = 'none';
       document.getElementById('add-routine-btn').textContent = "Add to Routine";
@@ -3891,7 +3891,7 @@
       document.getElementById('routine-location').value = item.location || '';
       document.getElementById('routine-color').value = item.color || 'var(--c-MATE1)';
       document.getElementById('routine-notes').value = item.notes || '';
-      syncObsidianField('routine-obsidian-editor', !(item.notes && item.notes.trim()));
+      syncmarkupField('routine-markup-editor', !(item.notes && item.notes.trim()));
 
       document.getElementById('routine-form-heading').textContent = "Edit Routine Activity";
       document.getElementById('cancel-routine-edit-btn').style.display = 'block';
@@ -4327,7 +4327,7 @@
       document.getElementById('hw-subject-input').value = hw.subject || '';
       setSlashDateField('hw-date-input', 'hw-date-proxy', hw.date || state.selectedDateSlash);
       document.getElementById('hw-text-input').value = hw.text || '';
-      syncObsidianField('hw-obsidian-editor', !(hw.text && hw.text.trim()));
+      syncmarkupField('hw-markup-editor', !(hw.text && hw.text.trim()));
       document.getElementById('delete-hw-btn').style.display = hw.id ? 'block' : 'none';
       openModal('modal-homework');
     }
@@ -4399,7 +4399,7 @@
       document.getElementById('modal-note-title-txt').textContent = note.id ? 'Edit Note' : 'Add Note';
       document.getElementById('note-title-input').value = note.title || '';
       document.getElementById('note-text-input').value = note.text || '';
-      syncObsidianField('note-obsidian-editor', !(note.text && note.text.trim()));
+      syncmarkupField('note-markup-editor', !(note.text && note.text.trim()));
       openModal('modal-note');
     }
 
@@ -4594,7 +4594,7 @@
       document.getElementById('event-notes').value = ev.notes || '';
       document.getElementById('event-color').value = ev.color || INTUITIVE_PALETTE[0].var;
       
-      syncObsidianField('event-obsidian-editor', !(ev.notes && ev.notes.trim()));
+      syncmarkupField('event-markup-editor', !(ev.notes && ev.notes.trim()));
 
       const delBtn = document.getElementById('delete-event-btn');
       delBtn.style.display = ev.id ? 'block' : 'none';
@@ -5784,25 +5784,25 @@
         // 4. Personal Notes in Markdown & LaTeX ($...$)
         const notesBox = document.createElement('div');
         notesBox.className = 'course-sub-box';
-        notesBox.innerHTML = `<div class="course-sub-title">Personal Notes (Markdown &amp; $...$)</div>`;
+        notesBox.innerHTML = `<div class="course-sub-title">Personal Notes</div>`;
 
-        const obsidianWrap = document.createElement('div');
-        obsidianWrap.className = 'obsidian-editor';
-        obsidianWrap.innerHTML = `
-          <button type="button" class="obsidian-mode-pill" tabindex="-1">Edit</button>
-          <div class="obsidian-rendered"></div>
-          <textarea class="obsidian-textarea" rows="4" placeholder="Tap to write personal course notes in Markdown or LaTeX ($E = mc^2$)..."></textarea>
+        const markupWrap = document.createElement('div');
+        markupWrap.className = 'markup-editor';
+        markupWrap.innerHTML = `
+          <button type="button" class="markup-mode-pill" tabindex="-1">Edit</button>
+          <div class="markup-rendered"></div>
+          <textarea class="markup-textarea" rows="4" placeholder="Tap to write personal course notes in Markdown or LaTeX ($E = mc^2$)..."></textarea>
         `;
-        const textarea = obsidianWrap.querySelector('.obsidian-textarea');
+        const textarea = markupWrap.querySelector('.markup-textarea');
         textarea.value = detail.notes || '';
 
-        initObsidianEditor(obsidianWrap, (updatedMarkdown) => {
+        initmarkupEditor(markupWrap, (updatedMarkdown) => {
           detail.notes = updatedMarkdown;
           saveAllState();
         });
-        obsidianWrap._syncObsidian(false);
+        markupWrap._syncmarkup(false);
 
-        notesBox.appendChild(obsidianWrap);
+        notesBox.appendChild(markupWrap);
         body.appendChild(notesBox);
 
         item.dataset.courseId = c.id;
