@@ -2282,13 +2282,13 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Course Regulations (Ordinamento)</label>
-          <input type="text" id="edit-course-regulation" class="form-control" placeholder="e.g. D.M. 270/04 - Reg. 2024">
+          <label>Course Regulations</label>
+          <input type="text" id="edit-course-regulation" class="form-control" placeholder="e.g. L-270 - Ord. 2019">
         </div>
 
         <div class="sub-panel-box">
           <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between;">
-            <label style="margin:0;">Out-of-Course Status (Fuoricorso)</label>
+            <label style="margin:0;">Out-of-Course Status</label>
             <input type="checkbox" id="edit-fuoricorso" style="width:20px; height:20px;">
           </div>
           <div class="form-group" id="fuoricorso-year-group" style="display:none;">
@@ -5660,7 +5660,7 @@
         // 2. Exam Dates (Appelli) Section
         const examBox = document.createElement('div');
         examBox.className = 'course-sub-box';
-        examBox.innerHTML = `<div class="course-sub-title">📅 Exam Dates (Sessions)</div>`;
+        examBox.innerHTML = `<div class="course-sub-title">Exam Dates (Sessions)</div>`;
 
         const examListDiv = document.createElement('div');
         examListDiv.style.cssText = 'display:flex; flex-direction:column; gap:6px;';
@@ -5722,7 +5722,7 @@
         // 3. Web Links Section
         const linksBox = document.createElement('div');
         linksBox.className = 'course-sub-box';
-        linksBox.innerHTML = `<div class="course-sub-title">🔗 Web Links</div>`;
+        linksBox.innerHTML = `<div class="course-sub-title">Web Links</div>`;
 
         const linksListDiv = document.createElement('div');
         linksListDiv.style.cssText = 'display:flex; flex-direction:column; gap:6px;';
@@ -5784,7 +5784,7 @@
         // 4. Personal Notes in Markdown & LaTeX ($...$)
         const notesBox = document.createElement('div');
         notesBox.className = 'course-sub-box';
-        notesBox.innerHTML = `<div class="course-sub-title">📝 Personal Notes (Markdown &amp; $...$)</div>`;
+        notesBox.innerHTML = `<div class="course-sub-title">Personal Notes (Markdown &amp; $...$)</div>`;
 
         const obsidianWrap = document.createElement('div');
         obsidianWrap.className = 'obsidian-editor';
