@@ -580,7 +580,7 @@
       right: 0;
       height: 2px;
       background: var(--accent-red);
-      z-index: 20;
+      z-index: 10;
       pointer-events: none;
     }
     .current-time-dot {
@@ -1883,7 +1883,6 @@
     .course-card.is-finalized-course {
       opacity: 0.72;
       cursor: default;
-      pointer-events: none;
     }
     .course-code { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
     .course-ssd { font-size: 0.72rem; color: var(--accent-blue); font-weight: 700; }
@@ -4112,7 +4111,40 @@
       }
     }
 
-    const rawStudyPlan = safeJsonParse('cladar_study_plan', [
+    function normalizeMergedCourseLinks(courses) {
+      const normalized = courses.map(course => {
+        const hasCurrentModules = Array.isArray(course.mergedModuleIds);
+        const hasLegacyModules = course.isMergedParent && Array.isArray(course.moduleIds);
+        const mergedModuleIds = hasCurrentModules && course.mergedModuleIds.length > 0
+          ? course.mergedModuleIds
+          : (hasLegacyModules ? course.moduleIds : (hasCurrentModules ? course.mergedModuleIds : null));
+        const mergedIntoId = course.mergedIntoId || course.mergedInto;
+        return {
+          ...course,
+          ...(mergedModuleIds ? { mergedModuleIds: [...mergedModuleIds] } : {}),
+          ...(mergedIntoId ? { mergedIntoId } : {})
+        };
+      });
+      const coursesById = new Map(normalized.map(course => [course.id, course]));
+
+      normalized.forEach(course => {
+        if (Array.isArray(course.mergedModuleIds)) {
+          course.mergedModuleIds.forEach(moduleId => {
+            const module = coursesById.get(moduleId);
+            if (module) module.mergedIntoId = course.id;
+          });
+        }
+        if (course.mergedIntoId) {
+          const parent = coursesById.get(course.mergedIntoId);
+          if (parent && Array.isArray(parent.mergedModuleIds) && !parent.mergedModuleIds.includes(course.id)) {
+            parent.mergedModuleIds.push(course.id);
+          }
+        }
+      });
+      return normalized;
+    }
+
+    const rawStudyPlan = normalizeMergedCourseLinks(safeJsonParse('cladar_study_plan', [
       { id: 'c1', code: '2941501', ssd: 'MAT/05', name: 'Mathematical Analysis I', prof: 'Prof. Toriel Dreemurr', ay: '2024/2025', year: 1, sem: 1, cfu: 12, type: 'Teaching', excludeCredits: false },
       { id: 'c2', code: '2941502', ssd: 'MAT/03', name: 'Linear Algebra and Geometry', prof: 'Prof. W.D. Gaster', ay: '2024/2025', year: 1, sem: 1, cfu: 6, type: 'Teaching', excludeCredits: false },
       { id: 'c3', code: '2941503', ssd: 'ING-INF/05', name: 'Fundamentals of Computer Science and Programming', prof: 'Prof. Sans', ay: '2024/2025', year: 1, sem: 1, cfu: 12, type: 'Teaching', excludeCredits: false },
@@ -4138,7 +4170,7 @@
     ]).map(c => {
       const excl = Boolean(c.excludeCredits || c.noCredit);
       return { ...c, excludeCredits: excl, noCredit: excl };
-    });
+    }));
 
     const state = {
       theme: localStorage.getItem('cladar_theme') || 'dark',
@@ -4435,10 +4467,10 @@
         state.profile = importedProfile;
       }
       if (Array.isArray(rawStudyPlanIn)) {
-        state.studyPlan = rawStudyPlanIn.map(c => {
+        state.studyPlan = normalizeMergedCourseLinks(rawStudyPlanIn.map(c => {
           const excl = Boolean(c.excludeCredits || c.noCredit);
           return { ...c, excludeCredits: excl, noCredit: excl };
-        });
+        }));
       }
       if (rawCourseDetailsIn && typeof rawCourseDetailsIn === 'object') {
         state.courseDetails = normalizeCourseDetailsData(rawCourseDetailsIn);
@@ -6390,6 +6422,25 @@
       return Number(course.cfu || 0);
     }
 
+    function getDisplayedCourseCfu(course) {
+      if (!course) return 0;
+      if (Array.isArray(course.mergedModuleIds) && course.mergedModuleIds.length > 0) {
+        return course.mergedModuleIds.reduce((sum, modId) => {
+          const module = state.studyPlan.find(item => item.id === modId);
+          return sum + Number(module && module.cfu || 0);
+        }, 0);
+      }
+      return Number(course.cfu || 0);
+    }
+
+    function formatCourseCfu(course, unit = getCreditUnit()) {
+      const displayedCfu = getDisplayedCourseCfu(course);
+      const countableCfu = getEffectiveCourseCfu(course);
+      if (countableCfu === 0) return `${displayedCfu} ${unit} · No Credit`;
+      if (countableCfu < displayedCfu) return `${displayedCfu} ${unit} · ${countableCfu} counted`;
+      return `${displayedCfu} ${unit}`;
+    }
+
     function getEffectiveEvaluationsAndCourses() {
       const mergedParents = state.studyPlan.filter(c => Array.isArray(c.mergedModuleIds) && c.mergedModuleIds.length > 0);
       const completedParentMap = new Map();
@@ -6397,10 +6448,16 @@
 
       mergedParents.forEach(parent => {
         const modIds = parent.mergedModuleIds;
-        const modFinals = modIds.map(mId =>
-          state.evaluations.find(ev => ev.courseId === mId && !ev.isPartial && isPassingGrade(ev.score))
-        );
-        if (modIds.length > 0 && modFinals.every(Boolean)) {
+        const moduleEvals = modIds.map(mId => {
+          const available = state.evaluations.filter(ev =>
+            ev.courseId === mId &&
+            String(ev.score || '').trim() !== '' &&
+            String(ev.score || '').trim().toUpperCase() !== 'NI'
+          );
+          const finals = available.filter(ev => !ev.isPartial);
+          return finals[finals.length - 1] || available[available.length - 1] || null;
+        });
+        if (modIds.length > 0 && moduleEvals.every(Boolean)) {
           modIds.forEach(mId => annulledModuleIds.add(mId));
 
           let weightedSum = 0;
@@ -6408,7 +6465,7 @@
           let latestDate = '';
           modIds.forEach((mId, idx) => {
             const modCourse = state.studyPlan.find(c => c.id === mId);
-            const ev = modFinals[idx];
+            const ev = moduleEvals[idx];
             const num = parseNumericGrade(ev.score);
             const cfu = modCourse && !modCourse.excludeCredits && !modCourse.noCredit ? Number(modCourse.cfu || 1) : 1;
             if (num !== null) {
@@ -6418,7 +6475,7 @@
             if (ev.date && ev.date > latestDate) latestDate = ev.date;
           });
 
-          const all30L = modFinals.every(ev => String(ev.score).trim().toUpperCase() === '30L');
+          const all30L = moduleEvals.every(ev => String(ev.score).trim().toUpperCase() === '30L');
           let consolidatedScore = 'I';
           if (all30L) {
             consolidatedScore = '30L';
@@ -6439,8 +6496,13 @@
 
       const effectiveEvals = [];
       state.evaluations.forEach(ev => {
-        if (!ev.isPartial && annulledModuleIds.has(ev.courseId)) return;
-        effectiveEvals.push(ev);
+        const parent = mergedParents.find(item => item.mergedModuleIds.includes(ev.courseId));
+        if (!parent) {
+          effectiveEvals.push(ev);
+          return;
+        }
+        if (completedParentMap.has(parent.id)) return;
+        effectiveEvals.push({ ...ev, isPartial: true });
       });
       completedParentMap.forEach(synthEv => effectiveEvals.push(synthEv));
 
@@ -6724,8 +6786,7 @@
         const course = state.studyPlan.find(c => c.id === ev.courseId) || { name: 'Course', cfu: 0, excludeCredits: false };
         const dotColor = ev.isPartial ? 'var(--accent-yellow)' : getGradeTierHex(ev.score);
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
-        const cfuVal = getEffectiveCourseCfu(course);
-        const cfuDisplay = (course.excludeCredits || course.noCredit) ? 'No Credit' : `${cfuVal} ${unit}`;
+        const cfuDisplay = formatCourseCfu(course, unit);
         const clickAttr = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
         return `
           <div class="eval-item" ${clickAttr}>
@@ -7181,8 +7242,7 @@
       tbody.innerHTML = effectiveEvals.map(ev => {
         const course = state.studyPlan.find(c => c.id === ev.courseId) || { name: 'Unknown Course', code: '-', ssd: '-', prof: '-', cfu: 0, excludeCredits: false };
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
-        const cfuVal = getEffectiveCourseCfu(course);
-        const cfuLabel = (course.excludeCredits || course.noCredit) ? 'No Credit' : `${cfuVal} ${unit}`;
+        const cfuLabel = formatCourseCfu(course, unit);
         const rowClick = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
         const gradeColor = ev.isPartial ? 'var(--accent-yellow)' : getGradeTierHex(ev.score);
         return `
@@ -7215,8 +7275,9 @@
 
       // Rule 4: Exclude courses that already have a final grade from being selectable when adding/changing grade
       const visibleCourses = state.studyPlan.filter(c => {
-        if (c.mergedIntoId && annulledModuleIds.has(c.id)) return false;
         if (targetEv && c.id === targetEv.courseId) return true;
+        if (c.mergedIntoId && annulledModuleIds.has(c.id)) return false;
+        if (Array.isArray(c.mergedModuleIds) && c.mergedModuleIds.length > 0) return false;
         return !isCourseFinalized(c.id);
       });
 
@@ -7355,10 +7416,16 @@
             statusTag = `<span class="course-type-tag">Module</span>`;
           }
 
-          const effectiveCfu = getEffectiveCourseCfu(c);
-          const cfuHtml = (c.excludeCredits || c.noCredit)
-            ? `<div class="course-cfu no-credit"><span>0 ${unit}</span><small>No Credit</small></div>`
-            : `<div class="course-cfu" style="${isAnnulledModule ? 'text-decoration:line-through;' : ''}">${effectiveCfu} ${unit}</div>`;
+          const displayedCfu = getDisplayedCourseCfu(c);
+          const countableCfu = getEffectiveCourseCfu(c);
+          const cfuNote = countableCfu === 0
+            ? 'No Credit'
+            : (c.mergedIntoId ? 'In merged course' : (countableCfu < displayedCfu ? `${countableCfu} counted` : ''));
+          const cfuHtml = `<div class="course-cfu ${(countableCfu === 0 || c.mergedIntoId) ? 'no-credit' : ''}" style="${isAnnulledModule ? 'text-decoration:line-through;' : ''}"><span>${displayedCfu} ${unit}</span>${cfuNote ? `<small>${cfuNote}</small>` : ''}</div>`;
+          const recordedGrade = [...state.evaluations].reverse().find(ev => ev.courseId === c.id && !ev.autoMerged);
+          const editGradeHtml = recordedGrade
+            ? '<button type="button" class="btn-preset" data-edit-recorded-grade>✎ Edit grade</button>'
+            : '';
 
           card.innerHTML = `
             <div>
@@ -7366,8 +7433,19 @@
               <div class="course-name">${escapeHtml(c.name)}</div>
               <div class="course-prof">${escapeHtml(c.prof || 'Professor TBA')}</div>
             </div>
-            ${cfuHtml}
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+              ${cfuHtml}
+              ${editGradeHtml}
+            </div>
           `;
+          const editGradeButton = card.querySelector('[data-edit-recorded-grade]');
+          if (editGradeButton) {
+            editGradeButton.addEventListener('click', event => {
+              event.stopPropagation();
+              closeModal('modal-study-plan');
+              openGradeModal(recordedGrade.id);
+            });
+          }
           // Rule 4: Once final grade is recorded, course cannot be selected elsewhere
           if (!finalized) {
             card.addEventListener('click', () => openCourseModal(c.id));
@@ -7383,8 +7461,7 @@
       const unit = getCreditUnit();
       const eligible = state.studyPlan.filter(c =>
         (!Array.isArray(c.mergedModuleIds) || c.mergedModuleIds.length === 0) &&
-        !c.mergedIntoId &&
-        !isCourseFinalized(c.id)
+        !c.mergedIntoId
       );
 
       document.getElementById('merge-course-name').value = '';
@@ -7402,7 +7479,7 @@
               <input type="checkbox" class="merge-mod-chk" value="${c.id}" data-cfu="${(c.excludeCredits || c.noCredit) ? 0 : (c.cfu || 0)}" data-ssd="${escapeHtml(c.ssd)}" data-prof="${escapeHtml(c.prof)}" data-year="${c.year || 1}" data-sem="${c.sem || 1}" style="width:18px; height:18px;">
               <span>${escapeHtml(c.name)} <small style="color:var(--text-muted);">(${escapeHtml(c.code)})</small></span>
             </span>
-            <strong style="color:var(--accent-blue);">${(c.excludeCredits || c.noCredit) ? 'No Credit' : `${c.cfu} ${unit}`}</strong>
+            <strong style="color:var(--accent-blue);">${formatCourseCfu(c, unit)}</strong>
           </label>
         `).join('');
 
@@ -7480,7 +7557,7 @@
         document.getElementById('course-name-in').value = c.name;
         document.getElementById('course-prof-in').value = c.prof;
         document.getElementById('course-type-in').value = c.type || 'Teaching';
-        document.getElementById('course-cfu-in').value = getEffectiveCourseCfu(c);
+        document.getElementById('course-cfu-in').value = getDisplayedCourseCfu(c);
         document.getElementById('course-exclude-cfu-in').checked = Boolean(c.excludeCredits || c.noCredit);
         document.getElementById('course-ay-in').value = c.ay || '2026/2027';
         populateProgramYearSelect(document.getElementById('course-year-in'), c.year || 1, true);
@@ -7674,7 +7751,7 @@
           }).join('')
         : '<div style="font-size:0.78rem; color:var(--text-muted); font-style:italic;">No course links added yet.</div>';
 
-      const cfuLabel = (course.excludeCredits || course.noCredit) ? 'No Credit' : `${getEffectiveCourseCfu(course)} ${unit}`;
+      const cfuLabel = formatCourseCfu(course, unit);
       const pinButtonHtml = state.coursesEditMode
         ? `<button type="button" class="btn-pin-toggle ${det.pinned ? 'is-pinned' : ''}" onclick="event.stopPropagation(); toggleCoursePin('${course.id}')">📌 ${det.pinned ? 'Pinned' : 'Pin'}</button>`
         : '';
