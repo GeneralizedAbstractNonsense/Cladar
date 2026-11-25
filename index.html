@@ -468,6 +468,7 @@
 
     .daily-grid-wrapper {
       flex: 1;
+      min-height: 0;
       overflow-x: auto;
       overflow-y: auto;
       position: relative;
@@ -573,6 +574,22 @@
       font-weight: 600;
       opacity: 0.92;
       font-variant-numeric: tabular-nums;
+    }
+    .gc-occurrence-cancel {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      z-index: 1;
+      width: 20px;
+      height: 20px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.28);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
     }
     .current-time-line {
       position: absolute;
@@ -1840,10 +1857,33 @@
     .btn-study-plan:active { transform: scale(0.99); }
     .btn-study-plan svg { fill: var(--accent-blue); width: 22px; height: 22px; }
 
-    .study-plan-header { background: var(--bg-color); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--card-border); margin-bottom: 14px; }
-    .study-plan-header h2 { font-size: 1.05rem; font-weight: 800; color: var(--accent-blue); }
-    .study-plan-header p { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
-    .study-plan-header .sp-order-badge { font-size: 0.78rem; color: var(--accent-blue); font-weight: 700; margin-top: 6px; display: block; }
+    .study-plan-header { background: linear-gradient(145deg, var(--card-bg), var(--bg-color)); padding: 20px; border-radius: 22px; border: 1px solid var(--card-border); margin-bottom: 18px; box-shadow: 0 8px 24px var(--shadow-color); }
+    .study-plan-header h2 { font-size: 1.12rem; font-weight: 800; color: var(--text-color); line-height: 1.3; }
+    .study-plan-header p { font-size: 0.82rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4; }
+    .study-plan-header .sp-order-badge { font-size: 0.74rem; color: var(--accent-blue); font-weight: 700; margin-top: 8px; display: block; overflow-wrap: anywhere; }
+
+    #modal-study-plan .modal-body {
+      max-width: none;
+      padding: 18px clamp(14px, 3vw, 36px) calc(28px + env(safe-area-inset-bottom, 0px));
+      overflow-x: hidden;
+    }
+    #modal-study-plan .study-plan-header,
+    #modal-study-plan .study-plan-header h2,
+    #modal-study-plan .study-plan-header p { min-width: 0; overflow-wrap: anywhere; }
+    #study-plan-tree,
+    #study-plan-tree .semester-section {
+      min-width: 0;
+      width: 100%;
+    }
+    #study-plan-tree .course-card {
+      min-width: 0;
+      overflow: hidden;
+      gap: 8px;
+    }
+    #study-plan-tree .course-card > div:first-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
 
     .sp-actions-row {
       display: flex;
@@ -1858,21 +1898,26 @@
       font-size: 0.85rem;
     }
 
-    .semester-section { margin-bottom: 16px; }
-    .semester-title { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; padding-left: 4px; letter-spacing: 0.05em; }
+    .semester-section { margin-bottom: 16px; padding: 14px; border: 1px solid var(--card-border); border-radius: 22px; background: var(--card-bg); box-shadow: 0 4px 14px var(--shadow-color); }
+    .semester-title { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 10px; padding: 3px 4px; letter-spacing: 0.07em; }
     .course-card {
-      background: var(--card-bg);
+      background: var(--bg-color);
       border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 8px;
+      border-radius: 16px;
+      padding: 14px 12px;
+      margin-bottom: 7px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px var(--shadow-color);
+      box-shadow: none;
       gap: 10px;
+      transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
     }
+    .course-card:last-child { margin-bottom: 0; }
+    .course-card:hover { border-color: rgba(10, 132, 255, 0.5); }
+    .course-card:active { transform: scale(0.995); }
+    .course-card:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
     .course-card.is-merged-parent {
       border-left: 3px solid var(--accent-purple);
     }
@@ -1881,8 +1926,8 @@
       border-style: dashed;
     }
     .course-card.is-finalized-course {
-      opacity: 0.72;
-      cursor: default;
+      opacity: 1;
+      cursor: pointer;
     }
     .course-code { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
     .course-ssd { font-size: 0.72rem; color: var(--accent-blue); font-weight: 700; }
@@ -1893,8 +1938,8 @@
     .course-type-tag.tag-passed { background: rgba(21, 128, 61, 0.22); color: var(--accent-light-green); }
     .course-cfu {
       background: rgba(10, 132, 255, 0.1);
-      padding: 5px 10px;
-      border-radius: 8px;
+      padding: 6px 11px;
+      border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 800;
       color: var(--accent-blue);
@@ -2946,7 +2991,7 @@
         <div class="dashboard-card" id="attendance-dashboard-card">
           <div class="dash-top-bar">
             <div class="dash-title">Attendance</div>
-            <button class="btn-link" id="open-attendance-btn">Attendance&rarr;</button>
+            <button class="btn-link" id="open-attendance-btn">Attendance &rarr;</button>
           </div>
           <div class="att-summary-row">
             <div class="att-stat-box">
@@ -3552,7 +3597,7 @@
   </div>
 
   <!-- STUDY PLAN MODAL -->
-  <div class="modal-overlay" id="modal-study-plan">
+  <div class="modal-overlay fullscreen-modal" id="modal-study-plan">
     <div class="modal-card">
       <div class="modal-header">
         <h3>Study Plan</h3>
@@ -3828,7 +3873,7 @@
   <div class="modal-overlay" id="modal-weekly-edit">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Configure Weekly Routine</h3>
+        <h3>Configure Daily Schedule</h3>
         <button class="btn-icon modal-close">&times;</button>
       </div>
       <div class="modal-body">
@@ -3836,10 +3881,22 @@
           <label>Select Day of Week</label>
           <select id="routine-day-select" class="form-control"></select>
         </div>
+        <div class="form-group">
+          <label>Repeats</label>
+          <select id="routine-repeat-select" class="form-control">
+            <option value="weekly">Every week</option>
+            <option value="once">Only this date</option>
+          </select>
+        </div>
+        <div class="form-group" id="routine-oneoff-date-group" style="display:none;">
+          <label>Event Date</label>
+          <input type="date" id="routine-oneoff-date" class="form-control">
+        </div>
         <div id="routine-items-list" style="margin-top: 6px;"></div>
         <hr style="border:none; border-top:1px solid var(--card-border); margin:10px 0;">
         <h4 style="font-size:0.85rem; color:var(--accent-color);" id="routine-form-heading">Add / Edit Routine Activity</h4>
         <input type="hidden" id="routine-edit-idx" value="-1">
+        <input type="hidden" id="routine-edit-day" value="">
         <div class="form-group">
           <label>Activity Name</label>
           <input type="text" id="routine-title" class="form-control" placeholder="Analysis Lecture">
@@ -3873,6 +3930,7 @@
         </div>
         <div style="display:flex; gap:8px;">
           <button type="button" id="cancel-routine-edit-btn" class="btn-primary-action" style="background:var(--card-border); color:var(--text-color); display:none; flex:1;">Cancel Edit</button>
+          <button type="button" id="cancel-routine-occurrence-btn" class="btn-primary-action" style="background:var(--accent-red); display:none; flex:1;">Cancel this date</button>
           <button type="button" id="add-routine-btn" class="btn-primary-action" style="flex:2;">Save to Routine</button>
         </div>
       </div>
@@ -4967,32 +5025,111 @@
       return DAYS_OF_WEEK[idx];
     }
 
+    const dailyBaseDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    let routineMinDayOffset = -30;
+    let routineMaxDayOffset = 60;
+
+    function routineDayOffset(dateObj) {
+      const base = Date.UTC(dailyBaseDate.getFullYear(), dailyBaseDate.getMonth(), dailyBaseDate.getDate());
+      const date = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+      return Math.round((date - base) / 86400000);
+    }
+
+    function createRoutineDayChip(offset, prepend = false) {
+      const bar = document.getElementById('day-selector-bar');
+      const chipDate = new Date(dailyBaseDate.getFullYear(), dailyBaseDate.getMonth(), dailyBaseDate.getDate() + offset);
+      const chipSlash = toSlashDate(chipDate);
+      const hasCal = state.events.some(ev => normalizeDateToSlash(ev.date) === chipSlash);
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'day-chip' + (hasCal ? ' has-cal-dot' : '');
+      chip.dataset.dayOffset = String(offset);
+      chip.textContent = `${DAYS_OF_WEEK[(chipDate.getDay() + 6) % 7].slice(0, 3)} ${chipDate.getDate()}`;
+      chip.addEventListener('click', () => {
+        state.routineDate = chipDate;
+        renderDaySelector();
+        renderDailyGrid();
+        document.getElementById('daily-grid-wrapper').scrollLeft = 0;
+      });
+      if (prepend) bar.prepend(chip);
+      else bar.appendChild(chip);
+      return chip;
+    }
+
+    function ensureRoutineDateInStrip() {
+      const bar = document.getElementById('day-selector-bar');
+      const selectedOffset = routineDayOffset(state.routineDate);
+      if (selectedOffset < routineMinDayOffset) {
+        const oldWidth = bar.scrollWidth;
+        const newMin = Math.floor(selectedOffset / 30) * 30;
+        for (let offset = routineMinDayOffset - 1; offset >= newMin; offset--) {
+          createRoutineDayChip(offset, true);
+        }
+        routineMinDayOffset = newMin;
+        bar.scrollLeft += bar.scrollWidth - oldWidth;
+      }
+      if (selectedOffset > routineMaxDayOffset) {
+        const newMax = Math.ceil(selectedOffset / 30) * 30;
+        for (let offset = routineMaxDayOffset + 1; offset <= newMax; offset++) {
+          createRoutineDayChip(offset);
+        }
+        routineMaxDayOffset = newMax;
+      }
+    }
+
+    function centerRoutineDateChip(smooth = false) {
+      const bar = document.getElementById('day-selector-bar');
+      const chip = bar.querySelector('.day-chip.active');
+      if (!chip) return;
+      const chipLeft = chip.getBoundingClientRect().left - bar.getBoundingClientRect().left + bar.scrollLeft;
+      const left = chipLeft - (bar.clientWidth - chip.offsetWidth) / 2;
+      bar.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' });
+    }
+
     function renderDaySelector() {
       const bar = document.getElementById('day-selector-bar');
-      bar.innerHTML = '';
-      const monday = getMondayOfWeek(state.routineDate);
+      if (!bar.dataset.initialized) {
+        bar.innerHTML = '';
+        for (let offset = routineMinDayOffset; offset <= routineMaxDayOffset; offset++) {
+          createRoutineDayChip(offset);
+        }
+        bar.dataset.initialized = 'true';
+        bar.addEventListener('scroll', () => {
+          if (bar.scrollLeft < 120) {
+            const oldWidth = bar.scrollWidth;
+            const newMin = routineMinDayOffset - 30;
+            for (let offset = routineMinDayOffset - 1; offset >= newMin; offset--) {
+              createRoutineDayChip(offset, true);
+            }
+            routineMinDayOffset = newMin;
+            bar.scrollLeft += bar.scrollWidth - oldWidth;
+          } else if (bar.scrollWidth - bar.clientWidth - bar.scrollLeft < 120) {
+            const newMax = routineMaxDayOffset + 30;
+            for (let offset = routineMaxDayOffset + 1; offset <= newMax; offset++) {
+              createRoutineDayChip(offset);
+            }
+            routineMaxDayOffset = newMax;
+          }
+        }, { passive: true });
+        ensureRoutineDateInStrip();
+      } else {
+        ensureRoutineDateInStrip();
+      }
       const rSlash = toSlashDate(state.routineDate);
 
-      DAYS_OF_WEEK.forEach((day, idx) => {
-        const chipDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + idx);
+      bar.querySelectorAll('.day-chip').forEach(chip => {
+        const offset = Number(chip.dataset.dayOffset);
+        const chipDate = new Date(dailyBaseDate.getFullYear(), dailyBaseDate.getMonth(), dailyBaseDate.getDate() + offset);
         const chipSlash = toSlashDate(chipDate);
-        const hasCal = state.events.some(ev => normalizeDateToSlash(ev.date) === chipSlash);
-
-        const chip = document.createElement('button');
-        chip.className = 'day-chip' + (chipSlash === rSlash ? ' active' : '') + (hasCal ? ' has-cal-dot' : '');
-        chip.textContent = `${day.slice(0, 3)} ${chipDate.getDate()}`;
-        chip.addEventListener('click', () => {
-          state.routineDate = chipDate;
-          renderDaySelector();
-          renderDailyGrid();
-        });
-        bar.appendChild(chip);
+        chip.classList.toggle('active', chipSlash === rSlash);
+        chip.classList.toggle('has-cal-dot', state.events.some(ev => normalizeDateToSlash(ev.date) === chipSlash));
       });
 
       const pill = document.getElementById('routine-date-pill');
       if (pill) {
         pill.textContent = rSlash === todaySlash ? 'Today' : rSlash;
       }
+      centerRoutineDateChip();
     }
 
     document.getElementById('routine-date-pill').addEventListener('click', () => {
@@ -5001,6 +5138,14 @@
       renderDailyGrid();
       scrollDailyToNow();
     });
+
+    function changeRoutineDayBy(days) {
+      state.routineDate = new Date(state.routineDate.getFullYear(), state.routineDate.getMonth(), state.routineDate.getDate() + days);
+      renderDaySelector();
+      renderDailyGrid();
+      document.getElementById('daily-grid-wrapper').scrollLeft = 0;
+      centerRoutineDateChip(true);
+    }
 
     function parseTimeToHours(timeStr) {
       if (!timeStr) return 0;
@@ -5024,19 +5169,20 @@
         if (!startOk || !endOk) return;
 
         (att.slots || []).forEach((slot, sIdx) => {
-          if (slot.day === dayName && slot.startTime) {
+          if (slot.day === dayName && slot.startTime && !(slot.skipDates || []).includes(dSlash)) {
             const modShort = formatModalityBadge(att.modality);
-            const locText = att.location ? `${att.location} (${modShort})` : modShort;
             results.push({
               id: `att_${courseId}_${sIdx}`,
               courseId,
               title: course.name,
               time: slot.startTime,
               endTime: slot.endTime || '',
-              location: locText,
+              location: att.location || '',
               color: att.color || 'var(--c-MATE2)',
               notes: `${course.code} • ${course.prof || 'Professor'} • ${att.modality || 'In-person'}`,
-              source: 'attendance'
+              source: 'attendance',
+              slotIdx: sIdx,
+              modality: modShort
             });
           }
         });
@@ -5055,8 +5201,12 @@
       const routineItems = (state.weeklyPlan[dayName] || []).map((item, idx) => ({
         ...item,
         source: 'routine',
+        routineDay: dayName,
         routineIdx: idx
-      }));
+      })).filter(item => {
+        if (item.repeat === 'once') return normalizeDateToSlash(item.date) === rSlash;
+        return !(item.skipDates || []).includes(rSlash);
+      });
       const attendanceItems = getActiveCourseSlotsForDate(state.routineDate);
       const dayCalEvents = state.events.filter(ev => normalizeDateToSlash(ev.date) === rSlash);
 
@@ -5069,21 +5219,32 @@
           items: dayCalEvents.map(ev => ({ ...ev, source: 'calendar' }))
         });
       }
-      // 2. Routine & Attendance columns show ONLY the location in the column title
-      routineItems.forEach(item => {
-        columns.push({
-          header: (item.location || '').trim() || '—',
-          isCal: false,
-          items: [item]
-        });
+      // Group routine and attendance items by normalized location, then place earlier groups first.
+      const locationGroups = new Map();
+      [...routineItems, ...attendanceItems].forEach((item, idx) => {
+        const locationKey = String(item.location || '').trim().replace(/\s+/g, ' ').toLocaleLowerCase() || '—';
+        if (!locationGroups.has(locationKey)) {
+          locationGroups.set(locationKey, {
+            header: String(item.location || '').trim() || '—',
+            isCal: false,
+            items: [],
+            firstRoutineIndex: Number.POSITIVE_INFINITY,
+            firstTime: parseTimeToHours(item.time)
+          });
+        }
+        const group = locationGroups.get(locationKey);
+        if (item.source === 'routine') group.firstRoutineIndex = Math.min(group.firstRoutineIndex, item.routineIdx);
+        group.firstTime = Math.min(group.firstTime, parseTimeToHours(item.time));
+        group.items.push({ ...item, sourceOrder: idx });
       });
-      attendanceItems.forEach(item => {
-        columns.push({
-          header: (item.location || '').trim() || '—',
-          isCal: false,
-          items: [item]
-        });
+      const orderedLocationGroups = [...locationGroups.values()].sort((a, b) => {
+        const aRoutine = Number.isFinite(a.firstRoutineIndex);
+        const bRoutine = Number.isFinite(b.firstRoutineIndex);
+        if (a.firstTime !== b.firstTime) return a.firstTime - b.firstTime;
+        if (aRoutine !== bRoutine) return aRoutine ? -1 : 1;
+        return aRoutine ? a.firstRoutineIndex - b.firstRoutineIndex : 0;
       });
+      columns.push(...orderedLocationGroups);
 
       if (columns.length === 0) {
         columns.push({
@@ -5126,7 +5287,34 @@
 
       const rowHeight = 54;
       columns.forEach((col, cIdx) => {
-        col.items.forEach(item => {
+        const timedItems = col.items.map(item => {
+          const start = parseTimeToHours(item.time);
+          const end = item.endTime ? parseTimeToHours(item.endTime) : start + 1;
+          return { ...item, _start: start, _end: Math.max(start + 0.5, end) };
+        }).sort((a, b) => a._start - b._start || a._end - b._end);
+        let overlapCluster = [];
+        let clusterEnd = Number.NEGATIVE_INFINITY;
+        const assignOverlapLanes = () => {
+          if (overlapCluster.length === 0) return;
+          const laneEnds = [];
+          overlapCluster.forEach(item => {
+            let lane = laneEnds.findIndex(laneEnd => laneEnd <= item._start);
+            if (lane === -1) lane = laneEnds.length;
+            laneEnds[lane] = item._end;
+            item._lane = lane;
+          });
+          overlapCluster.forEach(item => { item._laneCount = laneEnds.length; });
+          overlapCluster = [];
+          clusterEnd = Number.NEGATIVE_INFINITY;
+        };
+        timedItems.forEach(item => {
+          if (overlapCluster.length > 0 && item._start >= clusterEnd) assignOverlapLanes();
+          overlapCluster.push(item);
+          clusterEnd = Math.max(clusterEnd, item._end);
+        });
+        assignOverlapLanes();
+
+        timedItems.forEach(item => {
           const startH = parseTimeToHours(item.time);
           const endH = item.endTime ? parseTimeToHours(item.endTime) : startH + 1;
           const duration = Math.max(0.5, endH - startH);
@@ -5140,22 +5328,45 @@
             evDiv.className = 'gc-event' + (item.source === 'calendar' ? ' is-cal-event' : '');
             evDiv.style.top = `${offsetWithinHour}px`;
             evDiv.style.height = `${Math.max(26, heightPx)}px`;
+            evDiv.style.left = `calc(${(100 / item._laneCount) * item._lane}% + 2px)`;
+            evDiv.style.width = `calc(${100 / item._laneCount}% - 4px)`;
+            evDiv.style.right = 'auto';
             if (item.source !== 'calendar') {
               evDiv.style.background = item.color || 'var(--c-MATE1)';
             }
 
             const timeRange = item.endTime ? `${item.time} - ${item.endTime}` : item.time;
-            const locBadge = item.location ? ` • ${item.location}` : '';
-            evDiv.innerHTML = `<span class="ev-title-txt">${escapeHtml(item.title)}</span><span class="time-lbl">${escapeHtml(timeRange)}${escapeHtml(locBadge)}</span>`;
+            const detail = item.source === 'attendance' ? item.modality : item.location;
+            const detailLabel = detail ? ` • ${detail}` : '';
+            evDiv.innerHTML = `<span class="ev-title-txt">${escapeHtml(item.title)}</span><span class="time-lbl">${escapeHtml(timeRange)}${escapeHtml(detailLabel)}</span>`;
+
+            if ((item.source === 'routine' && item.repeat !== 'once') || item.source === 'attendance') {
+              const cancelButton = document.createElement('button');
+              cancelButton.type = 'button';
+              cancelButton.className = 'gc-occurrence-cancel';
+              cancelButton.setAttribute('aria-label', 'Cancel this date only');
+              cancelButton.title = 'Cancel this date only';
+              cancelButton.textContent = '×';
+              cancelButton.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (item.source === 'routine') {
+                  toggleRoutineSkip(item.routineDay, item.routineIdx, rSlash);
+                } else {
+                  toggleAttendanceSlotSkip(item.courseId, item.slotIdx, rSlash);
+                }
+              });
+              evDiv.appendChild(cancelButton);
+            }
 
             evDiv.addEventListener('click', (e) => {
               e.stopPropagation();
               if (item.source === 'calendar') {
                 openEventModal(item.id, null);
               } else if (item.source === 'attendance') {
-                openAttendanceModal();
+                openAttendanceModal(rSlash);
               } else {
-                openRoutineEditorAt(dayName, item.routineIdx);
+                openRoutineEditorAt(item.routineDay, item.routineIdx);
               }
             });
             hostCell.appendChild(evDiv);
@@ -5178,6 +5389,26 @@
       }
     }
 
+    (function attachDailyGridSwipe() {
+      const wrapper = document.getElementById('daily-grid-wrapper');
+      let touchStart = null;
+      wrapper.addEventListener('touchstart', event => {
+        if (event.touches.length !== 1) return;
+        touchStart = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }, { passive: true });
+      wrapper.addEventListener('touchend', event => {
+        if (!touchStart || !event.changedTouches.length) return;
+        const dx = event.changedTouches[0].clientX - touchStart.x;
+        const dy = event.changedTouches[0].clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.25) return;
+        const atLeft = wrapper.scrollLeft <= 8;
+        const atRight = wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 8;
+        if (dx > 0 && atLeft) changeRoutineDayBy(-1);
+        else if (dx < 0 && atRight) changeRoutineDayBy(1);
+      }, { passive: true });
+    })();
+
     function scrollDailyToNow() {
       const wrapper = document.getElementById('daily-grid-wrapper');
       if (!wrapper) return;
@@ -5188,6 +5419,7 @@
 
     function resetRoutineForm() {
       document.getElementById('routine-edit-idx').value = '-1';
+      document.getElementById('routine-edit-day').value = '';
       document.getElementById('routine-form-heading').textContent = 'Add Routine Activity';
       document.getElementById('routine-title').value = '';
       document.getElementById('routine-time').value = '09:30';
@@ -5195,10 +5427,31 @@
       document.getElementById('routine-location').value = '';
       document.getElementById('routine-notes').value = '';
       document.getElementById('routine-color').value = 'var(--c-MATE1)';
+      document.getElementById('routine-repeat-select').value = 'weekly';
+      document.getElementById('routine-oneoff-date').value = toInputDate(toSlashDate(state.routineDate));
+      document.getElementById('routine-oneoff-date-group').style.display = 'none';
       document.getElementById('cancel-routine-edit-btn').style.display = 'none';
+      document.getElementById('cancel-routine-occurrence-btn').style.display = 'none';
       renderColorGrid('routine-color-picker', 'routine-color');
       const rEd = document.getElementById('routine-markup-editor');
       if (rEd && rEd._syncRendered) rEd._syncRendered();
+    }
+
+    function toInputDate(dateSlash) {
+      return normalizeDateToSlash(dateSlash);
+    }
+
+    function updateRoutineOccurrenceButton(day, idx) {
+      const button = document.getElementById('cancel-routine-occurrence-btn');
+      const item = (state.weeklyPlan[day] || [])[idx];
+      if (!item || item.repeat === 'once' || document.getElementById('routine-repeat-select').value === 'once' || day !== getRoutineDayName()) {
+        button.style.display = 'none';
+        return;
+      }
+      const dateSlash = toSlashDate(state.routineDate);
+      const skipped = (item.skipDates || []).includes(dateSlash);
+      button.textContent = skipped ? 'Restore this date' : 'Cancel this date';
+      button.style.display = 'block';
     }
 
     function openRoutineEditorAt(day, idx) {
@@ -5211,6 +5464,7 @@
       if (idx !== undefined && list[idx]) {
         const item = list[idx];
         document.getElementById('routine-edit-idx').value = String(idx);
+        document.getElementById('routine-edit-day').value = day;
         document.getElementById('routine-form-heading').textContent = 'Edit Routine Activity';
         document.getElementById('routine-title').value = item.title || '';
         document.getElementById('routine-time').value = item.time || '09:30';
@@ -5218,7 +5472,11 @@
         document.getElementById('routine-location').value = item.location || '';
         document.getElementById('routine-notes').value = item.notes || '';
         document.getElementById('routine-color').value = item.color || 'var(--c-MATE1)';
+        document.getElementById('routine-repeat-select').value = item.repeat === 'once' ? 'once' : 'weekly';
+        document.getElementById('routine-oneoff-date').value = item.repeat === 'once' ? toInputDate(item.date) : toInputDate(toSlashDate(state.routineDate));
+        document.getElementById('routine-oneoff-date-group').style.display = item.repeat === 'once' ? 'block' : 'none';
         document.getElementById('cancel-routine-edit-btn').style.display = 'block';
+        updateRoutineOccurrenceButton(day, idx);
         renderColorGrid('routine-color-picker', 'routine-color');
         const rEd = document.getElementById('routine-markup-editor');
         if (rEd && rEd._syncRendered) rEd._syncRendered();
@@ -5234,6 +5492,21 @@
 
     document.getElementById('cancel-routine-edit-btn').addEventListener('click', () => {
       resetRoutineForm();
+    });
+
+    document.getElementById('routine-repeat-select').addEventListener('change', event => {
+      const isOnce = event.target.value === 'once';
+      document.getElementById('routine-oneoff-date-group').style.display = isOnce ? 'block' : 'none';
+      updateRoutineOccurrenceButton(
+        document.getElementById('routine-day-select').value,
+        parseInt(document.getElementById('routine-edit-idx').value, 10)
+      );
+    });
+
+    document.getElementById('cancel-routine-occurrence-btn').addEventListener('click', () => {
+      const day = document.getElementById('routine-edit-day').value;
+      const idx = parseInt(document.getElementById('routine-edit-idx').value, 10);
+      toggleRoutineSkip(day, idx, toSlashDate(state.routineDate));
     });
 
     document.getElementById('routine-day-select').addEventListener('change', (e) => {
@@ -5252,6 +5525,7 @@
         <div class="routine-item-card" onclick="openRoutineEditorAt('${day}', ${i})">
           <div>
             <strong style="font-size:0.9rem;">${escapeHtml(item.title)}</strong> <span style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(item.time)} - ${escapeHtml(item.endTime || '')}</span>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">${item.repeat === 'once' ? `Only ${escapeHtml(normalizeDateToSlash(item.date))}` : 'Repeats weekly'}${(item.skipDates || []).length ? ` • ${(item.skipDates || []).length} skipped date${item.skipDates.length === 1 ? '' : 's'}` : ''}</div>
             ${item.location ? `<div style="font-size:0.74rem; color:var(--accent-blue); font-weight:700; margin-top:2px;">📍 ${escapeHtml(item.location)}</div>` : ''}
           </div>
           <button type="button" class="btn-icon" style="color:var(--accent-red); font-weight:bold; font-size:1.2rem;" onclick="event.stopPropagation(); requestDelete('routine', '${day}::${i}')">&times;</button>
@@ -5260,8 +5534,11 @@
     }
 
     document.getElementById('add-routine-btn').addEventListener('click', () => {
-      const day = document.getElementById('routine-day-select').value;
+      let day = document.getElementById('routine-day-select').value;
+      const repeat = document.getElementById('routine-repeat-select').value;
+      const inputDate = document.getElementById('routine-oneoff-date').value;
       const editIdx = parseInt(document.getElementById('routine-edit-idx').value, 10);
+      const editDay = document.getElementById('routine-edit-day').value;
       const title = document.getElementById('routine-title').value.trim();
       const time = document.getElementById('routine-time').value;
       const endTime = document.getElementById('routine-end-time').value;
@@ -5270,21 +5547,52 @@
       const notes = document.getElementById('routine-notes').value.trim();
 
       if (!title || !time) return;
+      if (repeat === 'once') {
+        if (!inputDate) return;
+        const oneOffDate = new Date(`${inputDate}T00:00:00`);
+        day = DAYS_OF_WEEK[(oneOffDate.getDay() + 6) % 7];
+      }
       if (!state.weeklyPlan[day]) state.weeklyPlan[day] = [];
 
-      if (editIdx >= 0 && state.weeklyPlan[day][editIdx]) {
-        state.weeklyPlan[day][editIdx] = {
-          ...state.weeklyPlan[day][editIdx],
-          title, time, endTime, location, color, notes
+      if (editIdx >= 0 && (state.weeklyPlan[editDay] || [])[editIdx]) {
+        const previous = state.weeklyPlan[editDay][editIdx];
+        const updated = {
+          ...previous,
+          title, time, endTime, location, color, notes, repeat,
+          ...(repeat === 'once' ? { date: normalizeDateToSlash(inputDate) } : {})
         };
+        if (repeat !== 'once') delete updated.date;
+        if (day === editDay) {
+          state.weeklyPlan[day][editIdx] = updated;
+        } else {
+          state.weeklyPlan[editDay].splice(editIdx, 1);
+          state.weeklyPlan[day].push(updated);
+        }
       } else {
-        state.weeklyPlan[day].push({ id: 'r_' + Date.now(), title, time, endTime, location, color, notes });
+        state.weeklyPlan[day].push({
+          id: 'r_' + Date.now(), title, time, endTime, location, color, notes, repeat,
+          ...(repeat === 'once' ? { date: normalizeDateToSlash(inputDate) } : {})
+        });
       }
       saveData();
       resetRoutineForm();
       renderRoutineEditorList(day);
       renderDailyGrid();
     });
+
+    function toggleRoutineSkip(day, idx, dateSlash) {
+      const item = (state.weeklyPlan[day] || [])[idx];
+      if (!item || item.repeat === 'once') return;
+      if (!Array.isArray(item.skipDates)) item.skipDates = [];
+      const normalizedDate = normalizeDateToSlash(dateSlash);
+      item.skipDates = item.skipDates.includes(normalizedDate)
+        ? item.skipDates.filter(date => date !== normalizedDate)
+        : [...item.skipDates, normalizedDate];
+      saveData();
+      renderDailyGrid();
+      renderRoutineEditorList(day);
+      updateRoutineOccurrenceButton(day, idx);
+    }
 
     /* ==========================================================================
        5. TAB 2: TASKS, HOMEWORK & NOTES (APPLE CALENDAR WEEK CAROUSEL & TIMERS)
@@ -6496,6 +6804,8 @@
 
       const effectiveEvals = [];
       state.evaluations.forEach(ev => {
+        // Legacy imports may contain cached merged grades; derive these from module grades instead.
+        if (ev.autoMerged) return;
         const parent = mergedParents.find(item => item.mergedModuleIds.includes(ev.courseId));
         if (!parent) {
           effectiveEvals.push(ev);
@@ -6514,6 +6824,7 @@
       if (!courseId) return false;
       const hasDirectFinal = state.evaluations.some(ev =>
         ev.courseId === courseId &&
+        !ev.autoMerged &&
         !ev.isPartial &&
         String(ev.score || '').trim() !== '' &&
         String(ev.score || '').trim().toUpperCase() !== 'NI'
@@ -6528,6 +6839,7 @@
         p.mergedModuleIds.includes(courseId) &&
         state.evaluations.some(ev =>
           ev.courseId === p.id &&
+          !ev.autoMerged &&
           !ev.isPartial &&
           String(ev.score || '').trim() !== '' &&
           String(ev.score || '').trim().toUpperCase() !== 'NI'
@@ -6843,8 +7155,8 @@
       }).join('');
     }
 
-    function openAttendanceModal() {
-      document.getElementById('att-log-date').value = todaySlash;
+    function openAttendanceModal(dateSlash = todaySlash) {
+      document.getElementById('att-log-date').value = normalizeDateToSlash(dateSlash) || todaySlash;
       document.getElementById('att-log-note').value = '';
       renderAttendanceModalContent();
       openModal('modal-attendance');
@@ -6893,12 +7205,16 @@
       } else {
         coursesListEl.innerHTML = filteredCourses.map(course => {
           const att = getCourseAttendance(course.id);
-          const slotsHtml = (att.slots || []).map((s, sIdx) => `
-            <div class="att-slot-chip">
-              <span>${escapeHtml(s.day)} • ${escapeHtml(s.startTime)}${s.endTime ? ' - ' + escapeHtml(s.endTime) : ''}</span>
-              <button type="button" class="btn-icon" style="color:var(--accent-red); padding:0 4px;" onclick="removeCourseScheduleSlot('${course.id}', ${sIdx})">&times;</button>
-            </div>
-          `).join('');
+          const slotsHtml = (att.slots || []).map((s, sIdx) => {
+            const skippedToday = (s.skipDates || []).includes(toSlashDate(state.routineDate));
+            return `
+              <div class="att-slot-chip">
+                <span>${escapeHtml(s.day)} • ${escapeHtml(s.startTime)}${s.endTime ? ' - ' + escapeHtml(s.endTime) : ''}${skippedToday ? ' • Cancelled today' : ''}</span>
+                ${skippedToday ? `<button type="button" class="btn-preset" onclick="toggleAttendanceSlotSkip('${course.id}', ${sIdx}, '${toSlashDate(state.routineDate)}')">Restore</button>` : ''}
+                <button type="button" class="btn-icon" style="color:var(--accent-red); padding:0 4px;" onclick="removeCourseScheduleSlot('${course.id}', ${sIdx})">&times;</button>
+              </div>
+            `;
+          }).join('');
 
           const paletteOpts = INTUITIVE_PALETTE.map(p =>
             `<option value="${p.var}" ${att.color === p.var ? 'selected' : ''}>${p.name}</option>`
@@ -7035,6 +7351,22 @@
       saveData();
       renderAttendanceModalContent();
       renderDailyGrid();
+    }
+
+    function toggleAttendanceSlotSkip(courseId, slotIdx, dateSlash) {
+      const att = getCourseAttendance(courseId);
+      const slot = att.slots[slotIdx];
+      if (!slot) return;
+      if (!Array.isArray(slot.skipDates)) slot.skipDates = [];
+      const normalizedDate = normalizeDateToSlash(dateSlash);
+      slot.skipDates = slot.skipDates.includes(normalizedDate)
+        ? slot.skipDates.filter(date => date !== normalizedDate)
+        : [...slot.skipDates, normalizedDate];
+      saveData();
+      renderDailyGrid();
+      if (document.getElementById('modal-attendance').classList.contains('active')) {
+        renderAttendanceModalContent();
+      }
     }
 
     document.getElementById('btn-save-attendance-log').addEventListener('click', () => {
@@ -7404,7 +7736,6 @@
             + ((isAnnulledModule || isPendingModule) ? ' is-merged-module' : '')
             + (finalized ? ' is-finalized-course' : '');
 
-          const typeLabel = c.type ? `<span class="course-type-tag">${escapeHtml(c.type)}</span>` : '';
           let statusTag = '';
           if (finalEv) {
             statusTag = `<span class="course-type-tag tag-passed">Passed: ${escapeHtml(finalEv.score)}</span>`;
@@ -7422,33 +7753,38 @@
             ? 'No Credit'
             : (c.mergedIntoId ? 'In merged course' : (countableCfu < displayedCfu ? `${countableCfu} counted` : ''));
           const cfuHtml = `<div class="course-cfu ${(countableCfu === 0 || c.mergedIntoId) ? 'no-credit' : ''}" style="${isAnnulledModule ? 'text-decoration:line-through;' : ''}"><span>${displayedCfu} ${unit}</span>${cfuNote ? `<small>${cfuNote}</small>` : ''}</div>`;
-          const recordedGrade = [...state.evaluations].reverse().find(ev => ev.courseId === c.id && !ev.autoMerged);
-          const editGradeHtml = recordedGrade
-            ? '<button type="button" class="btn-preset" data-edit-recorded-grade>✎ Edit grade</button>'
-            : '';
+          const gradeCourseIds = isMergedParent ? c.mergedModuleIds : [c.id];
+          const recordedGrade = [...state.evaluations].reverse().find(ev =>
+            gradeCourseIds.includes(ev.courseId) && !ev.autoMerged
+          );
 
           card.innerHTML = `
             <div>
-              <div class="course-code">${escapeHtml(c.code)} &bull; <span class="course-ssd">${escapeHtml(c.ssd)}</span> &bull; ${escapeHtml(c.ay || '')}${typeLabel}${statusTag}</div>
+              <div class="course-code">${escapeHtml(c.code)} &bull; <span class="course-ssd">${escapeHtml(c.ssd)}</span> &bull; ${escapeHtml(c.ay || '')}${statusTag}</div>
               <div class="course-name">${escapeHtml(c.name)}</div>
               <div class="course-prof">${escapeHtml(c.prof || 'Professor TBA')}</div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
               ${cfuHtml}
-              ${editGradeHtml}
             </div>
           `;
-          const editGradeButton = card.querySelector('[data-edit-recorded-grade]');
-          if (editGradeButton) {
-            editGradeButton.addEventListener('click', event => {
-              event.stopPropagation();
+          const openCourseCard = recordedGrade
+            ? () => {
               closeModal('modal-study-plan');
               openGradeModal(recordedGrade.id);
+            }
+            : (!finalized ? () => openCourseModal(c.id) : null);
+          if (openCourseCard) {
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', recordedGrade ? `Edit grade for ${c.name}` : `Open ${c.name}`);
+            card.tabIndex = 0;
+            card.addEventListener('click', openCourseCard);
+            card.addEventListener('keydown', event => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openCourseCard();
+              }
             });
-          }
-          // Rule 4: Once final grade is recorded, course cannot be selected elsewhere
-          if (!finalized) {
-            card.addEventListener('click', () => openCourseModal(c.id));
           }
           sec.appendChild(card);
         });
