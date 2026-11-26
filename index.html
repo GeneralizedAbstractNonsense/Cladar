@@ -156,6 +156,95 @@
       margin-top: 36px;
     }
 
+    .backup-guide {
+      padding: 78px 0 88px;
+      border-top: 1px solid #e8e8ed;
+    }
+
+    .backup-intro {
+      max-width: 720px;
+      margin: 14px 0 32px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .backup-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .backup-card {
+      padding: 24px;
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .backup-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: -.03em;
+    }
+
+    .backup-card p,
+    .backup-card li {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .backup-card p { margin: 0; }
+    .backup-card ul,
+    .backup-card ol { margin: 10px 0 0; padding-left: 20px; }
+    .backup-card li + li { margin-top: 6px; }
+
+    .backup-key {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #e5e7eb;
+      color: #30343b;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .88em;
+      overflow-wrap: anywhere;
+    }
+
+    .backup-example {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    .backup-code {
+      margin: 14px 0 0;
+      padding: 18px;
+      overflow: auto;
+      border: 1px solid #303b4b;
+      border-radius: 14px;
+      background: #111827;
+      color: #e5e7eb;
+      font: 13px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      tab-size: 2;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .backup-code code { font: inherit; }
+    .backup-code:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+    }
+    .json-key { color: #8bd5ff; }
+    .json-string { color: #a7f3d0; }
+    .json-punctuation { color: #cbd5e1; }
+
+    .backup-caution {
+      margin-top: 14px !important;
+      padding: 14px 16px;
+      border-left: 3px solid #b45309;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: #713f12 !important;
+    }
+
     .download-option h3 {
       margin: 0 0 10px;
       font-size: 20px;
@@ -197,8 +286,11 @@
       .hero { padding: 90px 0 86px; }
       .feature-grid,
       .download-grid { grid-template-columns: 1fr; }
+      .backup-columns { grid-template-columns: 1fr; }
+      .backup-example { grid-column: auto; }
       .feature { min-height: 0; }
       .get-started { padding-top: 64px; padding-bottom: 68px; }
+      .backup-guide { padding-top: 64px; padding-bottom: 68px; }
       .download-grid { gap: 32px; }
     }
 
@@ -248,6 +340,69 @@
         <article class="feature">
           <h3>Private by design</h3>
           <p>Your data stays on your device, with offline access and backup tools.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="backup-guide" id="json-backup-guide" lang="it" aria-labelledby="backup-guide-title">
+      <h2 id="backup-guide-title">I tuoi dati, facili da salvare e trasferire.</h2>
+      <p class="backup-intro">Cladar salva i dati sul dispositivo. Un backup JSON è una copia leggibile che puoi conservare o trasferire: non è una sincronizzazione automatica tra dispositivi.</p>
+
+      <div class="backup-columns">
+        <article class="backup-card">
+          <h3>Cosa contiene il file</h3>
+          <p>Il file si chiama, per esempio, <code class="backup-key">cladar_backup_YYYY-MM-DD.json</code> e contiene queste aree:</p>
+          <ul>
+            <li><code class="backup-key">cladar_profiles</code>: tutti i profili; ogni elemento contiene un <code class="backup-key">id</code>, i dati personali e universitari <code class="backup-key">profile</code>, il piano corsi <code class="backup-key">studyPlan</code>, le valutazioni <code class="backup-key">evaluations</code> e le presenze <code class="backup-key">attendanceLogs</code>. Foto e QR caricati possono essere inclusi come data URL.</li>
+            <li><code class="backup-key">cladar_active_profile_id</code>: indica quale profilo era selezionato al momento del backup.</li>
+            <li><code class="backup-key">cladar_profile</code>, <code class="backup-key">cladar_study_plan</code>, <code class="backup-key">cladar_evaluations</code> e <code class="backup-key">cladar_attendance_logs</code>: copie dei dati del profilo attivo, mantenute anche per compatibilità.</li>
+            <li>Altre sezioni al livello principale: <code class="backup-key">cladar_events</code> per gli eventi; <code class="backup-key">cladar_course_details</code> per dettagli dei corsi, appelli e link; <code class="backup-key">cladar_course_attendance</code> per la frequenza; <code class="backup-key">cladar_courses_other</code> per link e note di altri corsi.</li>
+            <li><code class="backup-key">cladar_homeworks</code>, <code class="backup-key">cladar_tasks</code> e <code class="backup-key">cladar_notes</code>: compiti, attività e note; <code class="backup-key">cladar_weekly_plan</code>: routine settimanale; <code class="backup-key">cladar_theme</code>: tema chiaro o scuro.</li>
+          </ul>
+        </article>
+
+        <article class="backup-card">
+          <h3>Usarlo su un altro dispositivo</h3>
+          <ol>
+            <li>Nel dispositivo di partenza apri <strong>Settings → Backup &amp; Data Management</strong> e scegli <strong>Share Backup (JSON)</strong> oppure <strong>Export Data (JSON)</strong>.</li>
+            <li>Invia o salva il file con un metodo privato, ad esempio AirDrop, File/iCloud Drive o un servizio di file personali.</li>
+            <li>Nel nuovo dispositivo apri Cladar, scegli <strong>Import Data (JSON)</strong> e seleziona il file. Se hai copiato il testo JSON, usa <strong>Paste Backup (JSON)</strong>.</li>
+          </ol>
+          <p style="margin-top:12px;">L’importazione sostituisce i dati corrispondenti già presenti; non fonde i due archivi. Esporta prima i dati del dispositivo di destinazione se vuoi conservarli.</p>
+        </article>
+
+        <article class="backup-card">
+          <h3>Più profili nello stesso backup</h3>
+          <p>Non serve esportarli uno per volta: <code class="backup-key">cladar_profiles</code> contiene l’intero elenco. Dopo l’importazione puoi scegliere un profilo dal selettore di Cladar. L’importazione sostituisce l’elenco dei profili esistente con quello del file.</p>
+        </article>
+
+        <article class="backup-card backup-example">
+          <h3>Esempio di struttura</h3>
+          <p>Questo esempio semplificato mostra due profili e il profilo attivo. Un backup reale include i record effettivi e tutti gli altri campi elencati sopra.</p>
+          <pre class="backup-code" tabindex="0" aria-label="Esempio illustrativo della struttura del file JSON"><code><span class="json-punctuation">{</span>
+  <span class="json-key">"cladar_profiles"</span><span class="json-punctuation">: [</span>
+    <span class="json-punctuation">{</span>
+      <span class="json-key">"id"</span><span class="json-punctuation">: </span><span class="json-string">"profile_ada"</span><span class="json-punctuation">,</span>
+      <span class="json-key">"profile"</span><span class="json-punctuation">: { </span><span class="json-key">"name"</span><span class="json-punctuation">: </span><span class="json-string">"Ada"</span><span class="json-punctuation">, </span><span class="json-key">"mat"</span><span class="json-punctuation">: </span><span class="json-string">"DEMO-01"</span><span class="json-punctuation"> },</span>
+      <span class="json-key">"studyPlan"</span><span class="json-punctuation">: [],</span>
+      <span class="json-key">"evaluations"</span><span class="json-punctuation">: [],</span>
+      <span class="json-key">"attendanceLogs"</span><span class="json-punctuation">: []</span>
+    <span class="json-punctuation">},</span>
+    <span class="json-punctuation">{</span>
+      <span class="json-key">"id"</span><span class="json-punctuation">: </span><span class="json-string">"profile_luca"</span><span class="json-punctuation">,</span>
+      <span class="json-key">"profile"</span><span class="json-punctuation">: { </span><span class="json-key">"name"</span><span class="json-punctuation">: </span><span class="json-string">"Luca"</span><span class="json-punctuation">, </span><span class="json-key">"mat"</span><span class="json-punctuation">: </span><span class="json-string">"DEMO-02"</span><span class="json-punctuation"> },</span>
+      <span class="json-key">"studyPlan"</span><span class="json-punctuation">: [],</span>
+      <span class="json-key">"evaluations"</span><span class="json-punctuation">: [],</span>
+      <span class="json-key">"attendanceLogs"</span><span class="json-punctuation">: []</span>
+    <span class="json-punctuation">}</span>
+  <span class="json-punctuation">],</span>
+  <span class="json-key">"cladar_active_profile_id"</span><span class="json-punctuation">: </span><span class="json-string">"profile_ada"</span><span class="json-punctuation">,</span>
+  <span class="json-key">"cladar_events"</span><span class="json-punctuation">: [],</span>
+  <span class="json-key">"cladar_homeworks"</span><span class="json-punctuation">: [],</span>
+  <span class="json-key">"cladar_tasks"</span><span class="json-punctuation">: [],</span>
+  <span class="json-key">"cladar_notes"</span><span class="json-punctuation">: []</span>
+<span class="json-punctuation">}</span></code></pre>
+          <p class="backup-caution"><strong>Privacy:</strong> il JSON è testo leggibile, non è cifrato e può contenere dati personali, voti e note. Conservalo in un luogo privato e condividilo solo con persone o dispositivi fidati.</p>
         </article>
       </div>
     </section>
