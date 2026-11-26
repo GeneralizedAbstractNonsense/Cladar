@@ -344,42 +344,42 @@
       </div>
     </section>
 
-    <section class="backup-guide" id="json-backup-guide" lang="it" aria-labelledby="backup-guide-title">
-      <h2 id="backup-guide-title">I tuoi dati, facili da salvare e trasferire.</h2>
-      <p class="backup-intro">Cladar salva i dati sul dispositivo. Un backup JSON è una copia leggibile che puoi conservare o trasferire: non è una sincronizzazione automatica tra dispositivi.</p>
+    <section class="backup-guide" id="json-backup-guide" aria-labelledby="backup-guide-title">
+      <h2 id="backup-guide-title">Your data, easy to save and transfer.</h2>
+      <p class="backup-intro">Cladar saves your data on your device. A JSON backup is a readable copy that you can keep or transfer; it does not automatically sync data between devices.</p>
 
       <div class="backup-columns">
         <article class="backup-card">
-          <h3>Cosa contiene il file</h3>
-          <p>Il file si chiama, per esempio, <code class="backup-key">cladar_backup_YYYY-MM-DD.json</code> e contiene queste aree:</p>
+          <h3>What's in the file</h3>
+          <p>The file is named, for example, <code class="backup-key">cladar_backup_YYYY-MM-DD.json</code> and contains these sections:</p>
           <ul>
-            <li><code class="backup-key">cladar_profiles</code>: tutti i profili; ogni elemento contiene un <code class="backup-key">id</code>, i dati personali e universitari <code class="backup-key">profile</code>, il piano corsi <code class="backup-key">studyPlan</code>, le valutazioni <code class="backup-key">evaluations</code> e le presenze <code class="backup-key">attendanceLogs</code>. Foto e QR caricati possono essere inclusi come data URL.</li>
-            <li><code class="backup-key">cladar_active_profile_id</code>: indica quale profilo era selezionato al momento del backup.</li>
-            <li><code class="backup-key">cladar_profile</code>, <code class="backup-key">cladar_study_plan</code>, <code class="backup-key">cladar_evaluations</code> e <code class="backup-key">cladar_attendance_logs</code>: copie dei dati del profilo attivo, mantenute anche per compatibilità.</li>
-            <li>Altre sezioni al livello principale: <code class="backup-key">cladar_events</code> per gli eventi; <code class="backup-key">cladar_course_details</code> per dettagli dei corsi, appelli e link; <code class="backup-key">cladar_course_attendance</code> per la frequenza; <code class="backup-key">cladar_courses_other</code> per link e note di altri corsi.</li>
-            <li><code class="backup-key">cladar_homeworks</code>, <code class="backup-key">cladar_tasks</code> e <code class="backup-key">cladar_notes</code>: compiti, attività e note; <code class="backup-key">cladar_weekly_plan</code>: routine settimanale; <code class="backup-key">cladar_theme</code>: tema chiaro o scuro.</li>
+            <li><code class="backup-key">cladar_profiles</code>: all profiles. Each entry contains an <code class="backup-key">id</code>, personal and university details in <code class="backup-key">profile</code>, the course plan in <code class="backup-key">studyPlan</code>, grades in <code class="backup-key">evaluations</code>, and attendance in <code class="backup-key">attendanceLogs</code>. Uploaded photos and QR codes may be included as data URLs.</li>
+            <li><code class="backup-key">cladar_active_profile_id</code>: identifies the profile that was selected when the backup was created.</li>
+            <li><code class="backup-key">cladar_profile</code>, <code class="backup-key">cladar_study_plan</code>, <code class="backup-key">cladar_evaluations</code>, and <code class="backup-key">cladar_attendance_logs</code>: copies of the active profile's data, also included for compatibility.</li>
+            <li>Other top-level sections: <code class="backup-key">cladar_events</code> for events; <code class="backup-key">cladar_course_details</code> for course details, exam sessions, and links; <code class="backup-key">cladar_course_attendance</code> for course attendance; and <code class="backup-key">cladar_courses_other</code> for links and notes for other courses.</li>
+            <li><code class="backup-key">cladar_homeworks</code>, <code class="backup-key">cladar_tasks</code>, and <code class="backup-key">cladar_notes</code>: homework, tasks, and notes; <code class="backup-key">cladar_weekly_plan</code>: your weekly routine; <code class="backup-key">cladar_theme</code>: light or dark theme.</li>
           </ul>
         </article>
 
         <article class="backup-card">
-          <h3>Usarlo su un altro dispositivo</h3>
+          <h3>Use it on another device</h3>
           <ol>
-            <li>Nel dispositivo di partenza apri <strong>Settings → Backup &amp; Data Management</strong> e scegli <strong>Share Backup (JSON)</strong> oppure <strong>Export Data (JSON)</strong>.</li>
-            <li>Invia o salva il file con un metodo privato, ad esempio AirDrop, File/iCloud Drive o un servizio di file personali.</li>
-            <li>Nel nuovo dispositivo apri Cladar, scegli <strong>Import Data (JSON)</strong> e seleziona il file. Se hai copiato il testo JSON, usa <strong>Paste Backup (JSON)</strong>.</li>
+            <li>On the original device, open <strong>Settings → Backup &amp; Data Management</strong> and choose <strong>Share Backup (JSON)</strong> or <strong>Export Data (JSON)</strong>.</li>
+            <li>Send or save the file using a private method, such as AirDrop, Files/iCloud Drive, or a personal file storage service.</li>
+            <li>On the new device, open Cladar, choose <strong>Import Data (JSON)</strong>, and select the file. If you copied the JSON text, choose <strong>Paste Backup (JSON)</strong>.</li>
           </ol>
-          <p style="margin-top:12px;">L’importazione sostituisce i dati corrispondenti già presenti; non fonde i due archivi. Esporta prima i dati del dispositivo di destinazione se vuoi conservarli.</p>
+          <p style="margin-top:12px;">Importing replaces the corresponding data already on the device; it does not merge the two backups. Export the destination device's data first if you want to keep it.</p>
         </article>
 
         <article class="backup-card">
-          <h3>Più profili nello stesso backup</h3>
-          <p>Non serve esportarli uno per volta: <code class="backup-key">cladar_profiles</code> contiene l’intero elenco. Dopo l’importazione puoi scegliere un profilo dal selettore di Cladar. L’importazione sostituisce l’elenco dei profili esistente con quello del file.</p>
+          <h3>Multiple profiles in one backup</h3>
+          <p>You don't need to export them one at a time: <code class="backup-key">cladar_profiles</code> contains the full list. After importing, you can choose a profile from Cladar's profile selector. Importing replaces the existing profile list with the one in the file.</p>
         </article>
 
         <article class="backup-card backup-example">
-          <h3>Esempio di struttura</h3>
-          <p>Questo esempio semplificato mostra due profili e il profilo attivo. Un backup reale include i record effettivi e tutti gli altri campi elencati sopra.</p>
-          <pre class="backup-code" tabindex="0" aria-label="Esempio illustrativo della struttura del file JSON"><code><span class="json-punctuation">{</span>
+          <h3>Example structure</h3>
+          <p>This simplified example shows two profiles and the active profile. A real backup includes the actual records and all the other fields listed above.</p>
+          <pre class="backup-code" tabindex="0" aria-label="Illustrative example of the JSON file structure"><code><span class="json-punctuation">{</span>
   <span class="json-key">"cladar_profiles"</span><span class="json-punctuation">: [</span>
     <span class="json-punctuation">{</span>
       <span class="json-key">"id"</span><span class="json-punctuation">: </span><span class="json-string">"profile_ada"</span><span class="json-punctuation">,</span>
@@ -402,7 +402,7 @@
   <span class="json-key">"cladar_tasks"</span><span class="json-punctuation">: [],</span>
   <span class="json-key">"cladar_notes"</span><span class="json-punctuation">: []</span>
 <span class="json-punctuation">}</span></code></pre>
-          <p class="backup-caution"><strong>Privacy:</strong> il JSON è testo leggibile, non è cifrato e può contenere dati personali, voti e note. Conservalo in un luogo privato e condividilo solo con persone o dispositivi fidati.</p>
+          <p class="backup-caution"><strong>Privacy:</strong> JSON is readable, unencrypted text and may contain personal information, grades, and notes. Keep it somewhere private and share it only with people or devices you trust.</p>
         </article>
       </div>
     </section>
