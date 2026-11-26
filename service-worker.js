@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `cladar-shell-${CACHE_VERSION}`;
 const REMOTE_CACHE = `cladar-remote-${CACHE_VERSION}`;
 const APP_ROOT = new URL('./', self.location.href);
@@ -7,10 +7,10 @@ const SHELL_URLS = [
   APP_ROOT.href,
   APP_URL,
   new URL('manifest.webmanifest', APP_ROOT).href,
-  new URL('icons/cladar-192.png', APP_ROOT).href,
-  new URL('icons/cladar-512.png', APP_ROOT).href,
-  new URL('icons/apple-touch-icon.png', APP_ROOT).href,
-  new URL('vendor/qrcode.min.js', APP_ROOT).href
+ new URL('app/src/main/assets/icons/cladar-192.png', APP_ROOT).href,
+  new URL('app/src/main/assets/icons/cladar-512.png', APP_ROOT).href,
+  new URL('app/src/main/assets/icons/apple-touch-icon.png', APP_ROOT).href,
+  new URL('app/src/main/assets/vendor/qrcode.min.js', APP_ROOT).href
 ];
 const REMOTE_ORIGINS = new Set([
   'https://cdn.jsdelivr.net',
