@@ -2386,6 +2386,44 @@
       border-radius: var(--radius-md);
       background: var(--card-bg);
     }
+    .evaluation-pdf-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 12px;
+    }
+    .evaluation-pdf-controls .form-group {
+      min-width: 0;
+      margin: 0;
+    }
+    .evaluation-pdf-controls label {
+      color: var(--text-color);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .evaluation-pdf-controls .form-control {
+      min-height: 46px;
+    }
+    #export-evaluations-pdf-btn {
+      min-height: 46px;
+      margin: 0;
+      padding: 10px 16px;
+      white-space: nowrap;
+    }
+    #export-evaluations-pdf-btn svg {
+      width: 17px;
+      height: 17px;
+      margin-right: 6px;
+      vertical-align: -3px;
+      fill: currentColor;
+    }
+    .evaluation-pdf-help {
+      grid-column: 1 / -1;
+      margin: -4px 0 0;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
     .evaluations-table-scroll {
       width: 100%;
       overflow-x: auto;
@@ -2418,6 +2456,12 @@
       }
       .evaluations-conversion-controls {
         align-items: flex-start;
+      }
+      .evaluation-pdf-controls {
+        grid-template-columns: 1fr;
+      }
+      #export-evaluations-pdf-btn {
+        width: 100%;
       }
     }
     #modal-edit-profile {
@@ -4179,7 +4223,7 @@
         <section class="profile-edit-section" aria-labelledby="profile-edit-personal-title">
           <div class="profile-edit-section-heading">
             <h4 id="profile-edit-personal-title">Personal details</h4>
-            <p>Your name and university identification number.</p>
+            <p>Add optional contact and identity details for your PDF records. These details are included in backups.</p>
           </div>
           <div class="profile-edit-grid">
             <div class="form-group">
@@ -4189,6 +4233,18 @@
             <div class="form-group">
               <label for="edit-mat">Student ID</label>
               <input type="text" id="edit-mat" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="edit-email">Email</label>
+              <input type="email" id="edit-email" class="form-control" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="edit-date-of-birth">Date of birth</label>
+              <input type="date" id="edit-date-of-birth" class="form-control" autocomplete="bday">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-tax-code">Tax ID / Fiscal Code</label>
+              <input type="text" id="edit-tax-code" class="form-control" autocomplete="off">
             </div>
           </div>
         </section>
@@ -4388,6 +4444,17 @@
           <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:10px 32px 10px 12px;"></select>
           <button type="button" class="btn-link" id="toggle-eval-conversion-btn" aria-pressed="false">Convert grades</button>
           <span id="eval-conversion-note" style="display:none; font-size:0.78rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
+        </div>
+        <div class="evaluation-pdf-controls">
+          <div class="form-group">
+            <label for="evaluation-pdf-display-name">Name to show on the document</label>
+            <input type="text" id="evaluation-pdf-display-name" class="form-control" autocomplete="name">
+          </div>
+          <button type="button" class="btn-primary-action" id="export-evaluations-pdf-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-3 5-5h-3V4h-4v8H7l5 5z"/></svg>
+            Export to PDF
+          </button>
+          <p class="evaluation-pdf-help">The PDF uses the grading system selected above. Your display name can be changed for this export.</p>
         </div>
         <div class="evaluations-table-scroll" role="region" aria-label="Evaluations table" tabindex="0">
           <table class="eval-table">
@@ -5017,6 +5084,9 @@
     const DEFAULT_PROFILE = {
       name: 'Dr. Alphys',
       mat: '2015915',
+      email: '',
+      dateOfBirth: '',
+      taxCode: '',
       univ: 'Mount Ebott University',
       faculty: 'Faculty of Engineering & Applied Sciences',
       dept: 'Dept. of Information Engineering, Robotics and Bioengineering (DIIRB)',
@@ -9149,6 +9219,9 @@
       const p = state.profile;
       document.getElementById('edit-name').value = p.name;
       document.getElementById('edit-mat').value = p.mat;
+      document.getElementById('edit-email').value = p.email || '';
+      document.getElementById('edit-date-of-birth').value = p.dateOfBirth || '';
+      document.getElementById('edit-tax-code').value = p.taxCode || '';
       document.getElementById('edit-univ').value = p.univ;
       document.getElementById('edit-faculty').value = p.faculty || '';
       document.getElementById('edit-dept').value = p.dept || '';
@@ -9196,6 +9269,9 @@
     document.getElementById('save-profile-btn').addEventListener('click', () => {
       state.profile.name = document.getElementById('edit-name').value.trim() || 'Student';
       state.profile.mat = document.getElementById('edit-mat').value.trim();
+      state.profile.email = document.getElementById('edit-email').value.trim();
+      state.profile.dateOfBirth = document.getElementById('edit-date-of-birth').value;
+      state.profile.taxCode = document.getElementById('edit-tax-code').value.trim();
       state.profile.univ = document.getElementById('edit-univ').value.trim();
       state.profile.faculty = document.getElementById('edit-faculty').value.trim();
       state.profile.dept = document.getElementById('edit-dept').value.trim();
@@ -9232,6 +9308,7 @@
       const defaultTarget = state.profile.gradeScale === 'italian' ? 'german' : 'italian';
       const conversionScale = document.getElementById('eval-conversion-scale');
       conversionScale.innerHTML = getGradeScaleOptionsHtml(defaultTarget);
+      document.getElementById('evaluation-pdf-display-name').value = state.profile.name || '';
       isEvalConversionPreviewVisible = false;
       updateEvalConversionControls();
       renderAllEvaluationsModal();
@@ -9282,6 +9359,297 @@
       }
       return converted;
     }
+
+    const EVALUATION_PDF_LIBRARY_URLS = [
+      'https://cdn.jsdelivr.net/npm/jspdf@3.0.1/dist/jspdf.umd.min.js',
+      'https://cdn.jsdelivr.net/npm/jspdf-autotable@5.0.2/dist/jspdf.plugin.autotable.min.js'
+    ];
+    let evaluationPdfLibraryPromise = null;
+
+    function loadEvaluationPdfScript(url) {
+      return new Promise((resolve, reject) => {
+        const existingScript = [...document.scripts].find(script => script.dataset.pdfLibraryUrl === url);
+        if (existingScript?.dataset.loaded === 'true') {
+          resolve();
+          return;
+        }
+
+        const script = existingScript || document.createElement('script');
+        if (!existingScript) {
+          script.src = url;
+          script.crossOrigin = 'anonymous';
+          script.dataset.pdfLibraryUrl = url;
+        }
+        script.addEventListener('load', () => {
+          script.dataset.loaded = 'true';
+          resolve();
+        }, { once: true });
+        script.addEventListener('error', () => {
+          script.remove();
+          reject(new Error(`Unable to load PDF library: ${url}`));
+        }, { once: true });
+        if (!existingScript) document.head.appendChild(script);
+      });
+    }
+
+    async function getEvaluationPdfConstructor() {
+      if (window.jspdf?.jsPDF?.API?.autoTable) return window.jspdf.jsPDF;
+      if (!evaluationPdfLibraryPromise) {
+        evaluationPdfLibraryPromise = (async () => {
+          await loadEvaluationPdfScript(EVALUATION_PDF_LIBRARY_URLS[0]);
+          await loadEvaluationPdfScript(EVALUATION_PDF_LIBRARY_URLS[1]);
+          const PdfConstructor = window.jspdf?.jsPDF;
+          if (!PdfConstructor?.API?.autoTable) {
+            throw new Error('The PDF export libraries did not initialize correctly.');
+          }
+          return PdfConstructor;
+        })().catch(error => {
+          evaluationPdfLibraryPromise = null;
+          throw error;
+        });
+      }
+      return evaluationPdfLibraryPromise;
+    }
+
+    function loadEvaluationPdfLogo() {
+      return new Promise((resolve, reject) => {
+        const logo = new Image();
+        logo.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = logo.naturalWidth;
+            canvas.height = logo.naturalHeight;
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            if (!context) throw new Error('Canvas is unavailable for logo processing.');
+            context.drawImage(logo, 0, 0);
+            const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+            // The available app icon has a black background; remove those pixels for the white PDF page.
+            for (let index = 0; index < pixels.data.length; index += 4) {
+              if (pixels.data[index] < 12 && pixels.data[index + 1] < 12 && pixels.data[index + 2] < 12) {
+                pixels.data[index + 3] = 0;
+              }
+            }
+            context.putImageData(pixels, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+          } catch (error) {
+            reject(error);
+          }
+        };
+        logo.onerror = () => reject(new Error('The Cladar logo could not be loaded.'));
+        logo.src = new URL('./app/src/main/assets/icons/cladar-512.png', document.baseURI).href;
+      });
+    }
+
+    function formatEvaluationPdfDate(value) {
+      const match = normalizeDateToSlash(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) return String(value || '—');
+      const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+    }
+
+    function getEvaluationPdfProfileRows(displayName, gradeScaleLabel) {
+      const profile = state.profile;
+      const honorsProgram = [profile.honorsSchoolName, profile.honorsClass].filter(Boolean).join(' · ');
+      const fields = [
+        ['Display Name', displayName],
+        ['Student ID', profile.mat],
+        ['Date of Birth', profile.dateOfBirth ? formatEvaluationPdfDate(profile.dateOfBirth) : ''],
+        ['Tax ID / Fiscal Code', profile.taxCode],
+        ['Email', profile.email],
+        ['Degree Program', profile.degree],
+        ['Program Structure', getProgramStructureLabel()],
+        ['University', profile.univ],
+        ['Faculty', profile.faculty],
+        ['Department', profile.dept],
+        ['Credit System', profile.creditUnit],
+        ['Study Plan Code', profile.studyPlanCode],
+        ['Course Regulations', profile.courseRegulation],
+        ['Enrollment Year', profile.enrollmentYear],
+        ['Academic Status', profile.fuoricorso ? `Out of course (year ${profile.fuoricorsoYear})` : 'On track'],
+        ['Honors Program', profile.hasHonorsSchool ? honorsProgram || 'Yes' : ''],
+        ['Grade Scale', gradeScaleLabel]
+      ].filter(([, value]) => String(value ?? '').trim());
+
+      const rows = [];
+      for (let index = 0; index < fields.length; index += 2) {
+        const first = fields[index];
+        const second = fields[index + 1] || ['', ''];
+        rows.push([first[0], String(first[1]), second[0], String(second[1])]);
+      }
+      return rows;
+    }
+
+    async function exportEvaluationsToPdf() {
+      const displayName = document.getElementById('evaluation-pdf-display-name').value.trim() || state.profile.name || 'Student';
+      const targetScale = document.getElementById('eval-conversion-scale').value;
+      const targetScaleLabel = getGradeScale(targetScale).label;
+      const PdfConstructor = await getEvaluationPdfConstructor();
+      const logo = await loadEvaluationPdfLogo();
+      const pdf = new PdfConstructor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const profileRows = getEvaluationPdfProfileRows(displayName, targetScaleLabel);
+
+      pdf.setProperties({
+        title: 'Cladar Evaluation Record',
+        subject: 'Personal evaluation record',
+        author: 'Cladar'
+      });
+      pdf.addImage(logo, 'PNG', 14, 13, 26, 26);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(14);
+      pdf.setTextColor(33, 42, 57);
+      pdf.text('Cladar Evaluation Record', 46, 17);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(100, 110, 125);
+      pdf.text(`Generated ${formatEvaluationPdfDate(todaySlash)}`, pageWidth - 14, 17, { align: 'right' });
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(7);
+      pdf.setTextColor(55, 65, 81);
+      pdf.text('STUDENT DETAILS', 46, 24);
+
+      pdf.autoTable({
+        body: profileRows,
+        startY: 27,
+        margin: { left: 46, right: 14 },
+        tableWidth: pageWidth - 60,
+        theme: 'plain',
+        styles: {
+          font: 'helvetica',
+          fontSize: 7.5,
+          textColor: [55, 65, 81],
+          cellPadding: { top: 1.2, right: 1.4, bottom: 1.2, left: 1.4 },
+          overflow: 'linebreak',
+          valign: 'top'
+        },
+        columnStyles: {
+          0: { cellWidth: 18, fontStyle: 'bold' },
+          1: { cellWidth: 56 },
+          2: { cellWidth: 18, fontStyle: 'bold' },
+          3: { cellWidth: 58 }
+        }
+      });
+
+      const tableStartY = Math.max((pdf.lastAutoTable?.finalY || 27) + 12, 82);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(11);
+      pdf.setTextColor(33, 42, 57);
+      pdf.text('Evaluation Results', 14, tableStartY - 7);
+
+      const { effectiveEvals } = getEffectiveEvaluationsAndCourses();
+      const targetPassMark = getGradePassMark(targetScale, state.profile.degreeCategory);
+      const unit = getCreditUnit();
+      const tableRows = effectiveEvals.map(evaluation => {
+        const course = state.studyPlan.find(item => item.id === evaluation.courseId) || {
+          name: 'Unknown Course',
+          code: '—',
+          ssd: '—',
+          prof: '—',
+          cfu: 0,
+          excludeCredits: false
+        };
+        const sourceScale = getEvaluationScale(evaluation);
+        const convertedGrade = convertGradeBetweenScales(
+          evaluation.score,
+          sourceScale,
+          targetScale,
+          getEvaluationPassMark(evaluation),
+          targetPassMark
+        );
+        const courseDetails = `${course.code} · ${course.ssd} · ${formatCourseCfu(course, unit)}`;
+        const type = evaluation.isConsolidated ? 'Final (Merged)' : (evaluation.isPartial ? 'Partial' : 'Final');
+        return [
+          `${course.name}\n${courseDetails}`,
+          course.prof || '—',
+          convertedGrade,
+          type,
+          formatEvaluationPdfDate(evaluation.date)
+        ];
+      });
+
+      const disclaimer = 'Disclaimer: This document was generated by Cladar for personal record-keeping purposes only. It is not an official transcript and is not issued or endorsed by the university.';
+      pdf.autoTable({
+        head: [[
+          'Course / Details',
+          'Professor',
+          `Grade (${targetScaleLabel})`,
+          'Type',
+          'Date'
+        ]],
+        body: tableRows.length ? tableRows : [['No evaluations recorded', '', '', '', '']],
+        startY: tableStartY,
+        margin: { top: 34, right: 14, bottom: 27, left: 14 },
+        theme: 'grid',
+        showHead: 'everyPage',
+        rowPageBreak: 'avoid',
+        styles: {
+          font: 'helvetica',
+          fontSize: 8,
+          textColor: [40, 48, 62],
+          cellPadding: 3,
+          overflow: 'linebreak',
+          valign: 'middle',
+          lineColor: [220, 224, 230],
+          lineWidth: 0.2
+        },
+        headStyles: {
+          fillColor: [37, 52, 74],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 7.8
+        },
+        alternateRowStyles: { fillColor: [246, 248, 251] },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { cellWidth: 36 },
+          2: { cellWidth: 24, halign: 'center', fontStyle: 'bold' },
+          3: { cellWidth: 28 },
+          4: { cellWidth: 24 }
+        },
+        didDrawPage: data => {
+          if (data.pageNumber > 1) {
+            pdf.addImage(logo, 'PNG', 14, 10, 12, 12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(9);
+            pdf.setTextColor(33, 42, 57);
+            pdf.text('Cladar Evaluation Record', 30, 17);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7.5);
+            pdf.setTextColor(100, 110, 125);
+            pdf.text(displayName, pageWidth - 14, 17, { align: 'right' });
+          }
+
+          pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(8);
+          pdf.setTextColor(90, 98, 110);
+          const disclaimerLines = pdf.splitTextToSize(disclaimer, pageWidth - 28);
+          pdf.text(disclaimerLines, pageWidth / 2, pageHeight - 14, { align: 'center' });
+          pdf.text(`Page ${data.pageNumber}`, pageWidth - 14, pageHeight - 5, { align: 'right' });
+        }
+      });
+
+      pdf.save(`cladar_evaluations_${todaySlash}.pdf`);
+    }
+
+    document.getElementById('export-evaluations-pdf-btn').addEventListener('click', async event => {
+      const button = event.currentTarget;
+      if (button.disabled) return;
+      button.disabled = true;
+      try {
+        await exportEvaluationsToPdf();
+        showToast('Evaluation PDF exported.');
+      } catch (error) {
+        console.error('Evaluation PDF export failed:', error);
+        showToast('Could not export PDF. Check your connection and try again.', true);
+      } finally {
+        button.disabled = false;
+      }
+    });
 
     function renderAllEvaluationsModal() {
       const tbody = document.getElementById('eval-table-body');
