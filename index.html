@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="description" content="Cladar keeps your university life organized with study plans, schedules, tasks, and exam tracking.">
+  <title>Cladar</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #1d1d1f;
+      background: #fff;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      --muted: #6e6e73;
+      --blue: #06c;
+      --surface: #f5f5f7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; }
+
+    a { color: inherit; }
+
+    .topbar {
+      min-height: 64px;
+      padding: 0 max(24px, calc((100% - 1040px) / 2));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid #e8e8ed;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 650;
+      letter-spacing: -0.04em;
+      text-decoration: none;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 550;
+      text-decoration: none;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .button:hover { background: #0077ed; }
+    .button:active { transform: scale(.98); }
+
+    main {
+      width: min(100% - 40px, 920px);
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: clamp(88px, 15vw, 160px) 0 112px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: clamp(48px, 9vw, 88px);
+      line-height: .98;
+      letter-spacing: -.075em;
+      font-weight: 700;
+    }
+
+    .hero-copy {
+      max-width: 560px;
+      margin: 24px auto 30px;
+      color: var(--muted);
+      font-size: clamp(17px, 2.4vw, 21px);
+      line-height: 1.5;
+    }
+
+    .features {
+      padding: 78px 0 88px;
+      border-top: 1px solid #e8e8ed;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 48px);
+      letter-spacing: -.06em;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      margin: 12px 0 36px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .feature {
+      min-height: 150px;
+      padding: 24px;
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      letter-spacing: -.02em;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .get-started {
+      margin: 0 calc((min(100vw - 40px, 920px) - 100vw) / 2);
+      padding: 82px max(24px, calc((100% - 920px) / 2)) 88px;
+      background: var(--surface);
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 36px;
+    }
+
+    .download-option h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: -.03em;
+    }
+
+    .download-option p,
+    .download-option ol {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .download-option ol { padding-left: 20px; }
+    .download-option li + li { margin-top: 5px; }
+
+    .text-link {
+      color: var(--blue);
+      font-weight: 550;
+      text-decoration: none;
+    }
+
+    .text-link:hover { text-decoration: underline; }
+
+    .note {
+      margin-top: 18px;
+      font-size: 12px !important;
+    }
+
+    footer {
+      padding: 24px 20px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .topbar { padding: 0 20px; }
+      .hero { padding: 90px 0 86px; }
+      .feature-grid,
+      .download-grid { grid-template-columns: 1fr; }
+      .feature { min-height: 0; }
+      .get-started { padding-top: 64px; padding-bottom: 68px; }
+      .download-grid { gap: 32px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Cladar home">Cladar</a>
+    <a class="button" href="./cladar.html">Try in browser</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Make room to focus</p>
+      <h1>Your university life, in focus.</h1>
+      <p class="hero-copy">One calm place for your courses, schedule, tasks, and everything you need to stay on track.</p>
+      <a class="button" href="./cladar.html">Try Cladar in your browser</a>
+    </section>
+
+    <section class="features" aria-labelledby="features-title">
+      <h2 id="features-title">Everything in its place.</h2>
+      <p class="section-copy">The essentials for a more organized semester.</p>
+      <div class="feature-grid">
+        <article class="feature">
+          <h3>Study plans</h3>
+          <p>Organize courses by year and semester, and keep grades and credits together.</p>
+        </article>
+        <article class="feature">
+          <h3>Schedule & routine</h3>
+          <p>See your weekly timetable and build a routine that works for you.</p>
+        </article>
+        <article class="feature">
+          <h3>Tasks & notes</h3>
+          <p>Keep homework, reminders, and rich notes close to your studies.</p>
+        </article>
+        <article class="feature">
+          <h3>Exams & deadlines</h3>
+          <p>See what is coming up with a calendar and helpful countdowns.</p>
+        </article>
+        <article class="feature">
+          <h3>Your student profile</h3>
+          <p>Keep your student details and a handy QR code in one place.</p>
+        </article>
+        <article class="feature">
+          <h3>Private by design</h3>
+          <p>Your data stays on your device, with offline access and backup tools.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="get-started" aria-labelledby="get-started-title">
+      <h2 id="get-started-title">Get started with Cladar.</h2>
+      <div class="download-grid">
+        <div class="download-option">
+          <h3>For Android</h3>
+          <p>Download the latest Cladar APK from GitHub Releases and open it on your device to install.</p>
+          <a class="text-link" href="https://github.com/GeneralizedAbstractNonsense/Cladar/releases/latest" target="_blank" rel="noopener noreferrer">Download APK ↗</a>
+          <p class="note">Android may ask you to allow app installs from your browser or file manager.</p>
+        </div>
+        <div class="download-option">
+          <h3>Use the web app</h3>
+          <p>Open Cladar, then add it to your device from the browser menu:</p>
+          <ol>
+            <li><strong>Android:</strong> choose “Install app” or “Add to Home screen.”</li>
+            <li><strong>iPhone or iPad:</strong> in Safari, tap Share, then “Add to Home Screen.”</li>
+            <li><strong>Mac:</strong> use the install option in Chromium browsers, or “Add to Dock” in supported Safari versions.</li>
+          </ol>
+          <a class="text-link" href="./cladar.html">Open the web app ↗</a>
+          <p class="note">Install support varies. Firefox desktop browsers may not offer PWA installation, but Cladar still works in the browser.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Cladar.</footer>
+</body>
+</html>
