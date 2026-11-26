@@ -214,7 +214,7 @@
       z-index: 100;
       overflow: visible;
       touch-action: none;
-      transition: transform 0.35s cubic-bezier(0.28, 1.32, 0.52, 1), box-shadow 0.35s ease;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
     }
 
     .bottom-nav::before {
@@ -268,8 +268,8 @@
       z-index: 1;
       will-change: transform, width;
       transition:
-        transform 0.44s cubic-bezier(0.28, 1.32, 0.52, 1),
-        width 0.44s cubic-bezier(0.28, 1.32, 0.52, 1),
+        transform 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.52s cubic-bezier(0.22, 1, 0.36, 1),
         box-shadow 0.25s ease,
         background 0.25s ease;
     }
@@ -332,7 +332,7 @@
       gap: 2px;
       transition:
         color 0.2s ease,
-        transform 0.32s cubic-bezier(0.28, 1.32, 0.52, 1);
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     [data-theme="dark"] .nav-btn {
@@ -347,7 +347,7 @@
       width: 22px;
       height: 22px;
       fill: currentColor;
-      transition: transform 0.32s cubic-bezier(0.28, 1.32, 0.52, 1);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .nav-btn.active {
@@ -1365,20 +1365,29 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 22px 18px 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       position: relative;
       box-shadow: 0 4px 20px var(--shadow-color);
+      z-index: 2;
     }
     .avatar-wrapper {
       position: relative;
       width: 90px;
       height: 90px;
       margin-bottom: 12px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
       cursor: pointer;
+    }
+    .avatar-wrapper:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 4px;
     }
     .avatar-img {
       width: 100%;
@@ -1405,7 +1414,271 @@
       border: 2px solid var(--card-bg);
     }
     
-    .profile-name { font-size: 1.25rem; font-weight: 800; color: var(--text-color); margin-bottom: 2px; }
+    .profile-picker-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      margin: 0 0 2px;
+      padding: 3px 8px 3px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-color);
+      font-size: 1.25rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .profile-picker-trigger:hover,
+    .profile-picker-trigger[aria-expanded="true"] {
+      background: rgba(142, 142, 147, 0.14);
+      border-color: rgba(142, 142, 147, 0.2);
+    }
+    .profile-picker-trigger:active { transform: scale(0.97); }
+    .profile-picker-trigger svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+    .profile-picker-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .profile-picker-menu {
+      position: absolute;
+      top: 62px;
+      left: 50%;
+      z-index: 10;
+      width: min(290px, calc(100% - 32px));
+      max-height: min(60vh, 360px);
+      overflow-y: auto;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 18px;
+      background: rgba(35, 37, 45, 0.94);
+      color: var(--text-color);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      transform: translateX(-50%) translateY(-5px) scale(0.98);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+    }
+    [data-theme="light"] .profile-picker-menu {
+      background: rgba(250, 250, 252, 0.95);
+      border-color: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18), inset 0 1px rgba(255, 255, 255, 0.9);
+    }
+    .profile-picker-menu.open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+      transition-delay: 0s;
+    }
+    .profile-picker-option,
+    .profile-picker-add {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-color);
+      font-size: 0.88rem;
+      font-weight: 650;
+      text-align: left;
+      cursor: pointer;
+    }
+    .profile-picker-option:hover,
+    .profile-picker-add:hover { background: rgba(142, 142, 147, 0.15); }
+    .profile-picker-option[aria-checked="true"] { background: rgba(10, 132, 255, 0.1); }
+    .profile-picker-option .profile-picker-check {
+      width: 17px;
+      margin-left: auto;
+      color: var(--accent-blue);
+      text-align: center;
+    }
+    .profile-picker-add {
+      margin-top: 6px;
+      border-top: 1px solid rgba(142, 142, 147, 0.25);
+      border-radius: 0 0 12px 12px;
+      color: var(--accent-blue);
+    }
+    .profile-picker-heading {
+      padding: 8px 12px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 750;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .profile-picker-divider {
+      height: 1px;
+      margin: 6px 6px 0;
+      background: rgba(142, 142, 147, 0.25);
+    }
+    .profile-actions-section {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .profile-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 2px;
+    }
+    .profile-modal-cancel,
+    .profile-modal-confirm {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .profile-modal-cancel {
+      background: var(--input-bg);
+      color: var(--text-color);
+    }
+    .profile-modal-confirm {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+    .profile-modal-cancel:focus-visible,
+    .profile-modal-confirm:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+    .profile-quick-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .profile-edit-button {
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid rgba(10, 132, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(10, 132, 255, 0.1);
+      color: var(--accent-blue);
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.16s ease, transform 0.16s ease;
+    }
+    .profile-edit-button:hover { background: rgba(10, 132, 255, 0.16); }
+    .profile-edit-button:active { transform: scale(0.97); }
+    .profile-edit-button:focus-visible,
+    .profile-action-row:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+    .profile-section-title {
+      padding: 2px 4px 0;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .profile-action-group {
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      background: var(--card-bg);
+    }
+    .profile-action-row {
+      position: relative;
+      width: 100%;
+      min-height: 68px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: transparent;
+      color: var(--text-color);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.16s ease;
+    }
+    .profile-action-row + .profile-action-row::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 58px;
+      height: 1px;
+      background: var(--separator);
+    }
+    .profile-action-row:hover,
+    .profile-action-row:active { background: var(--input-bg); }
+    .profile-action-symbol {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(10, 132, 255, 0.12);
+      color: var(--accent-blue);
+    }
+    .profile-action-symbol svg {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .profile-action-copy {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .profile-action-title { font-size: 0.94rem; font-weight: 650; }
+    .profile-action-detail {
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .profile-action-chevron {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      color: var(--text-muted);
+      opacity: 0.72;
+    }
+    .avatar-badge-hint svg,
+    .honors-icon svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bottom-nav, .nav-liquid-pill, .nav-btn, .nav-btn svg, .profile-picker-menu {
+        transition-duration: 0.01ms !important;
+      }
+    }
     .profile-mat { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
     .profile-degree { font-size: 0.88rem; color: var(--accent-blue); font-weight: 700; margin-top: 6px; }
     .profile-univ-line { font-size: 0.78rem; color: var(--text-muted); margin-top: 3px; line-height: 1.35; }
@@ -1423,7 +1696,13 @@
       gap: 10px;
     }
     .honors-icon {
-      font-size: 1.25rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(191, 90, 242, 0.14);
+      color: var(--accent-purple);
+      display: grid;
+      place-items: center;
       flex-shrink: 0;
     }
     .honors-title {
@@ -1838,26 +2117,7 @@
     .eval-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
     .eval-score { font-size: 1rem; font-weight: 800; color: var(--text-color); white-space: nowrap; }
 
-    .btn-study-plan {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--text-color);
-      font-weight: 800;
-      font-size: 0.98rem;
-      cursor: pointer;
-      box-shadow: 0 4px 15px var(--shadow-color);
-      transition: border-color 0.2s ease, transform 0.12s ease;
-    }
-    .btn-study-plan:hover { border-color: var(--accent-blue); }
-    .btn-study-plan:active { transform: scale(0.99); }
-    .btn-study-plan svg { fill: var(--accent-blue); width: 22px; height: 22px; }
-
-    .study-plan-header { background: linear-gradient(145deg, var(--card-bg), var(--bg-color)); padding: 20px; border-radius: 22px; border: 1px solid var(--card-border); margin-bottom: 18px; box-shadow: 0 8px 24px var(--shadow-color); }
+    .study-plan-header { background: var(--card-bg); padding: 18px; border-radius: 18px; border: 1px solid var(--card-border); margin-bottom: 16px; }
     .study-plan-header h2 { font-size: 1.12rem; font-weight: 800; color: var(--text-color); line-height: 1.3; }
     .study-plan-header p { font-size: 0.82rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4; }
     .study-plan-header .sp-order-badge { font-size: 0.74rem; color: var(--accent-blue); font-weight: 700; margin-top: 8px; display: block; overflow-wrap: anywhere; }
@@ -1896,6 +2156,66 @@
       flex: 1 1 160px;
       padding: 12px 10px;
       font-size: 0.85rem;
+    }
+    .sp-actions-row #open-merge-courses-btn {
+      background: rgba(191, 90, 242, 0.12) !important;
+      color: var(--accent-purple);
+      border: 1px solid rgba(191, 90, 242, 0.22);
+    }
+    .sp-actions-row svg {
+      width: 17px;
+      height: 17px;
+      vertical-align: -3px;
+      margin-right: 5px;
+    }
+    #modal-study-plan .modal-header,
+    #modal-courses .modal-header,
+    #modal-attendance .modal-header,
+    #modal-archive .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: rgba(22, 24, 31, 0.9);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+    }
+    [data-theme="light"] #modal-study-plan .modal-header,
+    [data-theme="light"] #modal-courses .modal-header,
+    [data-theme="light"] #modal-attendance .modal-header,
+    [data-theme="light"] #modal-archive .modal-header {
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom-color: rgba(60, 60, 67, 0.16);
+    }
+    #modal-archive .modal-body {
+      padding: 18px clamp(14px, 3vw, 36px) calc(28px + env(safe-area-inset-bottom, 0px));
+    }
+    #modal-archive .archive-intro {
+      padding: 14px 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    #modal-archive .archive-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    #modal-archive .courses-section-divider {
+      margin-top: 0;
+      padding: 0 4px;
+    }
+    #modal-archive .archive-section-count {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--input-bg);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
     }
 
     .semester-section { margin-bottom: 16px; padding: 14px; border: 1px solid var(--card-border); border-radius: 22px; background: var(--card-bg); box-shadow: 0 4px 14px var(--shadow-color); }
@@ -1979,6 +2299,21 @@
     .modal-overlay.fullscreen-modal .modal-header {
       padding-top: calc(14px + env(safe-area-inset-top, 0px));
     }
+    .fullscreen-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .fullscreen-title-group h3 {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #modal-courses .modal-header { gap: 8px; padding-left: 12px; padding-right: 12px; }
+    #modal-courses #toggle-courses-edit-btn { flex-shrink: 0; }
     .modal-overlay.fullscreen-modal .modal-body {
       padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
       max-width: 720px;
@@ -2027,6 +2362,42 @@
       background: rgba(255, 214, 10, 0.16);
       border-color: rgba(255, 214, 10, 0.45);
       color: var(--accent-yellow);
+    }
+    .btn-pin-toggle svg,
+    .btn-preset svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: -3px;
+    }
+    .archive-stack-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      fill: none;
+      stroke: var(--accent-blue);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .course-pin-indicator {
+      display: inline-flex;
+      vertical-align: -3px;
+      margin-right: 4px;
+      color: var(--accent-yellow);
+    }
+    .course-pin-indicator svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .course-accordion {
@@ -2174,6 +2545,16 @@
       font-weight: 800;
       cursor: pointer;
       white-space: nowrap;
+    }
+    .btn-mini-add svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: -3px;
     }
 
     /* Preset Quick Buttons */
@@ -2766,34 +3147,44 @@
     /* Toast Notification */
     .cladar-toast {
       position: fixed;
-      top: 72px;
+      top: calc(12px + env(safe-area-inset-top, 0px));
       left: 50%;
-      transform: translateX(-50%) translateY(-16px);
-      background: var(--card-bg);
+      transform: translateX(-50%) translateY(-10px) scale(0.98);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(38, 40, 48, 0.88);
       color: var(--text-color);
-      border: 1px solid var(--accent-green);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-      padding: 10px 18px;
-      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 255, 255, 0.14);
+      padding: 11px 16px;
+      border-radius: 16px;
       font-size: 0.82rem;
       font-weight: 700;
       z-index: 3000;
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
       max-width: 90vw;
       text-align: center;
     }
+    [data-theme="light"] .cladar-toast { background: rgba(250, 250, 252, 0.9); }
+    .cladar-toast-icon { color: var(--accent-green); font-size: 1rem; line-height: 1; }
     .cladar-toast.show {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
   </style>
 </head>
 <body>
 
   <!-- Toast Banner -->
-  <div id="cladar-toast" class="cladar-toast">Backup saved successfully!</div>
+  <div id="cladar-toast" class="cladar-toast" role="status" aria-live="polite">
+    <span class="cladar-toast-icon" id="cladar-toast-icon" aria-hidden="true">✓</span>
+    <span id="cladar-toast-message">Backup saved successfully!</span>
+  </div>
 
   <!-- Header Banner -->
   <header>
@@ -2913,17 +3304,28 @@
         
         <!-- Profile Header & Avatar Card -->
         <div class="profile-header-card">
-          <div class="avatar-wrapper" id="profile-avatar-trigger" title="Click for Student Badge, Long Press to Edit">
+          <button type="button" class="avatar-wrapper" id="profile-avatar-trigger" title="Open Student ID" aria-label="Open Student ID badge">
             <img id="profile-avatar-img" class="avatar-img" src="" alt="Avatar">
-            <div class="avatar-badge-hint">🪪</div>
-          </div>
-          <div class="profile-name" id="display-profile-name">Dr. Alphys</div>
+            <span class="avatar-badge-hint" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="M6.5 15.5c.6-1.6 1.4-2.3 2.5-2.3s1.9.7 2.5 2.3M14.5 10h3M14.5 14h3"/></svg>
+            </span>
+          </button>
+          <button type="button" class="profile-picker-trigger" id="profile-picker-trigger" aria-label="Choose profile" aria-haspopup="menu" aria-expanded="false">
+            <span id="display-profile-name">Dr. Alphys</span>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5.2 7.4a.8.8 0 0 1 1.1 0L10 11.1l3.7-3.7a.8.8 0 1 1 1.1 1.1l-4.25 4.25a.8.8 0 0 1-1.1 0L5.2 8.5a.8.8 0 0 1 0-1.1z"/></svg>
+          </button>
+          <div class="profile-picker-menu" id="profile-picker-menu" role="menu" aria-label="Choose profile"></div>
           <div class="profile-mat" id="display-profile-mat">ID: 2015915</div>
           <div class="profile-degree" id="display-profile-degree">B.Sc. Computer Engineering (L-8)</div>
           <div class="profile-univ-line" id="display-profile-univ">Mount Ebott University • Faculty of Engineering • Dept. of Information Engineering</div>
+          <div class="profile-quick-actions">
+            <button type="button" class="profile-edit-button" id="profile-edit-button">Edit Profile</button>
+          </div>
 
           <div class="profile-honors-banner" id="display-profile-honors" style="display:none;">
-            <div class="honors-icon">🏛️</div>
+            <div class="honors-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5-9 5.5-9-5.5Z"/><path d="M6.5 12v4.5c3.3 2.2 7.7 2.2 11 0V12M21 9.5v6"/></svg>
+            </div>
             <div>
               <div class="honors-title" id="display-honors-name">Honors School</div>
               <div class="honors-sub" id="display-honors-class">Academic Class</div>
@@ -3010,23 +3412,47 @@
           <div class="att-recent-list" id="att-recent-list"></div>
         </div>
 
-        <!-- Study Plan Action Button -->
-        <button class="btn-study-plan" id="open-study-plan-btn">
-          <span>Study Plan</span>
-          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-        </button>
+        <div class="profile-actions-section">
+          <div class="profile-section-title">Manage Academics</div>
+          <div class="profile-action-group">
+            <button type="button" class="profile-action-row" id="open-study-plan-btn">
+              <span class="profile-action-symbol" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M6 3.75h8l4 4v12.5H6a2 2 0 0 1-2-2v-12.5a2 2 0 0 1 2-2Z"/><path d="M14 4v4h4M8 12h8M8 16h8"/></svg>
+              </span>
+              <span class="profile-action-copy">
+                <span class="profile-action-title">Study Plan</span>
+                <span class="profile-action-detail">Courses by academic year and semester</span>
+              </span>
+              <svg class="profile-action-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.2 4.7a.8.8 0 0 1 1.1 0l5.1 5.1a.8.8 0 0 1 0 1.1l-5.1 5.1a.8.8 0 1 1-1.1-1.1l4.6-4.6-4.6-4.6a.8.8 0 0 1 0-1.1z"/></svg>
+            </button>
+            <button type="button" class="profile-action-row" id="open-courses-btn">
+              <span class="profile-action-symbol" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 1 4 16.5v-11Z"/><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H20M8 7h8M8 10h6"/></svg>
+              </span>
+              <span class="profile-action-copy">
+                <span class="profile-action-title">Courses &amp; Exams</span>
+                <span class="profile-action-detail">Course notes, resources, and exam dates</span>
+              </span>
+              <svg class="profile-action-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.2 4.7a.8.8 0 0 1 1.1 0l5.1 5.1a.8.8 0 0 1 0 1.1l-5.1 5.1a.8.8 0 1 1-1.1-1.1l4.6-4.6-4.6-4.6a.8.8 0 0 1 0-1.1z"/></svg>
+            </button>
+          </div>
+        </div>
 
-        <!-- Courses Action Button -->
-        <button class="btn-study-plan" id="open-courses-btn">
-          <span>Courses</span>
-          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-        </button>
-
-        <!-- Archive Action Button -->
-        <button class="btn-study-plan" id="open-archive-btn">
-          <span>Archive</span>
-          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-        </button>
+        <div class="profile-actions-section">
+          <div class="profile-section-title">More</div>
+          <div class="profile-action-group">
+            <button type="button" class="profile-action-row" id="open-archive-btn">
+              <span class="profile-action-symbol" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM3 4h18v3H3z"/><path d="M9 11h6"/></svg>
+              </span>
+              <span class="profile-action-copy">
+                <span class="profile-action-title">Archive</span>
+                <span class="profile-action-detail">Restore archived tasks and notes</span>
+              </span>
+              <svg class="profile-action-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.2 4.7a.8.8 0 0 1 1.1 0l5.1 5.1a.8.8 0 0 1 0 1.1l-5.1 5.1a.8.8 0 1 1-1.1-1.1l4.6-4.6-4.6-4.6a.8.8 0 0 1 0-1.1z"/></svg>
+            </button>
+          </div>
+        </div>
 
       </div>
     </section>
@@ -3264,21 +3690,31 @@
   </div>
 
   <!-- MODAL ARCHIVE -->
-  <div class="modal-overlay" id="modal-archive">
+  <div class="modal-overlay fullscreen-modal" id="modal-archive">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Archive</h3>
-        <button class="btn-icon modal-close">&times;</button>
+        <div class="fullscreen-title-group">
+          <button type="button" class="btn-icon modal-close" aria-label="Back to Profile" title="Back to Profile">&larr;</button>
+          <h3>Archive</h3>
+        </div>
+        <span aria-hidden="true"></span>
       </div>
       <div class="modal-body">
-        <div class="courses-section-divider" style="margin-top:0;">
-          <span>Archived Tasks</span>
-        </div>
-        <div id="archived-tasks-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-        <div class="courses-section-divider">
-          <span>Archived Notes</span>
-        </div>
-        <div id="archived-notes-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <div class="archive-intro">Restore items to return them to your active lists, or delete items you no longer need.</div>
+        <section class="archive-section" aria-labelledby="archive-tasks-heading">
+          <div class="courses-section-divider">
+            <span id="archive-tasks-heading">Archived Tasks</span>
+            <span class="archive-section-count" id="archive-tasks-count">0</span>
+          </div>
+          <div id="archived-tasks-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </section>
+        <section class="archive-section" aria-labelledby="archive-notes-heading">
+          <div class="courses-section-divider">
+            <span id="archive-notes-heading">Archived Notes</span>
+            <span class="archive-section-count" id="archive-notes-count">0</span>
+          </div>
+          <div id="archived-notes-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </section>
       </div>
     </div>
   </div>
@@ -3368,7 +3804,7 @@
       <div style="font-size:0.7rem; color:var(--accent-purple); font-weight:700; display:none;" id="badge-honors-line"></div>
       <img id="badge-qr-img" class="badge-qr" src="" alt="Student QR Code" title="Tap QR Code for Full-Screen Scan">
       <div style="font-size:0.68rem; color:var(--text-muted);">Tap QR code for full-screen scan</div>
-      <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:2px;">Edit Profile &amp; Badge Data</button>
+      <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:2px;">Edit Profile</button>
     </div>
   </div>
 
@@ -3511,6 +3947,25 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="modal-create-profile">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="modal-header">
+        <h3>Create Profile</h3>
+        <button class="btn-icon modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="new-profile-name">Profile name</label>
+          <input type="text" id="new-profile-name" class="form-control" maxlength="60" placeholder="Enter a name">
+        </div>
+        <div class="profile-modal-actions">
+          <button type="button" class="profile-modal-cancel" id="cancel-create-profile">Cancel</button>
+          <button type="button" class="profile-modal-confirm" id="create-profile-confirm">Create Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- EVALUATIONS DETAIL MODAL -->
   <div class="modal-overlay" id="modal-evaluations-detail">
     <div class="modal-card">
@@ -3600,8 +4055,11 @@
   <div class="modal-overlay fullscreen-modal" id="modal-study-plan">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Study Plan</h3>
-        <button class="btn-icon modal-close">&times;</button>
+        <div class="fullscreen-title-group">
+          <button type="button" class="btn-icon modal-close" aria-label="Back to Profile" title="Back to Profile">&larr;</button>
+          <h3>Study Plan</h3>
+        </div>
+        <span aria-hidden="true"></span>
       </div>
       <div class="modal-body">
         <div class="study-plan-header">
@@ -3610,8 +4068,8 @@
           <span class="sp-order-badge" id="sp-order-code-header">Course Code: 29415</span>
         </div>
         <div class="sp-actions-row">
-          <button class="btn-primary-action" id="open-add-course-btn">+ Add Course / Seminar</button>
-          <button class="btn-primary-action" id="open-merge-courses-btn" style="background:var(--accent-purple);">⇄ Merge Modules</button>
+          <button type="button" class="btn-primary-action" id="open-add-course-btn">+ Add Course / Seminar</button>
+          <button type="button" class="btn-primary-action" id="open-merge-courses-btn" style="background:var(--accent-purple);">⇄ Merge Modules</button>
         </div>
         <div id="study-plan-tree"></div>
       </div>
@@ -3745,18 +4203,20 @@
   <div class="modal-overlay fullscreen-modal" id="modal-courses">
     <div class="modal-card">
       <div class="modal-header">
-        <button class="btn-icon modal-close" title="Back to Profile" style="font-size:1.3rem;">&larr;</button>
-        <h3>Courses &amp; Exam Sessions</h3>
+        <div class="fullscreen-title-group">
+          <button type="button" class="btn-icon modal-close" aria-label="Back to Profile" title="Back to Profile" style="font-size:1.3rem;">&larr;</button>
+          <h3>Courses &amp; Exam Sessions</h3>
+        </div>
         <button type="button" class="btn-today-jump" id="toggle-courses-edit-btn">Edit</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <input type="text" id="courses-search-input" class="form-control" placeholder="Search courses by name, discipline, or professor...">
+          <input type="text" id="courses-search-input" class="form-control" aria-label="Search courses and exam sessions" placeholder="Search courses by name, discipline, or professor...">
         </div>
         <div class="courses-edit-toolbar" id="courses-edit-toolbar" style="display:none;">
-          <button type="button" class="btn-mini-add" id="btn-pin-all-exams" style="background:var(--accent-yellow); color:#0f172a;">📌 Pin Exams to Top</button>
+          <button type="button" class="btn-mini-add" id="btn-pin-all-exams" style="background:var(--accent-yellow); color:#0f172a;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-4 1-4 4 1 4-2 2-3-5-5-3 2-2 4 1 4-4zM5 19l-2 2"/></svg>Pin Exams to Top</button>
           <button type="button" class="btn-mini-add" id="btn-unpin-all-courses" style="background:var(--card-border); color:var(--text-color);">Unpin All</button>
-          <button type="button" class="btn-mini-add" id="btn-archive-all-passed" style="background:var(--accent-dark-green); color:#ffffff;">📦 Archive Passed</button>
+          <button type="button" class="btn-mini-add" id="btn-archive-all-passed" style="background:var(--accent-dark-green); color:#ffffff;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4zM3 4h18v3H3zM9 11h6"/></svg>Archive Passed</button>
         </div>
         <div id="courses-accordion-list" style="display:flex; flex-direction:column; gap:10px;"></div>
       </div>
@@ -3974,8 +4434,11 @@
     function showToast(message, isError = false) {
       const toast = document.getElementById('cladar-toast');
       if (!toast) return;
-      toast.textContent = message;
-      toast.style.borderColor = isError ? 'var(--accent-red)' : 'var(--accent-green)';
+      document.getElementById('cladar-toast-message').textContent = message;
+      const icon = document.getElementById('cladar-toast-icon');
+      icon.textContent = isError ? '!' : '✓';
+      icon.style.color = isError ? 'var(--accent-red)' : 'var(--accent-green)';
+      toast.style.borderColor = isError ? 'rgba(255, 69, 58, 0.4)' : 'rgba(48, 209, 88, 0.32)';
       toast.classList.add('show');
       clearTimeout(toast._hideTimer);
       toast._hideTimer = setTimeout(() => {
@@ -4169,6 +4632,62 @@
       }
     }
 
+    function normalizeStoredProfileRecord(record, fallback = {}) {
+      if (!record || typeof record !== 'object' || !record.profile || typeof record.profile !== 'object') return null;
+      return {
+        id: String(record.id || `profile_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
+        profile: { ...DEFAULT_PROFILE, ...record.profile },
+        studyPlan: Array.isArray(record.studyPlan) ? normalizeMergedCourseLinks(record.studyPlan) : null,
+        evaluations: (Array.isArray(record.evaluations) ? record.evaluations : fallback.evaluations || [])
+          .map(e => ({ ...e, date: normalizeDateToSlash(e.date) })),
+        attendanceLogs: (Array.isArray(record.attendanceLogs) ? record.attendanceLogs : fallback.attendanceLogs || [])
+          .map(a => ({ ...a, date: normalizeDateToSlash(a.date) }))
+      };
+    }
+
+    const storedProfiles = safeJsonParse('cladar_profiles', []);
+    const normalizedStoredProfiles = Array.isArray(storedProfiles)
+      ? storedProfiles.map(record => normalizeStoredProfileRecord(record)).filter(Boolean)
+      : [];
+    const initialActiveProfileId = localStorage.getItem('cladar_active_profile_id');
+    const profiles = normalizedStoredProfiles.length > 0
+      ? normalizedStoredProfiles
+      : [{
+          id: 'profile_default',
+          profile: mergedProfile,
+          studyPlan: null,
+          evaluations: rawEvaluations,
+          attendanceLogs: rawAttendanceLogs
+        }];
+    if (
+      profiles.length === 1 &&
+      !profiles.some(item => String(item.profile.name || '').trim().toLowerCase() === 'mettaton ex')
+    ) {
+      profiles.push({
+        id: 'profile_mettaton_ex',
+        profile: {
+          ...DEFAULT_PROFILE,
+          name: 'Mettaton EX',
+          mat: '',
+          faculty: 'Faculty of Engineering & Applied Sciences',
+          dept: 'Department of Entertainment Systems',
+          degree: 'M.Sc. Entertainment Systems Engineering',
+          creditUnit: 'ECTS',
+          degreeCategory: 'Master',
+          programYears: 2,
+          studyPlanCode: 'MSE-2026',
+          courseRegulation: 'M.Sc. 2026',
+          enrollmentYear: '2026/2027',
+          avatarUrl: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect width=%22200%22 height=%22200%22 rx=%22100%22 fill=%22%232d1b3d%22/%3E%3Ctext x=%22100%22 y=%22118%22 text-anchor=%22middle%22 font-family=%22Arial,sans-serif%22 font-size=%2268%22 font-weight=%22700%22 fill=%22%23f5e1ff%22%3EME%3C/text%3E%3C/svg%3E',
+          qrData: 'METTATON_EX_MASTER'
+        },
+        studyPlan: [],
+        evaluations: [],
+        attendanceLogs: []
+      });
+    }
+    const initialProfileRecord = profiles.find(item => item.id === initialActiveProfileId) || profiles[0];
+
     function normalizeMergedCourseLinks(courses) {
       const normalized = courses.map(course => {
         const hasCurrentModules = Array.isArray(course.mergedModuleIds);
@@ -4230,6 +4749,12 @@
       return { ...c, excludeCredits: excl, noCredit: excl };
     }));
 
+    profiles.forEach(item => {
+      if (!Array.isArray(item.studyPlan)) {
+        item.studyPlan = JSON.parse(JSON.stringify(rawStudyPlan));
+      }
+    });
+
     const state = {
       theme: localStorage.getItem('cladar_theme') || 'dark',
       selectedDateSlash: todaySlash,
@@ -4239,8 +4764,10 @@
       showArchivedCourses: false,
       
       events: rawEvents,
-      profile: mergedProfile,
-      studyPlan: rawStudyPlan,
+      profiles,
+      activeProfileId: initialProfileRecord.id,
+      profile: initialProfileRecord.profile,
+      studyPlan: initialProfileRecord.studyPlan,
 
       courseDetails: normalizeCourseDetailsData(safeJsonParse('cladar_course_details', {})),
       courseAttendance: safeJsonParse('cladar_course_attendance', {
@@ -4258,10 +4785,10 @@
           ]
         }
       }),
-      attendanceLogs: rawAttendanceLogs,
+      attendanceLogs: initialProfileRecord.attendanceLogs,
       attendanceSemFilter: 'all',
       coursesOther: normalizeCoursesOtherData(safeJsonParse('cladar_courses_other', { links: [], notes: '' })),
-      evaluations: rawEvaluations,
+      evaluations: initialProfileRecord.evaluations,
       homeworks: rawHomeworks,
 
       tasks: safeJsonParse('cladar_tasks', [
@@ -4283,8 +4810,8 @@
       previewingNoteId: null
     };
 
-    function getCreditUnit() {
-      return state.profile.creditUnit === 'ECTS' ? 'ECTS' : 'CFU';
+    function getCreditUnit(profile = state.profile) {
+      return profile.creditUnit === 'ECTS' ? 'ECTS' : 'CFU';
     }
 
     function getProgramMaxYears() {
@@ -4371,6 +4898,108 @@
       return att;
     }
 
+    function getAllProfileCourses() {
+      return state.profiles.flatMap(profileRecord =>
+        (Array.isArray(profileRecord.studyPlan) ? profileRecord.studyPlan : []).map(course => ({
+          course,
+          profileRecord
+        }))
+      );
+    }
+
+    function getProfileCourseById(courseId) {
+      return getAllProfileCourses().find(item => item.course.id === courseId) || null;
+    }
+
+    function getCoursePickerLabel({ course, profileRecord }) {
+      return `${course.name} (${course.code}) — ${profileRecord.profile.name || 'Student'}`;
+    }
+
+    function reserveUniqueCourseId(baseId, usedIds) {
+      let candidate = String(baseId || 'course');
+      let suffix = 2;
+      while (usedIds.has(candidate)) {
+        candidate = `${baseId}_${suffix++}`;
+      }
+      usedIds.add(candidate);
+      return candidate;
+    }
+
+    function cloneStudyPlanWithUniqueIds(courses) {
+      const usedIds = new Set(getAllProfileCourses().map(item => item.course.id));
+      const cloned = JSON.parse(JSON.stringify(courses || []));
+      const idMap = new Map();
+      cloned.forEach((course, index) => {
+        const oldId = course.id;
+        const newId = reserveUniqueCourseId(`course_${Date.now()}_${index + 1}`, usedIds);
+        if (oldId !== undefined && oldId !== null) idMap.set(oldId, newId);
+        course.id = newId;
+      });
+      cloned.forEach(course => {
+        if (idMap.has(course.mergedIntoId)) course.mergedIntoId = idMap.get(course.mergedIntoId);
+        if (Array.isArray(course.mergedModuleIds)) {
+          course.mergedModuleIds = course.mergedModuleIds.map(id => idMap.get(id) || id);
+        }
+      });
+      return cloned;
+    }
+
+    function repairDuplicateProfileCourseIds() {
+      const owners = new Map();
+      const usedIds = new Set();
+      state.profiles.forEach((profileRecord, profileIndex) => {
+        const plan = Array.isArray(profileRecord.studyPlan) ? profileRecord.studyPlan : [];
+        const idMap = new Map();
+        plan.forEach((course, courseIndex) => {
+          const oldId = course.id;
+          if (oldId === undefined || oldId === null || !owners.has(oldId)) {
+            if (oldId !== undefined && oldId !== null) {
+              owners.set(oldId, profileRecord.id);
+              usedIds.add(oldId);
+            }
+            return;
+          }
+          if (owners.get(oldId) === profileRecord.id) return;
+
+          const newId = reserveUniqueCourseId(`course_migrated_${profileIndex + 1}_${courseIndex + 1}`, usedIds);
+          idMap.set(oldId, newId);
+          course.id = newId;
+          if (state.courseDetails[oldId] && !state.courseDetails[newId]) {
+            state.courseDetails[newId] = JSON.parse(JSON.stringify(state.courseDetails[oldId]));
+          }
+          if (state.courseAttendance[oldId] && !state.courseAttendance[newId]) {
+            state.courseAttendance[newId] = JSON.parse(JSON.stringify(state.courseAttendance[oldId]));
+          }
+        });
+        if (idMap.size === 0) return;
+
+        plan.forEach(course => {
+          if (idMap.has(course.mergedIntoId)) course.mergedIntoId = idMap.get(course.mergedIntoId);
+          if (Array.isArray(course.mergedModuleIds)) {
+            course.mergedModuleIds = course.mergedModuleIds.map(id => idMap.get(id) || id);
+          }
+        });
+        profileRecord.evaluations = profileRecord.evaluations.map(evaluation => ({
+          ...evaluation,
+          courseId: idMap.get(evaluation.courseId) || evaluation.courseId
+        }));
+        profileRecord.attendanceLogs = profileRecord.attendanceLogs.map(log => ({
+          ...log,
+          courseId: idMap.get(log.courseId) || log.courseId
+        }));
+      });
+
+      const activeProfile = state.profiles.find(item => item.id === state.activeProfileId);
+      if (activeProfile) {
+        state.profile = activeProfile.profile;
+        state.studyPlan = activeProfile.studyPlan;
+        state.evaluations = activeProfile.evaluations;
+        state.attendanceLogs = activeProfile.attendanceLogs;
+      }
+    }
+
+    repairDuplicateProfileCourseIds();
+
     function formatModalityBadge(modality) {
       const m = String(modality || '').toLowerCase();
       if (m === 'online' || m === 'online (zoom/teams)') return 'Online';
@@ -4395,11 +5024,31 @@
       });
     }
 
+    function syncActiveProfileRecord() {
+      let activeRecord = state.profiles.find(item => item.id === state.activeProfileId);
+      if (!activeRecord) {
+        activeRecord = {
+          id: state.activeProfileId,
+          profile: state.profile,
+          evaluations: state.evaluations,
+          attendanceLogs: state.attendanceLogs
+        };
+        state.profiles.push(activeRecord);
+      }
+      activeRecord.profile = state.profile;
+      activeRecord.studyPlan = state.studyPlan;
+      activeRecord.evaluations = state.evaluations;
+      activeRecord.attendanceLogs = state.attendanceLogs;
+    }
+
     function saveData() {
       syncAllCourseDetailsExamDates();
+      syncActiveProfileRecord();
       try {
         localStorage.setItem('cladar_events', JSON.stringify(state.events));
         localStorage.setItem('cladar_profile', JSON.stringify(state.profile));
+        localStorage.setItem('cladar_profiles', JSON.stringify(state.profiles));
+        localStorage.setItem('cladar_active_profile_id', state.activeProfileId);
         localStorage.setItem('cladar_study_plan', JSON.stringify(state.studyPlan));
         localStorage.setItem('cladar_course_details', JSON.stringify(state.courseDetails));
         localStorage.setItem('cladar_course_attendance', JSON.stringify(state.courseAttendance));
@@ -4452,9 +5101,12 @@
 
     function buildBackupPayload() {
       syncAllCourseDetailsExamDates();
+      syncActiveProfileRecord();
       return {
         cladar_events: state.events,
         cladar_profile: state.profile,
+        cladar_profiles: state.profiles,
+        cladar_active_profile_id: state.activeProfileId,
         cladar_study_plan: state.studyPlan,
         cladar_course_details: state.courseDetails,
         cladar_course_attendance: state.courseAttendance,
@@ -4484,6 +5136,8 @@
 
       const rawEventsIn = d.cladar_events || d.events;
       const rawProfileIn = d.cladar_profile || d.profile;
+      const rawProfilesIn = d.cladar_profiles;
+      const rawActiveProfileIdIn = d.cladar_active_profile_id;
       const rawStudyPlanIn = d.cladar_study_plan || d.studyPlan;
       const rawCourseDetailsIn = d.cladar_course_details || d.courseDetails;
       const rawCourseAttIn = d.cladar_course_attendance || d.courseAttendance;
@@ -4496,6 +5150,18 @@
       const rawWeeklyPlanIn = d.cladar_weekly_plan || d.weeklyPlan;
       const rawThemeIn = d.cladar_theme || d.theme;
 
+      if (Array.isArray(rawProfilesIn)) {
+        const importedProfiles = rawProfilesIn.map(record => normalizeStoredProfileRecord(record)).filter(Boolean);
+        if (importedProfiles.length > 0) {
+          state.profiles = importedProfiles;
+          const importedActive = importedProfiles.find(item => item.id === rawActiveProfileIdIn) || importedProfiles[0];
+          state.activeProfileId = importedActive.id;
+          state.profile = importedActive.profile;
+          state.studyPlan = importedActive.studyPlan || state.studyPlan;
+          state.evaluations = importedActive.evaluations;
+          state.attendanceLogs = importedActive.attendanceLogs;
+        }
+      }
       if (Array.isArray(rawEventsIn)) {
         state.events = rawEventsIn.map(e => ({ ...e, date: normalizeDateToSlash(e.date) }));
       }
@@ -4530,6 +5196,13 @@
           return { ...c, excludeCredits: excl, noCredit: excl };
         }));
       }
+      if (Array.isArray(rawProfilesIn)) {
+        state.profiles.forEach(item => {
+          if (!Array.isArray(item.studyPlan)) {
+            item.studyPlan = JSON.parse(JSON.stringify(state.studyPlan));
+          }
+        });
+      }
       if (rawCourseDetailsIn && typeof rawCourseDetailsIn === 'object') {
         state.courseDetails = normalizeCourseDetailsData(rawCourseDetailsIn);
       }
@@ -4544,6 +5217,15 @@
       }
       if (Array.isArray(rawEvaluationsIn)) {
         state.evaluations = rawEvaluationsIn.map(e => ({ ...e, date: normalizeDateToSlash(e.date) }));
+      }
+      if (Array.isArray(rawProfilesIn) && state.profiles.some(item => item.id === state.activeProfileId)) {
+        const activeRecord = state.profiles.find(item => item.id === state.activeProfileId);
+        activeRecord.profile = state.profile;
+        activeRecord.studyPlan = state.studyPlan;
+        activeRecord.evaluations = state.evaluations;
+        activeRecord.attendanceLogs = state.attendanceLogs;
+      } else {
+        syncActiveProfileRecord();
       }
       if (Array.isArray(rawHomeworksIn)) {
         state.homeworks = rawHomeworksIn.map(h => ({ ...h, date: normalizeDateToSlash(h.date), time: h.time || '', endTime: h.endTime || '' }));
@@ -4562,6 +5244,7 @@
         applyTheme();
       }
 
+      repairDuplicateProfileCourseIds();
       saveDataAndRefreshAll();
       showToast('Backup imported successfully!');
     }
@@ -4807,6 +5490,8 @@
     const dockButtons = Array.from(bottomNavEl.querySelectorAll('.nav-btn'));
     let isDockDragging = false;
     let dockDragStartX = 0;
+    let dockLastPointerX = 0;
+    let dockLastPointerTime = 0;
     let dockHasMoved = false;
     let dockHoverIdx = -1;
 
@@ -4849,8 +5534,14 @@
       const innerWidth = navRect.width - 8;
       const pillWidth = innerWidth / dockButtons.length;
       const relX = Math.max(0, Math.min(innerWidth - pillWidth, clientX - navRect.left - 4 - pillWidth / 2));
+      const now = performance.now();
+      const elapsed = Math.max(1, now - dockLastPointerTime);
+      const velocity = (clientX - dockLastPointerX) / elapsed;
+      const stretch = Math.min(1.14, 1 + Math.abs(velocity) * 0.06);
       liquidPillEl.style.width = `${pillWidth}px`;
-      liquidPillEl.style.transform = `translate3d(${relX}px, 0, 0)`;
+      liquidPillEl.style.transform = `translate3d(${relX}px, 0, 0) scaleX(${stretch})`;
+      dockLastPointerX = clientX;
+      dockLastPointerTime = now;
 
       const hoverIndex = Math.max(0, Math.min(dockButtons.length - 1, Math.floor((clientX - navRect.left - 4) / pillWidth)));
       if (hoverIndex !== dockHoverIdx) {
@@ -4866,6 +5557,8 @@
       isDockDragging = true;
       dockHasMoved = false;
       dockDragStartX = e.clientX;
+      dockLastPointerX = e.clientX;
+      dockLastPointerTime = performance.now();
       try { bottomNavEl.setPointerCapture(e.pointerId); } catch (_) {}
       liquidPillEl.classList.add('is-dragging');
     });
@@ -4919,19 +5612,72 @@
     window.addEventListener('resize', () => syncLiquidDockPill(true));
     requestAnimationFrame(() => syncLiquidDockPill(true));
 
+    const PROFILE_SUBVIEW_IDS = new Set(['modal-archive', 'modal-courses', 'modal-study-plan']);
+
     function openModal(id) {
       const el = document.getElementById(id);
-      if (el) el.classList.add('active');
+      if (!el) return;
+      if (PROFILE_SUBVIEW_IDS.has(id) && !el.classList.contains('active')) {
+        const currentState = history.state && typeof history.state === 'object' ? history.state : {};
+        history.pushState({ ...currentState, cladarProfileSubview: id }, '');
+      }
+      el.classList.add('active');
     }
     function closeModal(id) {
       const el = document.getElementById(id);
-      if (el) el.classList.remove('active');
+      if (!el || !el.classList.contains('active')) return;
+      el.classList.remove('active');
+      if (PROFILE_SUBVIEW_IDS.has(id) && history.state?.cladarProfileSubview === id) {
+        history.back();
+      }
     }
     document.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const overlay = e.target.closest('.modal-overlay');
-        if (overlay) overlay.classList.remove('active');
+        if (overlay) closeModal(overlay.id);
       });
+    });
+
+    window.addEventListener('popstate', () => {
+      const activeSubview = [...PROFILE_SUBVIEW_IDS]
+        .map(id => document.getElementById(id))
+        .find(el => el?.classList.contains('active'));
+      if (!activeSubview) return;
+
+      const topOverlay = [...document.querySelectorAll('.modal-overlay.active')].at(-1);
+      if (topOverlay && topOverlay !== activeSubview) {
+        topOverlay.classList.remove('active');
+        const currentState = history.state && typeof history.state === 'object' ? history.state : {};
+        history.pushState({ ...currentState, cladarProfileSubview: activeSubview.id }, '');
+        return;
+      }
+      activeSubview.classList.remove('active');
+    });
+
+    const swipeStarts = new WeakMap();
+    PROFILE_SUBVIEW_IDS.forEach(id => {
+      const screen = document.getElementById(id);
+      screen.addEventListener('touchstart', event => {
+        if (event.touches.length !== 1) return;
+        const touch = event.touches[0];
+        swipeStarts.set(screen, {
+          x: touch.clientX,
+          y: touch.clientY,
+          startedOnControl: Boolean(event.target.closest('button, input, textarea, select, a'))
+        });
+      }, { passive: true });
+      screen.addEventListener('touchend', event => {
+        const start = swipeStarts.get(screen);
+        swipeStarts.delete(screen);
+        if (!start || start.startedOnControl || event.changedTouches.length !== 1) return;
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - start.x;
+        const deltaY = touch.clientY - start.y;
+        const isLeftwardDismiss = deltaX <= -110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
+        const isLeadingEdgeBack = start.x <= 28 && deltaX >= 110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
+        if (isLeftwardDismiss || isLeadingEdgeBack) closeModal(id);
+      }, { passive: true });
+      screen.addEventListener('touchcancel', () => swipeStarts.delete(screen), { passive: true });
     });
 
     function renderColorGrid(containerId, hiddenInputId) {
@@ -4990,8 +5736,15 @@
         }
         state.studyPlan = state.studyPlan.filter(c => c.id !== id);
         state.evaluations = state.evaluations.filter(e => e.courseId !== id);
-        delete state.courseDetails[id];
-        delete state.courseAttendance[id];
+        const usedByOtherProfile = state.profiles.some(item =>
+          item.id !== state.activeProfileId &&
+          Array.isArray(item.studyPlan) &&
+          item.studyPlan.some(course => course.id === id)
+        );
+        if (!usedByOtherProfile) {
+          delete state.courseDetails[id];
+          delete state.courseAttendance[id];
+        }
         closeModal('modal-add-course');
       } else if (type === 'attendance_log') {
         state.attendanceLogs = state.attendanceLogs.filter(a => a.id !== id);
@@ -5160,9 +5913,9 @@
 
       Object.entries(state.courseAttendance).forEach(([courseId, att]) => {
         if (!att || !att.attending || !att.showInDaily) return;
-        if (isCourseFinalized(courseId)) return;
-        const course = state.studyPlan.find(c => c.id === courseId);
-        if (!course) return;
+        const courseEntry = getProfileCourseById(courseId);
+        if (!courseEntry || isCourseFinalized(courseId, courseEntry.profileRecord)) return;
+        const { course, profileRecord } = courseEntry;
 
         const startOk = !att.startDate || dSlash >= normalizeDateToSlash(att.startDate);
         const endOk = !att.endDate || dSlash <= normalizeDateToSlash(att.endDate);
@@ -5174,12 +5927,12 @@
             results.push({
               id: `att_${courseId}_${sIdx}`,
               courseId,
-              title: course.name,
+              title: `${course.name} — ${profileRecord.profile.name}`,
               time: slot.startTime,
               endTime: slot.endTime || '',
               location: att.location || '',
               color: att.color || 'var(--c-MATE2)',
-              notes: `${course.code} • ${course.prof || 'Professor'} • ${att.modality || 'In-person'}`,
+              notes: `${course.code} • ${profileRecord.profile.name} • ${course.prof || 'Professor'} • ${att.modality || 'In-person'}`,
               source: 'attendance',
               slotIdx: sIdx,
               modality: modShort
@@ -5526,7 +6279,7 @@
           <div>
             <strong style="font-size:0.9rem;">${escapeHtml(item.title)}</strong> <span style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(item.time)} - ${escapeHtml(item.endTime || '')}</span>
             <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">${item.repeat === 'once' ? `Only ${escapeHtml(normalizeDateToSlash(item.date))}` : 'Repeats weekly'}${(item.skipDates || []).length ? ` • ${(item.skipDates || []).length} skipped date${item.skipDates.length === 1 ? '' : 's'}` : ''}</div>
-            ${item.location ? `<div style="font-size:0.74rem; color:var(--accent-blue); font-weight:700; margin-top:2px;">📍 ${escapeHtml(item.location)}</div>` : ''}
+            ${item.location ? `<div style="font-size:0.74rem; color:var(--accent-blue); font-weight:700; margin-top:2px; display:flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>${escapeHtml(item.location)}</div>` : ''}
           </div>
           <button type="button" class="btn-icon" style="color:var(--accent-red); font-weight:bold; font-size:1.2rem;" onclick="event.stopPropagation(); requestDelete('routine', '${day}::${i}')">&times;</button>
         </div>
@@ -5782,7 +6535,7 @@
       }));
 
       const examItems = [];
-      state.studyPlan.forEach(course => {
+      getAllProfileCourses().forEach(({ course, profileRecord }) => {
         const det = state.courseDetails[course.id];
         const exList = det ? (Array.isArray(det.exams) ? det.exams : (Array.isArray(det.examDates) ? det.examDates : [])) : [];
         exList.forEach((ex, idx) => {
@@ -5790,7 +6543,7 @@
           examItems.push({
             id: `exam_${course.id}_${idx}`,
             courseId: course.id,
-            title: `Exam: ${course.name}`,
+            title: `Exam: ${course.name} — ${profileRecord.profile.name}`,
             date: normalizeDateToSlash(ex.date),
             time: ex.time || '09:00',
             location: ex.room || '',
@@ -5890,12 +6643,18 @@
 
     function getCourseProfessorForHomework(hw) {
       if (hw.courseId) {
-        const c = state.studyPlan.find(item => item.id === hw.courseId);
-        if (c && c.prof) return c.prof;
+        const entry = getProfileCourseById(hw.courseId);
+        if (entry) {
+          return [entry.course.prof, entry.profileRecord.profile.name].filter(Boolean).join(' • ');
+        }
       }
       if (hw.subject) {
-        const byName = state.studyPlan.find(item => item.name.toLowerCase() === hw.subject.trim().toLowerCase());
-        if (byName && byName.prof) return byName.prof;
+        const byName = getAllProfileCourses().find(item =>
+          item.course.name.toLowerCase() === hw.subject.trim().toLowerCase()
+        );
+        if (byName) {
+          return [byName.course.prof, byName.profileRecord.profile.name].filter(Boolean).join(' • ');
+        }
       }
       return '';
     }
@@ -6176,6 +6935,7 @@
       const notesContainer = document.getElementById('archived-notes-list');
 
       const archivedTasks = state.tasks.filter(t => t.archived);
+      document.getElementById('archive-tasks-count').textContent = archivedTasks.length;
       if (archivedTasks.length === 0) {
         tasksContainer.innerHTML = '<div class="empty-state">No archived tasks.</div>';
       } else {
@@ -6193,6 +6953,7 @@
       }
 
       const archivedNotes = state.notes.filter(n => n.archived);
+      document.getElementById('archive-notes-count').textContent = archivedNotes.length;
       if (archivedNotes.length === 0) {
         notesContainer.innerHTML = '<div class="empty-state">No archived notes.</div>';
       } else {
@@ -6251,18 +7012,20 @@
 
       if (sel.value === '__custom__') {
         customIn.style.display = 'block';
-        const byName = state.studyPlan.find(c => c.name.toLowerCase() === customIn.value.trim().toLowerCase());
-        if (byName && byName.prof) {
-          txt.textContent = byName.prof;
+        const byName = getAllProfileCourses().find(item =>
+          item.course.name.toLowerCase() === customIn.value.trim().toLowerCase()
+        );
+        if (byName && (byName.course.prof || byName.profileRecord.profile.name)) {
+          txt.textContent = [byName.course.prof, byName.profileRecord.profile.name].filter(Boolean).join(' • ');
           pill.style.display = 'inline-flex';
         } else {
           pill.style.display = 'none';
         }
       } else {
         customIn.style.display = 'none';
-        const c = state.studyPlan.find(item => item.id === sel.value);
-        if (c && c.prof) {
-          txt.textContent = c.prof;
+        const entry = getProfileCourseById(sel.value);
+        if (entry && (entry.course.prof || entry.profileRecord.profile.name)) {
+          txt.textContent = [entry.course.prof, entry.profileRecord.profile.name].filter(Boolean).join(' • ');
           pill.style.display = 'inline-flex';
         } else {
           pill.style.display = 'none';
@@ -6277,12 +7040,14 @@
 
       sel.innerHTML = '';
       // Rule 4: Exclude courses that already have a final grade (unless editing an existing homework tied to it)
-      const selectableCourses = state.studyPlan.filter(c => !isCourseFinalized(c.id) || (selectedCourseId && c.id === selectedCourseId));
+      const selectableCourses = getAllProfileCourses().filter(({ course, profileRecord }) =>
+        !isCourseFinalized(course.id, profileRecord) || (selectedCourseId && course.id === selectedCourseId)
+      );
 
-      selectableCourses.forEach(c => {
+      selectableCourses.forEach(entry => {
         const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = `${c.name} (${c.code})`;
+        opt.value = entry.course.id;
+        opt.textContent = getCoursePickerLabel(entry);
         sel.appendChild(opt);
       });
 
@@ -6291,20 +7056,22 @@
       customOpt.textContent = 'Other / Custom Subject...';
       sel.appendChild(customOpt);
 
-      if (selectedCourseId && selectableCourses.some(c => c.id === selectedCourseId)) {
+      if (selectedCourseId && selectableCourses.some(item => item.course.id === selectedCourseId)) {
         sel.value = selectedCourseId;
         customIn.value = '';
       } else if (customSubject) {
-        const match = selectableCourses.find(c => c.name.toLowerCase() === customSubject.trim().toLowerCase());
+        const match = selectableCourses.find(item =>
+          item.course.name.toLowerCase() === customSubject.trim().toLowerCase()
+        );
         if (match) {
-          sel.value = match.id;
+          sel.value = match.course.id;
           customIn.value = '';
         } else {
           sel.value = '__custom__';
           customIn.value = customSubject;
         }
       } else if (selectableCourses.length > 0) {
-        sel.value = selectableCourses[0].id;
+        sel.value = selectableCourses[0].course.id;
         customIn.value = '';
       } else {
         sel.value = '__custom__';
@@ -6360,12 +7127,17 @@
 
       if (selVal === '__custom__') {
         subject = document.getElementById('hw-subject-input').value.trim();
-        const matched = state.studyPlan.find(c => !isCourseFinalized(c.id) && c.name.toLowerCase() === subject.toLowerCase());
-        if (matched) courseId = matched.id;
+        const matched = getAllProfileCourses().find(({ course, profileRecord }) =>
+          !isCourseFinalized(course.id, profileRecord) && course.name.toLowerCase() === subject.toLowerCase()
+        );
+        if (matched) {
+          courseId = matched.course.id;
+          subject = matched.course.name;
+        }
       } else {
         courseId = selVal;
-        const cObj = state.studyPlan.find(c => c.id === courseId);
-        subject = cObj ? cObj.name : '';
+        const entry = getProfileCourseById(courseId);
+        subject = entry ? entry.course.name : '';
       }
 
       const date = normalizeDateToSlash(document.getElementById('hw-date-input').value) || state.selectedDateSlash;
@@ -6489,14 +7261,18 @@
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const allExamDatesMap = {};
-      state.studyPlan.forEach(course => {
+      getAllProfileCourses().forEach(({ course, profileRecord }) => {
         const det = state.courseDetails[course.id];
         const exList = det ? (Array.isArray(det.exams) ? det.exams : (Array.isArray(det.examDates) ? det.examDates : [])) : [];
         exList.forEach(ex => {
           if (!ex || !ex.date) return;
           const norm = normalizeDateToSlash(ex.date);
           if (!allExamDatesMap[norm]) allExamDatesMap[norm] = [];
-          allExamDatesMap[norm].push({ courseId: course.id, courseName: course.name, ...ex });
+          allExamDatesMap[norm].push({
+            courseId: course.id,
+            courseName: `${course.name} — ${profileRecord.profile.name}`,
+            ...ex
+          });
         });
       });
 
@@ -6719,45 +7495,47 @@
       return 'var(--accent-red)';
     }
 
-    function getEffectiveCourseCfu(course) {
+    function getEffectiveCourseCfu(course, studyPlan = state.studyPlan) {
       if (!course || course.excludeCredits || course.noCredit) return 0;
       if (Array.isArray(course.mergedModuleIds) && course.mergedModuleIds.length > 0) {
         return course.mergedModuleIds.reduce((sum, modId) => {
-          const m = state.studyPlan.find(x => x.id === modId);
+          const m = studyPlan.find(x => x.id === modId);
           return sum + (m && !m.excludeCredits && !m.noCredit ? Number(m.cfu || 0) : 0);
         }, 0);
       }
       return Number(course.cfu || 0);
     }
 
-    function getDisplayedCourseCfu(course) {
+    function getDisplayedCourseCfu(course, studyPlan = state.studyPlan) {
       if (!course) return 0;
       if (Array.isArray(course.mergedModuleIds) && course.mergedModuleIds.length > 0) {
         return course.mergedModuleIds.reduce((sum, modId) => {
-          const module = state.studyPlan.find(item => item.id === modId);
+          const module = studyPlan.find(item => item.id === modId);
           return sum + Number(module && module.cfu || 0);
         }, 0);
       }
       return Number(course.cfu || 0);
     }
 
-    function formatCourseCfu(course, unit = getCreditUnit()) {
-      const displayedCfu = getDisplayedCourseCfu(course);
-      const countableCfu = getEffectiveCourseCfu(course);
+    function formatCourseCfu(course, unit = getCreditUnit(), studyPlan = state.studyPlan) {
+      const displayedCfu = getDisplayedCourseCfu(course, studyPlan);
+      const countableCfu = getEffectiveCourseCfu(course, studyPlan);
       if (countableCfu === 0) return `${displayedCfu} ${unit} · No Credit`;
       if (countableCfu < displayedCfu) return `${displayedCfu} ${unit} · ${countableCfu} counted`;
       return `${displayedCfu} ${unit}`;
     }
 
-    function getEffectiveEvaluationsAndCourses() {
-      const mergedParents = state.studyPlan.filter(c => Array.isArray(c.mergedModuleIds) && c.mergedModuleIds.length > 0);
+    function getEffectiveEvaluationsAndCourses(profileRecord = null) {
+      const studyPlan = profileRecord ? profileRecord.studyPlan : state.studyPlan;
+      const evaluations = profileRecord ? profileRecord.evaluations : state.evaluations;
+      const mergedParents = studyPlan.filter(c => Array.isArray(c.mergedModuleIds) && c.mergedModuleIds.length > 0);
       const completedParentMap = new Map();
       const annulledModuleIds = new Set();
 
       mergedParents.forEach(parent => {
         const modIds = parent.mergedModuleIds;
         const moduleEvals = modIds.map(mId => {
-          const available = state.evaluations.filter(ev =>
+          const available = evaluations.filter(ev =>
             ev.courseId === mId &&
             String(ev.score || '').trim() !== '' &&
             String(ev.score || '').trim().toUpperCase() !== 'NI'
@@ -6772,7 +7550,7 @@
           let weightCfu = 0;
           let latestDate = '';
           modIds.forEach((mId, idx) => {
-            const modCourse = state.studyPlan.find(c => c.id === mId);
+            const modCourse = studyPlan.find(c => c.id === mId);
             const ev = moduleEvals[idx];
             const num = parseNumericGrade(ev.score);
             const cfu = modCourse && !modCourse.excludeCredits && !modCourse.noCredit ? Number(modCourse.cfu || 1) : 1;
@@ -6803,7 +7581,7 @@
       });
 
       const effectiveEvals = [];
-      state.evaluations.forEach(ev => {
+      evaluations.forEach(ev => {
         // Legacy imports may contain cached merged grades; derive these from module grades instead.
         if (ev.autoMerged) return;
         const parent = mergedParents.find(item => item.mergedModuleIds.includes(ev.courseId));
@@ -6820,9 +7598,11 @@
     }
 
     /* Rule 4: Check if a course already has a final grade */
-    function isCourseFinalized(courseId) {
+    function isCourseFinalized(courseId, profileRecord = null) {
       if (!courseId) return false;
-      const hasDirectFinal = state.evaluations.some(ev =>
+      const evaluations = profileRecord ? profileRecord.evaluations : state.evaluations;
+      const studyPlan = profileRecord ? profileRecord.studyPlan : state.studyPlan;
+      const hasDirectFinal = evaluations.some(ev =>
         ev.courseId === courseId &&
         !ev.autoMerged &&
         !ev.isPartial &&
@@ -6831,13 +7611,13 @@
       );
       if (hasDirectFinal) return true;
 
-      const { completedParentMap } = getEffectiveEvaluationsAndCourses();
+      const { completedParentMap } = getEffectiveEvaluationsAndCourses(profileRecord);
       if (completedParentMap.has(courseId)) return true;
 
-      const parentWithDirectFinal = state.studyPlan.find(p =>
+      const parentWithDirectFinal = studyPlan.find(p =>
         Array.isArray(p.mergedModuleIds) &&
         p.mergedModuleIds.includes(courseId) &&
-        state.evaluations.some(ev =>
+        evaluations.some(ev =>
           ev.courseId === p.id &&
           !ev.autoMerged &&
           !ev.isPartial &&
@@ -6849,16 +7629,16 @@
     }
 
     /* Rule 3: Passed-Course Archiving helpers */
-    function isCourseCompleted(courseId) {
-      return isCourseFinalized(courseId);
+    function isCourseCompleted(courseId, profileRecord = null) {
+      return isCourseFinalized(courseId, profileRecord);
     }
 
-    function isCourseArchivedInCoursesView(courseId) {
+    function isCourseArchivedInCoursesView(courseId, profileRecord = null) {
       const det = getCourseDetails(courseId);
       if (typeof det.archived === 'boolean') {
         return det.archived;
       }
-      return isCourseCompleted(courseId);
+      return isCourseCompleted(courseId, profileRecord);
     }
 
     function setCourseArchivedState(courseId, archivedBool) {
@@ -7057,10 +7837,158 @@
       }, { passive: true });
     })();
 
+    function renderProfilePicker() {
+      const menu = document.getElementById('profile-picker-menu');
+      if (!menu) return;
+      const options = state.profiles.map(item => `
+          <button type="button" class="profile-picker-option" role="menuitemradio" aria-checked="${item.id === state.activeProfileId}" data-profile-id="${escapeHtml(item.id)}">
+            <span>${escapeHtml(item.profile.name || 'Student')}</span>
+            <span class="profile-picker-check" aria-hidden="true">${item.id === state.activeProfileId ? '✓' : ''}</span>
+          </button>
+        `).join('');
+      menu.innerHTML = `
+        <div class="profile-picker-heading" role="presentation">
+          <span>Profiles</span><span>${state.profiles.length}</span>
+        </div>
+        <div role="group" aria-label="Select a profile">${options}</div>
+        <div class="profile-picker-divider" role="presentation"></div>
+        <button type="button" class="profile-picker-add" role="menuitem" id="profile-picker-add">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          <span>Add Profile</span>
+        </button>
+      `;
+    }
+
+    function closeProfilePicker(restoreFocus = false) {
+      document.getElementById('profile-picker-menu').classList.remove('open');
+      document.getElementById('profile-picker-trigger').setAttribute('aria-expanded', 'false');
+      if (restoreFocus) profilePickerTrigger.focus();
+    }
+
+    function switchProfile(profileId) {
+      const selected = state.profiles.find(item => item.id === profileId);
+      if (!selected || selected.id === state.activeProfileId) {
+        closeProfilePicker(true);
+        return;
+      }
+      saveData();
+      state.activeProfileId = selected.id;
+      state.profile = selected.profile;
+      state.studyPlan = selected.studyPlan;
+      state.evaluations = selected.evaluations;
+      state.attendanceLogs = selected.attendanceLogs;
+      closeProfilePicker(true);
+      saveDataAndRefreshAll();
+    }
+
+    const profilePickerTrigger = document.getElementById('profile-picker-trigger');
+    profilePickerTrigger.addEventListener('click', event => {
+      const menu = document.getElementById('profile-picker-menu');
+      const isOpening = !menu.classList.contains('open');
+      renderProfilePicker();
+      menu.classList.toggle('open', isOpening);
+      profilePickerTrigger.setAttribute('aria-expanded', String(isOpening));
+      if (isOpening && event.detail === 0) {
+        menu.querySelector('[aria-checked="true"]')?.focus();
+      }
+    });
+
+    document.getElementById('profile-picker-menu').addEventListener('click', event => {
+      const option = event.target.closest('[data-profile-id]');
+      if (option) {
+        switchProfile(option.dataset.profileId);
+        return;
+      }
+      if (event.target.closest('#profile-picker-add')) {
+        closeProfilePicker();
+        document.getElementById('new-profile-name').value = '';
+        openModal('modal-create-profile');
+        setTimeout(() => document.getElementById('new-profile-name').focus(), 0);
+      }
+    });
+
+    document.getElementById('profile-picker-menu').addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeProfilePicker(true);
+        return;
+      }
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+      const items = Array.from(document.querySelectorAll('#profile-picker-menu [role="menuitemradio"], #profile-picker-menu [role="menuitem"]'));
+      if (items.length === 0) return;
+      event.preventDefault();
+      const currentIndex = items.indexOf(document.activeElement);
+      const activeIndex = currentIndex >= 0
+        ? currentIndex
+        : items.findIndex(item => item.getAttribute('aria-checked') === 'true');
+      const nextIndex = event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? items.length - 1
+          : (activeIndex + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      items[nextIndex].focus();
+    });
+
+    document.addEventListener('click', event => {
+      const menu = document.getElementById('profile-picker-menu');
+      if (!menu.contains(event.target) && !profilePickerTrigger.contains(event.target)) {
+        closeProfilePicker();
+      }
+    });
+
+    document.getElementById('cancel-create-profile').addEventListener('click', () => {
+      closeModal('modal-create-profile');
+      profilePickerTrigger.focus();
+    });
+    document.querySelector('#modal-create-profile .modal-close').addEventListener('click', () => {
+      profilePickerTrigger.focus();
+    });
+
+    document.getElementById('new-profile-name').addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('create-profile-confirm').click();
+      }
+    });
+
+    document.getElementById('create-profile-confirm').addEventListener('click', () => {
+      const name = document.getElementById('new-profile-name').value.trim();
+      if (!name) {
+        document.getElementById('new-profile-name').focus();
+        showToast('Enter a profile name to continue.', true);
+        return;
+      }
+      const id = `profile_${Date.now()}_${state.profiles.length + 1}`;
+      const profile = {
+        ...DEFAULT_PROFILE,
+        name,
+        mat: '',
+        univ: '',
+        faculty: '',
+        dept: '',
+        degree: '',
+        studyPlanCode: '',
+        courseRegulation: '',
+        enrollmentYear: '',
+        qrData: ''
+      };
+      state.profiles.push({
+        id,
+        profile,
+        studyPlan: cloneStudyPlanWithUniqueIds(state.studyPlan),
+        evaluations: [],
+        attendanceLogs: []
+      });
+      closeModal('modal-create-profile');
+      switchProfile(id);
+      showToast(`Profile "${name}" created.`);
+    });
+
     function renderProfileView() {
       const p = state.profile;
       document.getElementById('profile-avatar-img').src = p.avatarUrl;
       document.getElementById('display-profile-name').textContent = p.name;
+      renderProfilePicker();
 
       let statusSuffix = ` • ${getProgramStructureLabel()}`;
       if (p.fuoricorso) {
@@ -7089,14 +8017,16 @@
       renderSsdHistogram(effectiveEvals);
 
       const recentList = document.getElementById('recent-evals-list');
-      const recent = [...effectiveEvals].reverse().slice(0, 3);
+      const recent = [...effectiveEvals]
+        .sort((a, b) => normalizeDateToSlash(b.date).localeCompare(normalizeDateToSlash(a.date)))
+        .slice(0, 3);
       if (recent.length === 0) {
         recentList.innerHTML = '<div class="empty-state">No evaluations recorded yet.</div>';
         return;
       }
       recentList.innerHTML = recent.map(ev => {
         const course = state.studyPlan.find(c => c.id === ev.courseId) || { name: 'Course', cfu: 0, excludeCredits: false };
-        const dotColor = ev.isPartial ? 'var(--accent-yellow)' : getGradeTierHex(ev.score);
+        const dotColor = getGradeTierHex(ev.score);
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
         const cfuDisplay = formatCourseCfu(course, unit);
         const clickAttr = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
@@ -7177,33 +8107,39 @@
     });
 
     function renderAttendanceModalContent() {
-      const { annulledModuleIds } = getEffectiveEvaluationsAndCourses();
-      // Rule 4: Exclude courses that already have a final grade from Attendance & Schedule selectors
-      const activeStudyCourses = state.studyPlan.filter(c => !(c.mergedIntoId && annulledModuleIds.has(c.id)) && !isCourseFinalized(c.id));
+      const profileEvaluationState = new Map(state.profiles.map(profileRecord => [
+        profileRecord.id,
+        getEffectiveEvaluationsAndCourses(profileRecord)
+      ]));
+      const activeStudyCourses = getAllProfileCourses().filter(({ course, profileRecord }) => {
+        const { annulledModuleIds } = profileEvaluationState.get(profileRecord.id);
+        return !(course.mergedIntoId && annulledModuleIds.has(course.id)) &&
+          !isCourseFinalized(course.id, profileRecord);
+      });
 
       const courseSelect = document.getElementById('att-log-course');
       const prevSelected = courseSelect.value;
-      courseSelect.innerHTML = activeStudyCourses.map(c =>
-        `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.code)})</option>`
+      courseSelect.innerHTML = activeStudyCourses.map(entry =>
+        `<option value="${escapeHtml(entry.course.id)}">${escapeHtml(getCoursePickerLabel(entry))}</option>`
       ).join('');
-      if (prevSelected && activeStudyCourses.some(c => c.id === prevSelected)) {
+      if (prevSelected && activeStudyCourses.some(item => item.course.id === prevSelected)) {
         courseSelect.value = prevSelected;
       }
 
       const coursesListEl = document.getElementById('att-courses-list');
       let filteredCourses = activeStudyCourses;
       if (state.attendanceSemFilter === '1') {
-        filteredCourses = activeStudyCourses.filter(c => Number(c.sem) === 1);
+        filteredCourses = activeStudyCourses.filter(({ course }) => Number(course.sem) === 1);
       } else if (state.attendanceSemFilter === '2') {
-        filteredCourses = activeStudyCourses.filter(c => Number(c.sem) === 2);
+        filteredCourses = activeStudyCourses.filter(({ course }) => Number(course.sem) === 2);
       } else if (state.attendanceSemFilter === 'attending') {
-        filteredCourses = activeStudyCourses.filter(c => getCourseAttendance(c.id).attending);
+        filteredCourses = activeStudyCourses.filter(({ course }) => getCourseAttendance(course.id).attending);
       }
 
       if (filteredCourses.length === 0) {
         coursesListEl.innerHTML = '<div class="empty-state">No courses match the selected semester filter.</div>';
       } else {
-        coursesListEl.innerHTML = filteredCourses.map(course => {
+        coursesListEl.innerHTML = filteredCourses.map(({ course, profileRecord }) => {
           const att = getCourseAttendance(course.id);
           const slotsHtml = (att.slots || []).map((s, sIdx) => {
             const skippedToday = (s.skipDates || []).includes(toSlashDate(state.routineDate));
@@ -7224,7 +8160,7 @@
             <div class="att-course-card ${att.attending ? 'is-attending' : ''}">
               <div class="att-course-top">
                 <div style="min-width:0; flex:1;">
-                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent-blue);">${escapeHtml(course.code)} • ${formatOrdinalYear(course.year)} • ${Number(course.sem) === 1 ? '1st' : '2nd'} Sem</div>
+                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent-blue);">${escapeHtml(course.code)} • ${formatOrdinalYear(course.year)} • ${Number(course.sem) === 1 ? '1st' : '2nd'} Sem • ${escapeHtml(profileRecord.profile.name)}</div>
                   <div style="font-size:0.92rem; font-weight:800; color:var(--text-color); margin-top:2px;">${escapeHtml(course.name)}</div>
                   <div style="font-size:0.74rem; color:var(--text-muted);">${escapeHtml(course.prof || 'Professor TBA')}</div>
                 </div>
@@ -7371,14 +8307,19 @@
 
     document.getElementById('btn-save-attendance-log').addEventListener('click', () => {
       const courseId = document.getElementById('att-log-course').value;
+      const courseEntry = getProfileCourseById(courseId);
+      if (!courseEntry) {
+        showToast('Select a course to log attendance.', true);
+        return;
+      }
       const type = document.getElementById('att-log-type').value;
       const date = normalizeDateToSlash(document.getElementById('att-log-date').value) || todaySlash;
       const note = document.getElementById('att-log-note').value.trim();
 
-      const course = state.studyPlan.find(c => c.id === courseId);
-      const courseName = course ? course.name : 'Course';
+      const { course, profileRecord } = courseEntry;
+      const courseName = course.name;
 
-      state.attendanceLogs.push({
+      profileRecord.attendanceLogs.push({
         id: 'att_' + Date.now(),
         courseId,
         courseName,
@@ -7398,6 +8339,9 @@
 
       document.getElementById('att-log-note').value = '';
       saveDataAndRefreshAll();
+      if (profileRecord.id !== state.activeProfileId) {
+        showToast(`Attendance saved for ${profileRecord.profile.name}.`);
+      }
     });
 
     function generateDefaultBadgeUrl() {
@@ -7414,20 +8358,7 @@
     }
 
     const avatarTrigger = document.getElementById('profile-avatar-trigger');
-    let pressTimer;
-    let isLongPress = false;
-
-    avatarTrigger.addEventListener('pointerdown', (e) => {
-      isLongPress = false;
-      pressTimer = setTimeout(() => {
-        isLongPress = true;
-        openEditProfileModal();
-      }, 550);
-    });
-    avatarTrigger.addEventListener('pointerup', () => clearTimeout(pressTimer));
-    avatarTrigger.addEventListener('pointerleave', () => clearTimeout(pressTimer));
     avatarTrigger.addEventListener('click', () => {
-      if (isLongPress) return;
       const p = state.profile;
       const qrSrc = getResolvedQrSrc();
       document.getElementById('badge-univ-name').textContent = p.univ;
@@ -7448,6 +8379,7 @@
 
       openModal('modal-student-badge');
     });
+    document.getElementById('profile-edit-button').addEventListener('click', openEditProfileModal);
 
     document.getElementById('badge-qr-img').addEventListener('click', (e) => {
       e.stopPropagation();
@@ -7576,7 +8508,7 @@
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
         const cfuLabel = formatCourseCfu(course, unit);
         const rowClick = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
-        const gradeColor = ev.isPartial ? 'var(--accent-yellow)' : getGradeTierHex(ev.score);
+        const gradeColor = getGradeTierHex(ev.score);
         return `
           <tr style="cursor:${ev.isConsolidated ? 'default' : 'pointer'};" ${rowClick}>
             <td>
@@ -7948,9 +8880,13 @@
 
       const excl = document.getElementById('course-exclude-cfu-in').checked;
       const existing = id ? state.studyPlan.find(c => c.id === id) : null;
+      const newCourseId = id || reserveUniqueCourseId(
+        `c_${Date.now()}`,
+        new Set(getAllProfileCourses().map(item => item.course.id))
+      );
       const obj = {
         ...(existing || {}),
-        id: id || 'c_' + Date.now(),
+        id: newCourseId,
         code: document.getElementById('course-code-in').value.trim() || 'EXT01',
         ssd: document.getElementById('course-ssd-in').value.trim() || 'N/A',
         name,
@@ -8000,8 +8936,8 @@
     });
 
     document.getElementById('btn-pin-all-exams').addEventListener('click', () => {
-      state.studyPlan.forEach(c => {
-        const det = getCourseDetails(c.id);
+      getAllProfileCourses().forEach(({ course }) => {
+        const det = getCourseDetails(course.id);
         if (det.exams && det.exams.length > 0) {
           det.pinned = true;
         }
@@ -8019,9 +8955,9 @@
     });
 
     document.getElementById('btn-archive-all-passed').addEventListener('click', () => {
-      state.studyPlan.forEach(c => {
-        if (isCourseCompleted(c.id)) {
-          const det = getCourseDetails(c.id);
+      getAllProfileCourses().forEach(({ course, profileRecord }) => {
+        if (isCourseCompleted(course.id, profileRecord)) {
+          const det = getCourseDetails(course.id);
           det.archived = true;
         }
       });
@@ -8040,7 +8976,7 @@
       renderCoursesAccordionList(courseId);
     }
 
-    function buildCourseAccordionCard(course, det, { isOpen, isArchived, finalGradeStr, unit }) {
+    function buildCourseAccordionCard(course, det, { isOpen, isArchived, finalGradeStr, unit, profileRecord }) {
       const examsList = Array.isArray(det.exams) ? det.exams : [];
       const linksList = Array.isArray(det.links) ? det.links : [];
 
@@ -8057,7 +8993,7 @@
         ? `<span class="course-type-tag tag-passed">Passed: ${escapeHtml(finalGradeStr)}</span>`
         : (isArchived ? `<span class="course-type-tag">Archived</span>` : '');
       const pinIndicator = det.pinned && !state.coursesEditMode
-        ? `<span style="color:var(--accent-yellow); margin-right:4px;" title="Pinned">📌</span>`
+        ? `<span class="course-pin-indicator" title="Pinned"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-4 1-4 4 1 4-2 2-3-5-5-3 2-2 4 1 4-4zM5 19l-2 2"/></svg></span>`
         : '';
 
       const examsHtml = examsList.length > 0
@@ -8087,21 +9023,21 @@
           }).join('')
         : '<div style="font-size:0.78rem; color:var(--text-muted); font-style:italic;">No course links added yet.</div>';
 
-      const cfuLabel = formatCourseCfu(course, unit);
+      const cfuLabel = formatCourseCfu(course, unit, profileRecord.studyPlan);
       const pinButtonHtml = state.coursesEditMode
-        ? `<button type="button" class="btn-pin-toggle ${det.pinned ? 'is-pinned' : ''}" onclick="event.stopPropagation(); toggleCoursePin('${course.id}')">📌 ${det.pinned ? 'Pinned' : 'Pin'}</button>`
+        ? `<button type="button" class="btn-pin-toggle ${det.pinned ? 'is-pinned' : ''}" aria-label="${det.pinned ? 'Unpin' : 'Pin'} ${escapeHtml(course.name)}" onclick="event.stopPropagation(); toggleCoursePin('${course.id}')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16 3 5 5-4 1-4 4 1 4-2 2-3-5-5-3 2-2 4 1 4-4zM5 19l-2 2"/></svg>${det.pinned ? 'Pinned' : 'Pin'}</button>`
         : '';
 
       const archiveActionHtml = isArchived
         ? `<button type="button" class="btn-restore-pill" onclick="setCourseArchivedState('${course.id}', false)">↩ Restore to Active</button>`
-        : `<button type="button" class="btn-preset" onclick="setCourseArchivedState('${course.id}', true)">📦 Archive Course</button>`;
+        : `<button type="button" class="btn-preset" onclick="setCourseArchivedState('${course.id}', true)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4zM3 4h18v3H3zM9 11h6"/></svg> Archive Course</button>`;
 
       acc.innerHTML = `
         <div class="course-accordion-header">
           <div style="min-width:0; flex:1;">
             <div style="font-size:0.72rem; color:var(--accent-blue); font-weight:700;">${escapeHtml(course.code)} &bull; ${escapeHtml(course.ssd)} &bull; ${cfuLabel}${examBadge}${passedBadge}</div>
             <div style="font-size:0.95rem; font-weight:800; color:var(--text-color); margin-top:2px;">${pinIndicator}${escapeHtml(course.name)}</div>
-            <div style="font-size:0.76rem; color:var(--text-muted);">${escapeHtml(course.prof || 'Professor TBA')}</div>
+            <div style="font-size:0.76rem; color:var(--text-muted);">${escapeHtml(course.prof || 'Professor TBA')} • ${escapeHtml(profileRecord.profile.name)}</div>
           </div>
           ${pinButtonHtml}
           <span class="course-acc-chevron">&#9662;</span>
@@ -8160,37 +9096,41 @@
     function renderCoursesAccordionList(expandCourseId = null) {
       const container = document.getElementById('courses-accordion-list');
       const query = (document.getElementById('courses-search-input').value || '').trim().toLowerCase();
-      const unit = getCreditUnit();
-      const { annulledModuleIds, effectiveEvals } = getEffectiveEvaluationsAndCourses();
+      const effectiveByProfile = new Map(state.profiles.map(profileRecord => [
+        profileRecord.id,
+        getEffectiveEvaluationsAndCourses(profileRecord)
+      ]));
 
-      const filtered = state.studyPlan.filter(c => {
-        if (c.mergedIntoId && annulledModuleIds.has(c.id)) return false;
+      const filtered = getAllProfileCourses().filter(({ course, profileRecord }) => {
+        const { annulledModuleIds } = effectiveByProfile.get(profileRecord.id);
+        if (course.mergedIntoId && annulledModuleIds.has(course.id)) return false;
         if (!query) return true;
         return (
-          (c.name || '').toLowerCase().includes(query) ||
-          (c.ssd || '').toLowerCase().includes(query) ||
-          (c.code || '').toLowerCase().includes(query) ||
-          (c.prof || '').toLowerCase().includes(query)
+          (course.name || '').toLowerCase().includes(query) ||
+          (course.ssd || '').toLowerCase().includes(query) ||
+          (course.code || '').toLowerCase().includes(query) ||
+          (course.prof || '').toLowerCase().includes(query) ||
+          (profileRecord.profile.name || '').toLowerCase().includes(query)
         );
       });
 
       const activeCourses = [];
       const archivedCourses = [];
 
-      filtered.forEach(c => {
-        if (isCourseArchivedInCoursesView(c.id)) {
-          archivedCourses.push(c);
+      filtered.forEach(entry => {
+        if (isCourseArchivedInCoursesView(entry.course.id, entry.profileRecord)) {
+          archivedCourses.push(entry);
         } else {
-          activeCourses.push(c);
+          activeCourses.push(entry);
         }
       });
 
       const sortCourses = (arr) => arr.sort((a, b) => {
-        const pinA = getCourseDetails(a.id).pinned ? 1 : 0;
-        const pinB = getCourseDetails(b.id).pinned ? 1 : 0;
+        const pinA = getCourseDetails(a.course.id).pinned ? 1 : 0;
+        const pinB = getCourseDetails(b.course.id).pinned ? 1 : 0;
         if (pinA !== pinB) return pinB - pinA;
-        if ((a.year || 1) !== (b.year || 1)) return (a.year || 1) - (b.year || 1);
-        return (a.sem || 1) - (b.sem || 1);
+        if ((a.course.year || 1) !== (b.course.year || 1)) return (a.course.year || 1) - (b.course.year || 1);
+        return (a.course.sem || 1) - (b.course.sem || 1);
       });
 
       sortCourses(activeCourses);
@@ -8208,14 +9148,15 @@
           activeLabel.innerHTML = `<span>Active Courses (${activeCourses.length})</span>`;
           container.appendChild(activeLabel);
 
-          activeCourses.forEach(course => {
+          activeCourses.forEach(({ course, profileRecord }) => {
             const det = getCourseDetails(course.id);
             const isOpen = expandCourseId === course.id;
             const acc = buildCourseAccordionCard(course, det, {
               isOpen,
               isArchived: false,
               finalGradeStr: '',
-              unit
+              unit: getCreditUnit(profileRecord.profile),
+              profileRecord
             });
             container.appendChild(acc);
           });
@@ -8231,7 +9172,7 @@
           const shouldExpandDrawer = Boolean(
             state.showArchivedCourses ||
             (query && archivedCourses.length > 0) ||
-            (expandCourseId && archivedCourses.some(c => c.id === expandCourseId))
+            (expandCourseId && archivedCourses.some(item => item.course.id === expandCourseId))
           );
 
           const drawer = document.createElement('div');
@@ -8241,7 +9182,7 @@
           drawerHeader.className = 'passed-archive-header';
           drawerHeader.innerHTML = `
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:0.95rem;">📦</span>
+              <svg class="archive-stack-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v13H4zM3 4h18v3H3zM9 11h6"/></svg>
               <div>
                 <div style="font-size:0.86rem; font-weight:800; color:var(--text-color);">Passed / Archived Courses (${archivedCourses.length})</div>
                 <div style="font-size:0.72rem; color:var(--text-muted);">Completed courses tucked away to keep your active list focused</div>
@@ -8260,15 +9201,17 @@
           if (shouldExpandDrawer) {
             const drawerBody = document.createElement('div');
             drawerBody.className = 'passed-archive-list';
-            archivedCourses.forEach(course => {
+            archivedCourses.forEach(({ course, profileRecord }) => {
               const det = getCourseDetails(course.id);
+              const { effectiveEvals } = effectiveByProfile.get(profileRecord.id);
               const finalEv = effectiveEvals.find(ev => ev.courseId === course.id && !ev.isPartial && isPassingGrade(ev.score));
               const isOpen = expandCourseId === course.id;
               const acc = buildCourseAccordionCard(course, det, {
                 isOpen,
                 isArchived: true,
                 finalGradeStr: finalEv ? finalEv.score : '',
-                unit
+                unit: getCreditUnit(profileRecord.profile),
+                profileRecord
               });
               drawerBody.appendChild(acc);
             });
