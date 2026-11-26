@@ -10,6 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="Cladar">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./app/src/main/assets/icons/cladar-192.png">
   <link rel="apple-touch-icon" href="./app/src/main/assets/icons/apple-touch-icon.png">
   
   <!-- Google Fonts and External Libraries -->
@@ -11824,6 +11825,11 @@
         const data = buildBackupPayload();
         const jsonString = JSON.stringify(data, null, 2);
         const fileName = `cladar_backup_${todaySlash}.json`;
+        if (window.AndroidBridge && typeof window.AndroidBridge.saveJson === 'function') {
+          window.AndroidBridge.saveJson(jsonString, fileName);
+          return;
+        }
+
         const blob = new Blob([jsonString], { type: 'application/json' });
 
         const url = URL.createObjectURL(blob);
