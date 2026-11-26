@@ -1,8 +1,8 @@
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = `cladar-shell-${CACHE_VERSION}`;
 const REMOTE_CACHE = `cladar-remote-${CACHE_VERSION}`;
 const APP_ROOT = new URL('./', self.location.href);
-const APP_URL = new URL('index.html', APP_ROOT).href;
+const APP_URL = new URL('cladar.html', APP_ROOT).href;
 const SHELL_URLS = [
   APP_ROOT.href,
   APP_URL,
@@ -125,7 +125,9 @@ self.addEventListener('fetch', event => {
           const shell = await caches.open(SHELL_CACHE);
           try {
             await shell.put(request, response.clone());
-            await shell.put(APP_URL, response.clone());
+            if (requestUrl.pathname === new URL(APP_URL).pathname) {
+              await shell.put(APP_URL, response.clone());
+            }
           } catch (error) {
             console.warn('Unable to update the cached Cladar page:', error);
           }
