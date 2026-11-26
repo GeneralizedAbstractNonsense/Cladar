@@ -10,10 +10,10 @@
   <meta name="apple-mobile-web-app-title" content="Cladar">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
-   <link rel="apple-touch-icon" href="./app/src/main/assets/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="./app/src/main/assets/icons/apple-touch-icon.png">
   
   <!-- Google Fonts and External Libraries -->
-   <script src="./app/src/main/assets/vendor/qrcode.min.js" defer></script>
+  <script src="./app/src/main/assets/vendor/qrcode.min.js" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" crossorigin="anonymous">
   <!-- KaTeX for LaTeX rendering ($...$) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
@@ -2328,6 +2328,209 @@
       width: 100%;
       margin: 0 auto;
     }
+    #modal-edit-profile {
+      padding: 0;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    #modal-edit-profile .modal-card {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      border: 0;
+      border-radius: 0;
+    }
+    #modal-edit-profile .profile-edit-header {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(88px, 1fr) minmax(0, 2fr) minmax(88px, 1fr);
+      align-items: center;
+      gap: 8px;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, calc((100% - 720px) / 2)) 10px;
+      border-bottom: 1px solid var(--card-border);
+      background: var(--card-bg);
+    }
+    .profile-edit-back {
+      display: inline-flex;
+      width: fit-content;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 5px;
+      padding: 0 8px;
+      border: 0;
+      background: transparent;
+      color: var(--accent-blue);
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .profile-edit-back svg {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #modal-edit-profile .profile-edit-header h3 {
+      overflow: hidden;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .profile-edit-save {
+      justify-self: end;
+      min-width: 72px;
+      min-height: 44px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent-blue);
+      color: #ffffff;
+      font-size: 0.94rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .profile-edit-back:focus-visible,
+    .profile-edit-save:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+    #modal-edit-profile .profile-edit-body {
+      width: 100%;
+      max-width: 752px;
+      margin: 0 auto;
+      padding: 22px 16px max(28px, env(safe-area-inset-bottom, 0px));
+      gap: 16px;
+      background: var(--bg-color);
+    }
+    .profile-edit-intro {
+      margin: 0 2px 2px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    .profile-edit-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 18px;
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: var(--card-bg);
+    }
+    .profile-edit-section-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .profile-edit-section-heading h4 {
+      margin: 0;
+      color: var(--text-color);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .profile-edit-section-heading p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+    .profile-edit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 12px;
+    }
+    #modal-edit-profile .form-group {
+      gap: 7px;
+    }
+    #modal-edit-profile .form-group label {
+      color: var(--text-color);
+      font-size: 0.86rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    #modal-edit-profile .form-control {
+      min-height: 48px;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    #modal-edit-profile select.form-control {
+      padding-right: 34px;
+    }
+    .profile-edit-span {
+      grid-column: 1 / -1;
+    }
+    .profile-edit-toggle {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--bg-color);
+    }
+    #modal-edit-profile .profile-edit-toggle label {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    #modal-edit-profile .profile-edit-toggle input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      accent-color: var(--accent-blue);
+    }
+    .profile-edit-help {
+      margin: -8px 0 0;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    #modal-profile-discard {
+      z-index: 2600;
+    }
+    #modal-profile-discard .confirm-card {
+      width: min(100% - 32px, 380px);
+      padding: 22px;
+    }
+    @media (max-width: 520px) {
+      #modal-edit-profile .profile-edit-header {
+        grid-template-columns: minmax(76px, 1fr) minmax(0, 2fr) minmax(68px, 1fr);
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+      .profile-edit-back {
+        gap: 2px;
+        padding: 0 4px;
+      }
+      #modal-edit-profile .profile-edit-body {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+      .profile-edit-section {
+        padding: 16px;
+      }
+    }
+    @media (max-width: 380px) {
+      .profile-edit-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .profile-edit-span {
+        grid-column: auto;
+      }
+    }
 
     .courses-section-divider {
       font-size: 0.76rem;
@@ -3355,14 +3558,14 @@
                 <div class="gauge-box">
                   <div class="circle-gauge gauge-dark-green" id="gauge-official">
                     <span class="gauge-val" id="val-official-avg">28.4</span>
-                    <span class="gauge-scale">/ 30</span>
+                    <span class="gauge-scale" id="official-gauge-scale">/ 30</span>
                   </div>
                   <span class="gauge-label">Official Average</span>
                 </div>
                 <div class="gauge-box">
                   <div class="circle-gauge gauge-dark-green" id="gauge-provisional">
                     <span class="gauge-val" id="val-provisional-avg">27.9</span>
-                    <span class="gauge-scale">/ 30</span>
+                    <span class="gauge-scale" id="provisional-gauge-scale">/ 30</span>
                   </div>
                   <span class="gauge-label">Temporary Average</span>
                 </div>
@@ -3374,7 +3577,7 @@
               <div class="md-ssd-card">
                 <div class="md-ssd-header">
                   <span>Average by Disciplinary Sector (SSD)</span>
-                  <span>Weighted / 30</span>
+                  <span id="ssd-scale-label">Weighted / 30</span>
                 </div>
                 <div class="md-ssd-scroll">
                   <div class="md-ssd-chart" id="ssd-histogram-container"></div>
@@ -3830,127 +4033,189 @@
   </div>
 
   <!-- EDIT PROFILE MODAL -->
-  <div class="modal-overlay" id="modal-edit-profile">
+  <div class="modal-overlay fullscreen-modal" id="modal-edit-profile" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title">
     <div class="modal-card">
-      <div class="modal-header">
-        <h3>Edit Student Profile</h3>
-        <button class="btn-icon modal-close">&times;</button>
+      <div class="modal-header profile-edit-header">
+        <button type="button" class="modal-close profile-edit-back" id="profile-edit-close-btn" aria-label="Close profile editor">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          <span>Back</span>
+        </button>
+        <h3 id="profile-edit-title">Edit Profile</h3>
+        <button type="button" class="profile-edit-save" id="save-profile-btn">Save</button>
       </div>
-      <div class="modal-body">
-        <div class="form-row-wrap">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="edit-name" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Student ID</label>
-            <input type="text" id="edit-mat" class="form-control">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>University</label>
-          <input type="text" id="edit-univ" class="form-control">
-        </div>
-        <div class="form-group">
-          <label>Faculty</label>
-          <input type="text" id="edit-faculty" class="form-control" placeholder="e.g. Faculty of Information Engineering, Informatics and Statistics">
-        </div>
-        <div class="form-group">
-          <label>Department</label>
-          <input type="text" id="edit-dept" class="form-control">
-        </div>
-        <div class="form-group">
-          <label>Degree Name &amp; Class</label>
-          <input type="text" id="edit-degree" class="form-control" placeholder="e.g. B.Sc. Computer Engineering (L-8)">
-        </div>
+      <div class="modal-body profile-edit-body">
+        <p class="profile-edit-intro">Keep your student details and academic information up to date. Changes take effect when you save.</p>
 
-        <div class="form-row-wrap">
-          <div class="form-group">
-            <label>Credit System</label>
-            <select id="edit-credit-unit" class="form-control">
-              <option value="CFU">CFU (Italian Credits)</option>
-              <option value="ECTS">ECTS (European Credits)</option>
-            </select>
+        <section class="profile-edit-section" aria-labelledby="profile-edit-personal-title">
+          <div class="profile-edit-section-heading">
+            <h4 id="profile-edit-personal-title">Personal details</h4>
+            <p>Your name and university identification number.</p>
           </div>
-          <div class="form-group">
-            <label>Program Structure</label>
-            <select id="edit-degree-category" class="form-control">
-              <option value="Bachelor">Bachelor (3 years)</option>
-              <option value="Master">Master (2 years)</option>
-              <option value="Custom">Custom (Name + Years)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="sub-panel-box" id="custom-degree-panel" style="display:none;">
-          <div class="form-row-wrap">
+          <div class="profile-edit-grid">
             <div class="form-group">
-              <label>Custom Program Name</label>
-              <input type="text" id="edit-custom-degree-name" class="form-control" placeholder="e.g. Single-Cycle Master">
+              <label for="edit-name">Full name</label>
+              <input type="text" id="edit-name" class="form-control" autocomplete="name">
             </div>
-            <div class="form-group" style="max-width:130px;">
-              <label>Number of Years</label>
-              <input type="number" id="edit-program-years" class="form-control" min="1" max="10" value="5">
+            <div class="form-group">
+              <label for="edit-mat">Student ID</label>
+              <input type="text" id="edit-mat" class="form-control">
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="form-row-wrap">
-          <div class="form-group">
-            <label>Course Code</label>
-            <input type="text" id="edit-study-plan-code" class="form-control" placeholder="e.g. 29415">
+        <section class="profile-edit-section" aria-labelledby="profile-edit-institution-title">
+          <div class="profile-edit-section-heading">
+            <h4 id="profile-edit-institution-title">Institution</h4>
+            <p>Where you study and the academic unit you belong to.</p>
           </div>
-          <div class="form-group">
-            <label>Enrollment Year</label>
-            <input type="text" id="edit-enrollment-year" class="form-control" placeholder="e.g. 2024/2025">
+          <div class="profile-edit-grid">
+            <div class="form-group profile-edit-span">
+              <label for="edit-univ">University</label>
+              <input type="text" id="edit-univ" class="form-control" autocomplete="organization">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-faculty">Faculty</label>
+              <input type="text" id="edit-faculty" class="form-control" placeholder="e.g. Faculty of Engineering">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-dept">Department</label>
+              <input type="text" id="edit-dept" class="form-control">
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label>Course Regulations</label>
-          <input type="text" id="edit-course-regulation" class="form-control" placeholder="e.g. L-270 - Ord. 2019">
-        </div>
+        </section>
 
-        <div class="sub-panel-box">
-          <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between;">
-            <label style="margin:0;">Out-of-Course Status</label>
-            <input type="checkbox" id="edit-fuoricorso" style="width:20px; height:20px;">
+        <section class="profile-edit-section" aria-labelledby="profile-edit-program-title">
+          <div class="profile-edit-section-heading">
+            <h4 id="profile-edit-program-title">Degree and grading</h4>
+            <p>These settings determine how your academic progress and evaluations are displayed.</p>
+          </div>
+          <div class="profile-edit-grid">
+            <div class="form-group profile-edit-span">
+              <label for="edit-degree">Degree name and class</label>
+              <input type="text" id="edit-degree" class="form-control" placeholder="e.g. B.Sc. Computer Engineering (L-8)">
+            </div>
+            <div class="form-group">
+              <label for="edit-degree-category">Program structure</label>
+              <select id="edit-degree-category" class="form-control">
+                <option value="Bachelor">Bachelor (3 years)</option>
+                <option value="Master">Master (2 years)</option>
+                <option value="Custom">Custom (name and duration)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="edit-credit-unit">Credit system</label>
+              <select id="edit-credit-unit" class="form-control">
+                <option value="CFU">CFU (Italian credits)</option>
+                <option value="ECTS">ECTS (European credits)</option>
+              </select>
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-grade-scale">Grading scale</label>
+              <select id="edit-grade-scale" class="form-control" aria-describedby="edit-grade-scale-help">
+                <option value="italian">Italy · 18–30</option>
+                <option value="german">Germany / Austria · 1.0–5.0 (inverse)</option>
+                <option value="german-points">Germany · 0–15 points</option>
+                <option value="gpa">US / Canada · letter grades or GPA 0.0–4.0</option>
+                <option value="uk">UK / Ireland · 0–100%</option>
+                <option value="french">France · 0–20</option>
+                <option value="dutch">Netherlands · 1–10</option>
+                <option value="spanish">Spain · 0–10</option>
+                <option value="swiss">Switzerland · 1–6</option>
+                <option value="ects">Scandinavia · ECTS A–F or U / G / VG</option>
+              </select>
+              <span id="edit-grade-scale-help" class="profile-edit-help">Enter grades using the selected scale. The pass mark and maximum are shown above.</span>
+            </div>
+            <div class="sub-panel-box profile-edit-span" id="custom-degree-panel" style="display:none;">
+              <div class="profile-edit-grid">
+                <div class="form-group">
+                  <label for="edit-custom-degree-name">Custom program name</label>
+                  <input type="text" id="edit-custom-degree-name" class="form-control" placeholder="e.g. Single-Cycle Master">
+                </div>
+                <div class="form-group">
+                  <label for="edit-program-years">Number of years</label>
+                  <input type="number" id="edit-program-years" class="form-control" min="1" max="10" value="5">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="edit-study-plan-code">Course code</label>
+              <input type="text" id="edit-study-plan-code" class="form-control" placeholder="e.g. 29415">
+            </div>
+            <div class="form-group">
+              <label for="edit-enrollment-year">Enrollment year</label>
+              <input type="text" id="edit-enrollment-year" class="form-control" placeholder="e.g. 2024/2025">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-course-regulation">Course regulations</label>
+              <input type="text" id="edit-course-regulation" class="form-control" placeholder="e.g. L-270 - Ord. 2019">
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-edit-section" aria-labelledby="profile-edit-status-title">
+          <div class="profile-edit-section-heading">
+            <h4 id="profile-edit-status-title">Academic status</h4>
+            <p>Optional information shown with your student profile.</p>
+          </div>
+          <div class="profile-edit-toggle">
+            <label for="edit-fuoricorso">Out-of-course status</label>
+            <input type="checkbox" id="edit-fuoricorso">
           </div>
           <div class="form-group" id="fuoricorso-year-group" style="display:none;">
-            <label>Out-of-Course Year</label>
+            <label for="edit-fuoricorso-year">Out-of-course year</label>
             <input type="number" id="edit-fuoricorso-year" class="form-control" min="1" max="15" value="1">
           </div>
-        </div>
-
-        <div class="sub-panel-box">
-          <div class="form-group" style="flex-direction:row; align-items:center; justify-content:space-between;">
-            <label style="margin:0;">Honors Track / Superior School</label>
-            <input type="checkbox" id="edit-has-honors" style="width:20px; height:20px;">
+          <div class="profile-edit-toggle">
+            <label for="edit-has-honors">Honors track or superior school</label>
+            <input type="checkbox" id="edit-has-honors">
           </div>
           <div id="honors-fields-group" style="display:none; flex-direction:column; gap:10px;">
             <div class="form-group">
-              <label>Superior School / Honors Program</label>
-              <input type="text" id="edit-honors-school" class="form-control" placeholder="e.g. SSAS, Scuola Normale di Pisa, Galileiana...">
+              <label for="edit-honors-school">Superior school or honors program</label>
+              <input type="text" id="edit-honors-school" class="form-control" placeholder="e.g. SSAS, Scuola Normale di Pisa, Galileiana">
             </div>
             <div class="form-group">
-              <label>Academic Class / Field of Study</label>
-              <input type="text" id="edit-honors-class" class="form-control" placeholder="e.g. Class of Sciences, Humanities...">
+              <label for="edit-honors-class">Academic class or field of study</label>
+              <input type="text" id="edit-honors-class" class="form-control" placeholder="e.g. Class of Sciences, Humanities">
             </div>
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Profile Picture (Upload PNG/JPEG or URL)</label>
-          <input type="file" id="edit-avatar-file" accept="image/png, image/jpeg" class="form-control">
-          <input type="text" id="edit-avatar-url" class="form-control" style="margin-top:4px;" placeholder="https://... or Data URL">
-        </div>
+        </section>
 
-        <div class="form-group">
-          <label>Badge Image / QR Code (Upload PNG/JPEG or Text/URL)</label>
-          <input type="file" id="edit-qr-file" accept="image/png, image/jpeg" class="form-control">
-          <input type="text" id="edit-qr-data" class="form-control" style="margin-top:4px;" placeholder="QR content string or image URL">
-        </div>
-        
-        <button class="btn-primary-action" id="save-profile-btn">Save Profile Settings</button>
+        <section class="profile-edit-section" aria-labelledby="profile-edit-badge-title">
+          <div class="profile-edit-section-heading">
+            <h4 id="profile-edit-badge-title">Profile and student badge</h4>
+            <p>Add a photo and optional QR or badge image.</p>
+          </div>
+          <div class="profile-edit-grid">
+            <div class="form-group profile-edit-span">
+              <label for="edit-avatar-file">Profile photo (PNG or JPEG)</label>
+              <input type="file" id="edit-avatar-file" accept="image/png, image/jpeg" class="form-control">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-avatar-url">Photo URL</label>
+              <input type="text" id="edit-avatar-url" class="form-control" placeholder="https://... or image data URL">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-qr-file">Badge image or QR code (PNG or JPEG)</label>
+              <input type="file" id="edit-qr-file" accept="image/png, image/jpeg" class="form-control">
+            </div>
+            <div class="form-group profile-edit-span">
+              <label for="edit-qr-data">QR content or image URL</label>
+              <input type="text" id="edit-qr-data" class="form-control" placeholder="QR content string or image URL">
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-profile-discard" role="alertdialog" aria-modal="true" aria-labelledby="profile-discard-title" aria-describedby="profile-discard-description">
+    <div class="confirm-card">
+      <h4 id="profile-discard-title">Discard unsaved changes?</h4>
+      <p id="profile-discard-description">Your profile edits will be lost if you leave without saving.</p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-confirm-cancel" id="profile-discard-stay-btn">Keep Editing</button>
+        <button type="button" class="btn-confirm-del" id="profile-discard-confirm-btn">Discard Changes</button>
       </div>
     </div>
   </div>
@@ -3986,13 +4251,20 @@
           <span style="font-size:0.8rem; color:var(--text-muted);" id="eval-count-lbl">0 evaluations recorded</span>
           <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:6px 12px; font-size:0.8rem; margin-top:0;">+ Add Grade</button>
         </div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+          <label for="eval-conversion-scale" style="font-size:0.78rem; color:var(--text-muted);">Preview in</label>
+          <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:6px 28px 6px 10px;"></select>
+          <button type="button" class="btn-link" id="toggle-eval-conversion-btn" aria-pressed="false">Convert grades</button>
+          <span id="eval-conversion-note" style="display:none; font-size:0.72rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
+        </div>
         <div style="width:100%;">
           <table class="eval-table">
-            <colgroup>
+            <colgroup id="eval-table-colgroup">
               <col style="width: 38%;">
               <col style="width: 24%;">
               <col style="width: 16%;">
               <col style="width: 22%;">
+              <col id="eval-converted-col" style="display:none; width:0;">
             </colgroup>
             <thead>
               <tr>
@@ -4000,6 +4272,7 @@
                 <th>Professor</th>
                 <th>Grade</th>
                 <th>Type</th>
+                <th id="eval-converted-header" style="display:none;"></th>
               </tr>
             </thead>
             <tbody id="eval-table-body"></tbody>
@@ -4027,9 +4300,9 @@
           <input type="checkbox" id="grade-is-partial" style="width:20px; height:20px;">
         </div>
         <div class="form-group">
-          <label>Grade (18-30, 30L, I = Pass, NI = Fail, ✓ = Check)</label>
+          <label id="grade-score-label">Grade (18-30, 30L, I = Pass, NI = Fail, ✓ = Check)</label>
           <input type="text" id="grade-score-input" class="form-control" placeholder="e.g. 30, 28, 30L, I, NI, ✓">
-          <div class="preset-btn-row">
+          <div class="preset-btn-row" id="grade-preset-row">
             <button type="button" class="btn-preset" onclick="setGradePreset('18')">18</button>
             <button type="button" class="btn-preset" onclick="setGradePreset('24')">24</button>
             <button type="button" class="btn-preset" onclick="setGradePreset('28')">28</button>
@@ -4039,7 +4312,7 @@
             <button type="button" class="btn-preset" style="color:var(--accent-red);" onclick="setGradePreset('NI')">NI</button>
             <button type="button" class="btn-preset" style="color:var(--accent-green); font-weight:800;" onclick="setGradePreset('✓')" title="Check (Extra Activity)">✓</button>
           </div>
-          <span style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">* Pass (I), Fail (NI), and Check (✓) grades do not count toward the weighted average.</span>
+          <span id="grade-score-help" style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">* Pass (I), Fail (NI), and Check (✓) grades do not count toward the weighted average.</span>
         </div>
         <div class="form-group">
           <label>Date of Evaluation (YYYY-MM-DD)</label>
@@ -4609,6 +4882,7 @@
       dept: 'Dept. of Information Engineering, Robotics and Bioengineering (DIIRB)',
       degree: 'B.Sc. Computer Engineering, Robotics and Bio-inspired Systems (L-8)',
       creditUnit: 'CFU',
+      gradeScale: 'italian',
       degreeCategory: 'Bachelor',
       customDegreeName: '',
       programYears: 3,
@@ -5620,7 +5894,10 @@
     window.addEventListener('resize', () => syncLiquidDockPill(true));
     requestAnimationFrame(() => syncLiquidDockPill(true));
 
-    const PROFILE_SUBVIEW_IDS = new Set(['modal-archive', 'modal-courses', 'modal-study-plan']);
+    const PROFILE_SUBVIEW_IDS = new Set(['modal-archive', 'modal-courses', 'modal-study-plan', 'modal-edit-profile']);
+    let profileEditInitialSnapshot = null;
+    let profileEditReturnFocus = null;
+    let profileDiscardReturnFocus = null;
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -5631,13 +5908,18 @@
       }
       el.classList.add('active');
     }
-    function closeModal(id) {
+    function closeModal(id, force = false) {
       const el = document.getElementById(id);
       if (!el || !el.classList.contains('active')) return;
+      if (id === 'modal-edit-profile' && !force && isProfileEditorDirty()) {
+        showProfileDiscardPrompt();
+        return;
+      }
       el.classList.remove('active');
       if (PROFILE_SUBVIEW_IDS.has(id) && history.state?.cladarProfileSubview === id) {
         history.back();
       }
+      if (id === 'modal-edit-profile') restoreProfileEditorFocus();
     }
     document.querySelectorAll('.modal-close').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -5657,9 +5939,17 @@
         topOverlay.classList.remove('active');
         const currentState = history.state && typeof history.state === 'object' ? history.state : {};
         history.pushState({ ...currentState, cladarProfileSubview: activeSubview.id }, '');
+        if (topOverlay.id === 'modal-profile-discard') restoreProfileDiscardFocus();
+        return;
+      }
+      if (activeSubview.id === 'modal-edit-profile' && isProfileEditorDirty()) {
+        const currentState = history.state && typeof history.state === 'object' ? history.state : {};
+        history.pushState({ ...currentState, cladarProfileSubview: activeSubview.id }, '');
+        showProfileDiscardPrompt();
         return;
       }
       activeSubview.classList.remove('active');
+      if (activeSubview.id === 'modal-edit-profile') restoreProfileEditorFocus();
     });
 
     const swipeStarts = new WeakMap();
@@ -5681,7 +5971,7 @@
         const touch = event.changedTouches[0];
         const deltaX = touch.clientX - start.x;
         const deltaY = touch.clientY - start.y;
-        const isLeftwardDismiss = deltaX <= -110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
+        const isLeftwardDismiss = id !== 'modal-edit-profile' && deltaX <= -110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
         const isLeadingEdgeBack = start.x <= 28 && deltaX >= 110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
         if (isLeftwardDismiss || isLeadingEdgeBack) closeModal(id);
       }, { passive: true });
@@ -7457,49 +7747,206 @@
     /* ==========================================================================
        7. TAB 4: PROFILE, MODULAR MERGE, GRADE COLORS & COURSES
        ========================================================================== */
+    const GRADE_SCALES = {
+      italian: {
+        label: 'Italy · 18–30',
+        pass: 18, top: 30, min: 18, max: 30, decimals: 2, suffix: ' /30', gaugeSuffix: '/ 30',
+        help: 'Pass: 18/30 · Maximum: 30/30 (30L can be entered as 30).',
+        presets: ['18', '24', '28', '30', '30L', 'I', 'NI', '✓']
+      },
+      german: {
+        label: 'Germany / Austria · 1.0–5.0',
+        pass: 4, top: 1, min: 1, max: 5, decimals: 2, suffix: '', gaugeSuffix: '1–5 inverse',
+        help: 'Inverse scale · Pass: 4.0 or better · Maximum: 1.0. Decimals are accepted. Italian grades convert to 1 + 3 × (30 − grade) / 12.',
+        presets: []
+      },
+      'german-points': {
+        label: 'Germany · 0–15 points',
+        pass: 4, top: 15, min: 0, max: 15, decimals: 2, suffix: '', gaugeSuffix: '/ 15',
+        help: 'Pass: 4 points · Maximum: 15 points.',
+        presets: []
+      },
+      gpa: {
+        label: 'US / Canada · GPA 0.0–4.0',
+        pass: 1, top: 4, min: 0, max: 4, decimals: 2, suffix: '', gaugeSuffix: 'GPA / 4',
+        help: 'Pass: D / 1.0 (many Master’s programs require C / 2.0) · Maximum: A or A+ / 4.0. Letter grades and GPA points are accepted.',
+        allowNumeric: true,
+        letterValues: { 'A+': 4, A: 4, 'A-': 3.7, 'B+': 3.3, B: 3, 'B-': 2.7, 'C+': 2.3, C: 2, 'C-': 1.7, 'D+': 1.3, D: 1, F: 0 },
+        presets: []
+      },
+      uk: {
+        label: 'UK / Ireland · 0–100%',
+        pass: 40, top: 100, min: 0, max: 100, decimals: 1, suffix: '%', gaugeSuffix: '%',
+        help: 'Pass: 40% (B.Sc.; often 50% for M.Sc.) · Maximum: 100%. Enter a number, with or without %.',
+        presets: []
+      },
+      french: {
+        label: 'France · 0–20',
+        pass: 10, top: 20, min: 0, max: 20, decimals: 2, suffix: ' /20', gaugeSuffix: '/ 20',
+        help: 'Pass: 10/20 · Maximum: 20/20.',
+        presets: []
+      },
+      dutch: {
+        label: 'Netherlands · 1–10',
+        pass: 5.5, top: 10, min: 1, max: 10, decimals: 2, suffix: ' /10', gaugeSuffix: '/ 10',
+        help: 'Pass: 5.5 (some institutions use 6.0) · Maximum: 10.',
+        presets: []
+      },
+      spanish: {
+        label: 'Spain · 0–10',
+        pass: 5, top: 10, min: 0, max: 10, decimals: 2, suffix: ' /10', gaugeSuffix: '/ 10',
+        help: 'Pass: 5/10 · Maximum: 10/10 (Matrícula de Honor can be entered as 10).',
+        presets: []
+      },
+      swiss: {
+        label: 'Switzerland · 1–6',
+        pass: 4, top: 6, min: 1, max: 6, decimals: 2, suffix: '', gaugeSuffix: '/ 6',
+        help: 'Pass: 4.0 · Maximum: 6.0. Quarter- and half-point grades are accepted.',
+        presets: []
+      },
+      ects: {
+        label: 'Scandinavia · ECTS / U-G-VG',
+        pass: 0, top: 1, min: -0.25, max: 1, decimals: 0, suffix: '', gaugeSuffix: 'ECTS',
+        help: 'Enter ECTS A–F or U (fail), G (pass), VG (very good).',
+        letterValues: { A: 1, B: 0.8, C: 0.6, D: 0.4, E: 0, F: -0.25, U: -0.25, G: 0, VG: 1 },
+        presets: []
+      }
+    };
+
+    function getGradeScale(scaleKey = state.profile.gradeScale) {
+      return GRADE_SCALES[scaleKey] || GRADE_SCALES.italian;
+    }
+
+    function getGradePassMark(scaleKey = state.profile.gradeScale, degreeCategory = state.profile.degreeCategory) {
+      if (scaleKey === 'gpa' && degreeCategory === 'Master') return 2;
+      if (scaleKey === 'uk' && degreeCategory === 'Master') return 50;
+      return getGradeScale(scaleKey).pass;
+    }
+
+    function getEvaluationScale(evaluation, profile = state.profile) {
+      return evaluation.gradeScale || profile.gradeScale || 'italian';
+    }
+
+    function getEvaluationPassMark(evaluation, profile = state.profile) {
+      return evaluation.gradePassMark ?? getGradePassMark(getEvaluationScale(evaluation, profile), profile.degreeCategory);
+    }
+
+    function getGradeScaleHelp(scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      if (scaleKey === 'gpa') {
+        return `Pass: ${passMark >= 2 ? 'C / 2.0 (Master’s default)' : 'D / 1.0'} · Maximum: A or A+ / 4.0. Letter grades and GPA points are accepted.`;
+      }
+      if (scaleKey === 'uk') {
+        return `Pass: ${passMark}% (${passMark === 50 ? 'M.Sc.' : 'B.Sc.'}) · Maximum: 100%. Enter a number, with or without %.`;
+      }
+      return getGradeScale(scaleKey).help;
+    }
+
+    function getGradeQuality(scoreStr, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      const activeScaleKey = GRADE_SCALES[scaleKey] ? scaleKey : 'italian';
+      const s = String(scoreStr ?? '').trim().toUpperCase();
+      if (!s || s === 'I' || s === 'NI' || s === '✓' || s === '✔') return null;
+      const scale = getGradeScale(activeScaleKey);
+      if (activeScaleKey === 'italian' && s === '30L') return 1;
+      if (scale.letterValues && Object.prototype.hasOwnProperty.call(scale.letterValues, s)) {
+        const letterValue = scale.letterValues[s];
+        return activeScaleKey === 'gpa' ? (letterValue - passMark) / (scale.top - passMark) : letterValue;
+      }
+      if (scale.letterValues && !scale.allowNumeric) return null;
+      const numericText = s.replace(',', '.').replace(/%$/, '').replace(/\/\s*\d+(?:\.\d+)?$/, '').trim();
+      const numericValue = Number(numericText);
+      if (!Number.isFinite(numericValue) || numericValue < scale.min || numericValue > scale.max) return null;
+      if (activeScaleKey === 'italian' && numericValue < 18) return null;
+      return (numericValue - passMark) / (scale.top - passMark);
+    }
+
+    function gradeFromQuality(quality, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      const scale = getGradeScale(scaleKey);
+      if (scale.letterValues) {
+        const [grade] = Object.entries(scale.letterValues)
+          .sort((a, b) => {
+            const qualityA = scaleKey === 'gpa' ? (a[1] - passMark) / (scale.top - passMark) : a[1];
+            const qualityB = scaleKey === 'gpa' ? (b[1] - passMark) / (scale.top - passMark) : b[1];
+            return Math.abs(qualityA - quality) - Math.abs(qualityB - quality);
+          })[0];
+        return grade;
+      }
+      const value = passMark + quality * (scale.top - passMark);
+      return `${value.toFixed(scale.decimals)}${scale.suffix}`;
+    }
+
+    function formatAverageQuality(quality, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      if (quality === null || !Number.isFinite(quality)) return '--';
+      if (scaleKey === 'ects') return gradeFromQuality(quality, scaleKey, passMark);
+      if (scaleKey === 'gpa') return (passMark + quality * (GRADE_SCALES.gpa.top - passMark)).toFixed(2);
+      return gradeFromQuality(quality, scaleKey, passMark).replace(/ ?\/(?:30|20|10)$/, '').replace(/%$/, '%');
+    }
+
+    function getGradeScaleOptionsHtml(selectedKey = '') {
+      return Object.entries(GRADE_SCALES).map(([key, scale]) =>
+        `<option value="${key}" ${key === selectedKey ? 'selected' : ''}>${escapeHtml(scale.label)}</option>`
+      ).join('');
+    }
+
+    function updateGradeScaleHelp() {
+      const scaleKey = document.getElementById('edit-grade-scale').value;
+      const degreeCategory = document.getElementById('edit-degree-category').value;
+      document.getElementById('edit-grade-scale-help').textContent =
+        getGradeScaleHelp(scaleKey, getGradePassMark(scaleKey, degreeCategory));
+    }
+
+    function syncGradeInputScale(scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      const scale = getGradeScale(scaleKey);
+      document.getElementById('grade-score-input').dataset.gradeScale = GRADE_SCALES[scaleKey] ? scaleKey : 'italian';
+      document.getElementById('grade-score-input').dataset.gradePassMark = String(passMark);
+      const presets = document.getElementById('grade-preset-row');
+      presets.style.display = scale.presets.length ? 'flex' : 'none';
+      document.getElementById('grade-score-label').textContent = `${scale.label} grade`;
+      document.getElementById('grade-score-input').placeholder = scaleKey === 'gpa'
+        ? 'e.g. A-, B+, 3.7, D, F'
+        : scaleKey === 'ects'
+          ? 'e.g. A, C, E, F, U, G, VG'
+          : scaleKey === 'uk'
+            ? 'e.g. 72 or 72%'
+            : `Enter a grade from ${scale.min} to ${scale.max}`;
+      document.getElementById('grade-score-help').textContent =
+        `${getGradeScaleHelp(scaleKey, passMark)} Pass (I), Fail (NI), and Check (✓) do not count toward the weighted average.`;
+    }
+
     function isNonNumericalGrade(scoreStr) {
-      const s = String(scoreStr || '').trim().toUpperCase();
+      const s = String(scoreStr ?? '').trim().toUpperCase();
       return s === 'I' || s === 'NI' || s === '✓' || s === '✔';
     }
 
-    function isPassingGrade(scoreStr) {
-      const s = String(scoreStr || '').trim().toUpperCase();
-      if (s === 'I' || s === '✓' || s === '✔' || s === '30L') return true;
+    function isPassingGrade(scoreStr, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      const s = String(scoreStr ?? '').trim().toUpperCase();
+      const activeScaleKey = GRADE_SCALES[scaleKey] ? scaleKey : 'italian';
+      if (s === 'I' || s === '✓' || s === '✔' || (s === '30L' && activeScaleKey === 'italian')) return true;
       if (s === 'NI') return false;
-      const n = parseFloat(s);
-      return !isNaN(n) && n >= 18;
+      const quality = getGradeQuality(s, activeScaleKey, passMark);
+      return quality !== null && quality >= 0;
     }
 
-    function parseNumericGrade(scoreStr) {
-      const s = String(scoreStr || '').trim().toUpperCase();
-      if (s === '30L') return 30;
-      if (isNonNumericalGrade(s)) return null;
-      const n = parseFloat(s);
-      return (!isNaN(n) && n >= 18 && n <= 30) ? n : null;
+    function parseNumericGrade(scoreStr, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      return getGradeQuality(scoreStr, scaleKey, passMark);
     }
 
-    /* Rule 2: Grade Color Thresholds
-       Yellow: 18 <= v < 21
-       Light Green: 21 <= v < 26
-       Dark Green: 26 <= v <= 30 (e.g. 26.5 -> dark green)
-       Red: < 18
-    */
-    function getGradeTierClass(numericVal) {
-      if (numericVal >= 26) return 'dark-green';
-      if (numericVal >= 21) return 'light-green';
-      if (numericVal >= 18) return 'yellow';
+    function getGradeTierClass(quality) {
+      if (quality >= 2 / 3) return 'dark-green';
+      if (quality >= 0.25) return 'light-green';
+      if (quality >= 0) return 'yellow';
       return 'red';
     }
 
-    function getGradeTierHex(scoreStr) {
-      const s = String(scoreStr || '').trim().toUpperCase();
+    function getGradeTierHex(scoreStr, scaleKey = state.profile.gradeScale, passMark = getGradePassMark(scaleKey)) {
+      const s = String(scoreStr ?? '').trim().toUpperCase();
       if (s === 'I' || s === '✓' || s === '✔') return 'var(--accent-dark-green)';
       if (s === 'NI') return 'var(--accent-red)';
-      const n = parseNumericGrade(s);
-      if (n === null) return 'var(--accent-blue)';
-      if (n >= 26) return 'var(--accent-dark-green)';
-      if (n >= 21) return 'var(--accent-light-green)';
-      if (n >= 18) return 'var(--accent-yellow)';
+      const quality = parseNumericGrade(s, scaleKey, passMark);
+      if (quality === null) return 'var(--accent-blue)';
+      const tier = getGradeTierClass(quality);
+      if (tier === 'dark-green') return 'var(--accent-dark-green)';
+      if (tier === 'light-green') return 'var(--accent-light-green)';
+      if (tier === 'yellow') return 'var(--accent-yellow)';
       return 'var(--accent-red)';
     }
 
@@ -7536,6 +7983,8 @@
     function getEffectiveEvaluationsAndCourses(profileRecord = null) {
       const studyPlan = profileRecord ? profileRecord.studyPlan : state.studyPlan;
       const evaluations = profileRecord ? profileRecord.evaluations : state.evaluations;
+      const gradeScale = profileRecord ? profileRecord.profile.gradeScale : state.profile.gradeScale;
+      const degreeCategory = profileRecord ? profileRecord.profile.degreeCategory : state.profile.degreeCategory;
       const mergedParents = studyPlan.filter(c => Array.isArray(c.mergedModuleIds) && c.mergedModuleIds.length > 0);
       const completedParentMap = new Map();
       const annulledModuleIds = new Set();
@@ -7545,8 +7994,12 @@
         const moduleEvals = modIds.map(mId => {
           const available = evaluations.filter(ev =>
             ev.courseId === mId &&
-            String(ev.score || '').trim() !== '' &&
-            String(ev.score || '').trim().toUpperCase() !== 'NI'
+            String(ev.score ?? '').trim() !== '' &&
+            isPassingGrade(
+              ev.score,
+              getEvaluationScale(ev, profileRecord ? profileRecord.profile : state.profile),
+              getEvaluationPassMark(ev, profileRecord ? profileRecord.profile : state.profile)
+            )
           );
           const finals = available.filter(ev => !ev.isPartial);
           return finals[finals.length - 1] || available[available.length - 1] || null;
@@ -7560,7 +8013,11 @@
           modIds.forEach((mId, idx) => {
             const modCourse = studyPlan.find(c => c.id === mId);
             const ev = moduleEvals[idx];
-            const num = parseNumericGrade(ev.score);
+            const num = parseNumericGrade(
+              ev.score,
+              getEvaluationScale(ev, profileRecord ? profileRecord.profile : state.profile),
+              getEvaluationPassMark(ev, profileRecord ? profileRecord.profile : state.profile)
+            );
             const cfu = modCourse && !modCourse.excludeCredits && !modCourse.noCredit ? Number(modCourse.cfu || 1) : 1;
             if (num !== null) {
               weightedSum += num * cfu;
@@ -7569,19 +8026,19 @@
             if (ev.date && ev.date > latestDate) latestDate = ev.date;
           });
 
-          const all30L = moduleEvals.every(ev => String(ev.score).trim().toUpperCase() === '30L');
-          let consolidatedScore = 'I';
-          if (all30L) {
-            consolidatedScore = '30L';
-          } else if (weightCfu > 0) {
-            consolidatedScore = String(Math.round(weightedSum / weightCfu));
-          }
+          const all30L = gradeScale === 'italian' && moduleEvals.every(ev => String(ev.score).trim().toUpperCase() === '30L');
+          const consolidatedScore = all30L
+            ? '30L'
+            : weightCfu > 0
+              ? gradeFromQuality(weightedSum / weightCfu, gradeScale, getGradePassMark(gradeScale, degreeCategory))
+              : 'I';
 
           completedParentMap.set(parent.id, {
             id: `merged_eval_${parent.id}`,
             courseId: parent.id,
             isPartial: false,
             score: consolidatedScore,
+            gradeScale,
             date: latestDate || todaySlash,
             isConsolidated: true
           });
@@ -7610,12 +8067,12 @@
       if (!courseId) return false;
       const evaluations = profileRecord ? profileRecord.evaluations : state.evaluations;
       const studyPlan = profileRecord ? profileRecord.studyPlan : state.studyPlan;
+      const profile = profileRecord ? profileRecord.profile : state.profile;
       const hasDirectFinal = evaluations.some(ev =>
         ev.courseId === courseId &&
         !ev.autoMerged &&
         !ev.isPartial &&
-        String(ev.score || '').trim() !== '' &&
-        String(ev.score || '').trim().toUpperCase() !== 'NI'
+        isPassingGrade(ev.score, getEvaluationScale(ev, profile), getEvaluationPassMark(ev, profile))
       );
       if (hasDirectFinal) return true;
 
@@ -7629,8 +8086,7 @@
           ev.courseId === p.id &&
           !ev.autoMerged &&
           !ev.isPartial &&
-          String(ev.score || '').trim() !== '' &&
-          String(ev.score || '').trim().toUpperCase() !== 'NI'
+          isPassingGrade(ev.score, getEvaluationScale(ev, profile), getEvaluationPassMark(ev, profile))
         )
       );
       return Boolean(parentWithDirectFinal);
@@ -7678,12 +8134,12 @@
         if (!course) return;
         const cfu = getEffectiveCourseCfu(course);
 
-        if (isPassingGrade(ev.score)) {
+        if (isPassingGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev))) {
           officialCourseIds.add(course.id);
           earnedCfu += cfu;
         }
 
-        const num = parseNumericGrade(ev.score);
+        const num = parseNumericGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev));
         if (num !== null && cfu > 0) {
           officialNum += num * cfu;
           officialDen += cfu;
@@ -7697,7 +8153,7 @@
       effectiveEvals.filter(e => e.isPartial).forEach(ev => {
         if (!officialCourseIds.has(ev.courseId)) {
           if (!partialByCourse[ev.courseId]) partialByCourse[ev.courseId] = [];
-          const num = parseNumericGrade(ev.score);
+          const num = parseNumericGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev));
           if (num !== null) partialByCourse[ev.courseId].push(num);
         }
       });
@@ -7735,7 +8191,7 @@
         gaugeEl.classList.add('gauge-dark-green');
         return;
       }
-      valEl.textContent = avg.toFixed(2);
+      valEl.textContent = formatAverageQuality(avg);
       const tier = getGradeTierClass(avg);
       gaugeEl.classList.add(`gauge-${tier}`);
     }
@@ -7758,7 +8214,7 @@
         if (!course) return;
         const ssd = (course.ssd || '').trim().toUpperCase();
         if (!ssd || ssd === 'NN' || ssd === 'N/A' || ssd === '-') return;
-        const num = parseNumericGrade(ev.score);
+        const num = parseNumericGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev));
         if (num === null) return;
         const cfu = Math.max(1, getEffectiveCourseCfu(course));
         if (!ssdMap.has(ssd)) {
@@ -7796,12 +8252,12 @@
           `;
         }
         const avg = item.avg;
-        const pct = Math.max(12, Math.min(100, (avg / 30) * 100));
+        const pct = Math.max(12, Math.min(100, avg * 100));
         const tier = getGradeTierClass(avg);
         const colorCls = `md-${tier}`;
         return `
           <div class="md-ssd-bar-slot">
-            <div class="md-ssd-val">${avg.toFixed(1)}</div>
+            <div class="md-ssd-val">${escapeHtml(formatAverageQuality(avg))}</div>
             <div class="md-ssd-bar ${colorCls}" style="height:${pct}%;"></div>
           </div>
         `;
@@ -7813,9 +8269,9 @@
 
       container.innerHTML = `
         <div class="md-ssd-plot">
-          <div class="md-ssd-gridline" style="bottom:100%;"><span>30</span></div>
-          <div class="md-ssd-gridline" style="bottom:80%;"><span>24</span></div>
-          <div class="md-ssd-gridline" style="bottom:60%;"><span>18</span></div>
+          <div class="md-ssd-gridline" style="bottom:100%;"><span>${escapeHtml(formatAverageQuality(1))}</span></div>
+          <div class="md-ssd-gridline" style="bottom:67%;"><span>${escapeHtml(formatAverageQuality(2 / 3))}</span></div>
+          <div class="md-ssd-gridline" style="bottom:33%;"><span>${escapeHtml(formatAverageQuality(1 / 3))}</span></div>
           ${barsHtml}
         </div>
         <div class="md-ssd-labels-row">
@@ -8022,6 +8478,10 @@
 
       applyGaugeStyle(document.getElementById('gauge-official'), document.getElementById('val-official-avg'), officialAvg);
       applyGaugeStyle(document.getElementById('gauge-provisional'), document.getElementById('val-provisional-avg'), provAvg);
+      const gaugeScaleLabel = getGradeScale().gaugeSuffix;
+      document.getElementById('official-gauge-scale').textContent = gaugeScaleLabel;
+      document.getElementById('provisional-gauge-scale').textContent = gaugeScaleLabel;
+      document.getElementById('ssd-scale-label').textContent = `Weighted · ${getGradeScale().label}`;
       renderSsdHistogram(effectiveEvals);
 
       const recentList = document.getElementById('recent-evals-list');
@@ -8034,7 +8494,7 @@
       }
       recentList.innerHTML = recent.map(ev => {
         const course = state.studyPlan.find(c => c.id === ev.courseId) || { name: 'Course', cfu: 0, excludeCredits: false };
-        const dotColor = getGradeTierHex(ev.score);
+        const dotColor = getGradeTierHex(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev));
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
         const cfuDisplay = formatCourseCfu(course, unit);
         const clickAttr = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
@@ -8435,6 +8895,7 @@
     function syncProfileModalDynamicPanels() {
       const cat = document.getElementById('edit-degree-category').value;
       document.getElementById('custom-degree-panel').style.display = cat === 'Custom' ? 'block' : 'none';
+      updateGradeScaleHelp();
 
       const fcChecked = document.getElementById('edit-fuoricorso').checked;
       document.getElementById('fuoricorso-year-group').style.display = fcChecked ? 'flex' : 'none';
@@ -8443,11 +8904,107 @@
       document.getElementById('honors-fields-group').style.display = honorsChecked ? 'flex' : 'none';
     }
 
+    function getProfileEditorSnapshot() {
+      return JSON.stringify([...document.querySelectorAll('#modal-edit-profile input, #modal-edit-profile select, #modal-edit-profile textarea')]
+        .map(field => ({
+          id: field.id,
+          value: field.type === 'checkbox' ? field.checked : field.value
+        })));
+    }
+
+    function isProfileEditorDirty() {
+      return profileEditInitialSnapshot !== null && getProfileEditorSnapshot() !== profileEditInitialSnapshot;
+    }
+
+    function showProfileDiscardPrompt() {
+      const discardModal = document.getElementById('modal-profile-discard');
+      if (discardModal.classList.contains('active')) return;
+      profileDiscardReturnFocus = document.activeElement;
+      openModal('modal-profile-discard');
+      document.getElementById('profile-discard-stay-btn').focus();
+    }
+
+    function restoreProfileDiscardFocus() {
+      const target = profileDiscardReturnFocus;
+      profileDiscardReturnFocus = null;
+      if (target instanceof HTMLElement && target.isConnected && target.getClientRects().length > 0) {
+        target.focus();
+      } else {
+        document.getElementById('profile-edit-close-btn').focus();
+      }
+    }
+
+    function restoreProfileEditorFocus() {
+      profileEditInitialSnapshot = null;
+      const target = profileEditReturnFocus;
+      profileEditReturnFocus = null;
+      if (target instanceof HTMLElement && target.isConnected && target.getClientRects().length > 0) {
+        target.focus();
+      } else {
+        document.getElementById('profile-edit-button').focus();
+      }
+    }
+
+    document.getElementById('modal-edit-profile').addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal('modal-edit-profile');
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [...document.querySelectorAll('#modal-edit-profile button:not(:disabled), #modal-edit-profile input:not(:disabled), #modal-edit-profile select:not(:disabled), #modal-edit-profile textarea:not(:disabled), #modal-edit-profile [tabindex]:not([tabindex="-1"])')]
+        .filter(element => element.getClientRects().length > 0);
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !focusable.includes(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !focusable.includes(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    document.getElementById('modal-profile-discard').addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal('modal-profile-discard');
+        restoreProfileDiscardFocus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const buttons = [...document.querySelectorAll('#modal-profile-discard button:not(:disabled)')];
+      if (event.shiftKey && document.activeElement === buttons[0]) {
+        event.preventDefault();
+        buttons[buttons.length - 1].focus();
+      } else if (!event.shiftKey && document.activeElement === buttons[buttons.length - 1]) {
+        event.preventDefault();
+        buttons[0].focus();
+      }
+    });
+    document.getElementById('profile-discard-stay-btn').addEventListener('click', () => {
+      closeModal('modal-profile-discard');
+      restoreProfileDiscardFocus();
+    });
+    document.getElementById('profile-discard-confirm-btn').addEventListener('click', () => {
+      closeModal('modal-profile-discard');
+      closeModal('modal-edit-profile', true);
+    });
+
     document.getElementById('edit-degree-category').addEventListener('change', syncProfileModalDynamicPanels);
     document.getElementById('edit-fuoricorso').addEventListener('change', syncProfileModalDynamicPanels);
     document.getElementById('edit-has-honors').addEventListener('change', syncProfileModalDynamicPanels);
+    document.getElementById('edit-grade-scale').addEventListener('change', updateGradeScaleHelp);
 
     function openEditProfileModal() {
+      const activeElement = document.activeElement;
+      profileEditReturnFocus = activeElement instanceof HTMLElement && !activeElement.closest('#modal-student-badge')
+        ? activeElement
+        : document.getElementById('profile-edit-button');
       const p = state.profile;
       document.getElementById('edit-name').value = p.name;
       document.getElementById('edit-mat').value = p.mat;
@@ -8456,6 +9013,8 @@
       document.getElementById('edit-dept').value = p.dept || '';
       document.getElementById('edit-degree').value = p.degree;
       document.getElementById('edit-credit-unit').value = p.creditUnit || 'CFU';
+      document.getElementById('edit-grade-scale').value = GRADE_SCALES[p.gradeScale] ? p.gradeScale : 'italian';
+      updateGradeScaleHelp();
       document.getElementById('edit-degree-category').value = p.degreeCategory || 'Bachelor';
       document.getElementById('edit-custom-degree-name').value = p.customDegreeName || '';
       document.getElementById('edit-program-years').value = p.programYears || 3;
@@ -8469,8 +9028,12 @@
       document.getElementById('edit-honors-class').value = p.honorsClass || '';
       document.getElementById('edit-avatar-url').value = p.avatarUrl;
       document.getElementById('edit-qr-data').value = p.qrData || '';
+      document.getElementById('edit-avatar-file').value = '';
+      document.getElementById('edit-qr-file').value = '';
       syncProfileModalDynamicPanels();
+      profileEditInitialSnapshot = getProfileEditorSnapshot();
       openModal('modal-edit-profile');
+      document.getElementById('profile-edit-close-btn').focus();
     }
 
     document.getElementById('edit-avatar-file').addEventListener('change', e => {
@@ -8497,6 +9060,15 @@
       state.profile.dept = document.getElementById('edit-dept').value.trim();
       state.profile.degree = document.getElementById('edit-degree').value.trim();
       state.profile.creditUnit = document.getElementById('edit-credit-unit').value;
+      const previousGradeScale = state.profile.gradeScale || 'italian';
+      const previousDegreeCategory = state.profile.degreeCategory || 'Bachelor';
+      state.evaluations.forEach(evaluation => {
+        if (!evaluation.gradeScale) evaluation.gradeScale = previousGradeScale;
+        if (evaluation.gradePassMark === undefined) {
+          evaluation.gradePassMark = getGradePassMark(evaluation.gradeScale, previousDegreeCategory);
+        }
+      });
+      state.profile.gradeScale = document.getElementById('edit-grade-scale').value;
       state.profile.degreeCategory = document.getElementById('edit-degree-category').value;
       state.profile.customDegreeName = document.getElementById('edit-custom-degree-name').value.trim();
       state.profile.programYears = parseInt(document.getElementById('edit-program-years').value, 10) || 3;
@@ -8511,14 +9083,64 @@
       state.profile.avatarUrl = document.getElementById('edit-avatar-url').value.trim();
       state.profile.qrData = document.getElementById('edit-qr-data').value.trim();
       saveData();
-      closeModal('modal-edit-profile');
+      closeModal('modal-edit-profile', true);
       renderProfileView();
     });
 
     document.getElementById('open-all-evals-btn').addEventListener('click', () => {
+      const defaultTarget = state.profile.gradeScale === 'italian' ? 'german' : 'italian';
+      const conversionScale = document.getElementById('eval-conversion-scale');
+      conversionScale.innerHTML = getGradeScaleOptionsHtml(defaultTarget);
+      isEvalConversionPreviewVisible = false;
+      updateEvalConversionControls();
       renderAllEvaluationsModal();
       openModal('modal-evaluations-detail');
     });
+
+    let isEvalConversionPreviewVisible = false;
+
+    function updateEvalConversionControls() {
+      const button = document.getElementById('toggle-eval-conversion-btn');
+      const note = document.getElementById('eval-conversion-note');
+      const header = document.getElementById('eval-converted-header');
+      const column = document.getElementById('eval-converted-col');
+      button.textContent = isEvalConversionPreviewVisible ? 'Hide conversion' : 'Convert grades';
+      button.setAttribute('aria-pressed', String(isEvalConversionPreviewVisible));
+      note.style.display = isEvalConversionPreviewVisible ? 'inline' : 'none';
+      header.style.display = isEvalConversionPreviewVisible ? '' : 'none';
+      column.style.display = isEvalConversionPreviewVisible ? '' : 'none';
+      column.style.width = isEvalConversionPreviewVisible ? '18%' : '0';
+      document.getElementById('eval-table-colgroup').querySelectorAll('col:not(#eval-converted-col)').forEach((col, index) => {
+        col.style.width = isEvalConversionPreviewVisible ? ['31%', '20%', '13%', '18%'][index] : ['38%', '24%', '16%', '22%'][index];
+      });
+      if (isEvalConversionPreviewVisible) {
+        header.textContent = `Converted · ${getGradeScale(document.getElementById('eval-conversion-scale').value).label}`;
+      }
+    }
+
+    document.getElementById('toggle-eval-conversion-btn').addEventListener('click', () => {
+      isEvalConversionPreviewVisible = !isEvalConversionPreviewVisible;
+      updateEvalConversionControls();
+      renderAllEvaluationsModal();
+    });
+
+    document.getElementById('eval-conversion-scale').addEventListener('change', () => {
+      updateEvalConversionControls();
+      if (isEvalConversionPreviewVisible) renderAllEvaluationsModal();
+    });
+
+    function convertGradeBetweenScales(score, sourceScale, targetScale, sourcePassMark, targetPassMark) {
+      const normalizedScore = String(score ?? '').trim().toUpperCase();
+      if (isNonNumericalGrade(normalizedScore)) return normalizedScore;
+      const quality = getGradeQuality(normalizedScore, sourceScale, sourcePassMark);
+      if (quality === null) return '—';
+      const converted = gradeFromQuality(quality, targetScale, targetPassMark);
+      if (targetScale === 'gpa') {
+        const gpaValue = targetPassMark + quality * (GRADE_SCALES.gpa.top - targetPassMark);
+        return `${converted} (${gpaValue.toFixed(2)} GPA)`;
+      }
+      return converted;
+    }
 
     function renderAllEvaluationsModal() {
       const tbody = document.getElementById('eval-table-body');
@@ -8527,7 +9149,7 @@
       document.getElementById('eval-count-lbl').textContent = `${effectiveEvals.length} evaluations recorded`;
 
       if (effectiveEvals.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No evaluations found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${isEvalConversionPreviewVisible ? 5 : 4}" class="empty-state">No evaluations found.</td></tr>`;
         return;
       }
 
@@ -8536,7 +9158,16 @@
         const typeStr = ev.isConsolidated ? 'Final (Merged)' : (ev.isPartial ? 'Partial' : 'Final');
         const cfuLabel = formatCourseCfu(course, unit);
         const rowClick = ev.isConsolidated ? '' : `onclick="openGradeModal('${ev.id}')"`;
-        const gradeColor = getGradeTierHex(ev.score);
+        const sourceScale = getEvaluationScale(ev);
+        const sourcePassMark = getEvaluationPassMark(ev);
+        const targetScale = document.getElementById('eval-conversion-scale').value;
+        const targetPassMark = getGradePassMark(targetScale);
+        const gradeColor = getGradeTierHex(ev.score, sourceScale, sourcePassMark);
+        const sourceScaleTitle = `${getGradeScale(sourceScale).label} · pass ${sourcePassMark}`;
+        const convertedGrade = isEvalConversionPreviewVisible
+          ? convertGradeBetweenScales(ev.score, sourceScale, targetScale, sourcePassMark, targetPassMark)
+          : '';
+        const convertedQuality = getGradeQuality(ev.score, sourceScale, sourcePassMark);
         return `
           <tr style="cursor:${ev.isConsolidated ? 'default' : 'pointer'};" ${rowClick}>
             <td>
@@ -8544,8 +9175,9 @@
               <div class="sub-code-col">${escapeHtml(course.code)} &bull; ${escapeHtml(course.ssd)} (${cfuLabel})</div>
             </td>
             <td style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(course.prof || '-')}</td>
-            <td><strong style="color:${gradeColor}; font-size:0.95rem;">${escapeHtml(ev.score)}</strong></td>
+            <td title="${escapeHtml(sourceScaleTitle)}"><strong style="color:${gradeColor}; font-size:0.95rem;">${escapeHtml(ev.score)}</strong></td>
             <td style="font-size:0.74rem; color:var(--text-muted);">${typeStr}<br>${escapeHtml(normalizeDateToSlash(ev.date))}</td>
+            ${isEvalConversionPreviewVisible ? `<td><strong style="font-size:0.9rem;">${escapeHtml(convertedGrade)}</strong>${convertedQuality !== null && convertedQuality < 0 ? '<br><span style="font-size:0.68rem; color:var(--accent-red);">Fail</span>' : ''}</td>` : ''}
           </tr>
         `;
       }).join('');
@@ -8564,6 +9196,10 @@
       const saveGradeBtn = document.getElementById('save-grade-btn');
       const { annulledModuleIds } = getEffectiveEvaluationsAndCourses();
       const targetEv = evalId ? state.evaluations.find(e => e.id === evalId) : null;
+      syncGradeInputScale(
+        targetEv ? getEvaluationScale(targetEv) : state.profile.gradeScale,
+        targetEv ? getEvaluationPassMark(targetEv) : getGradePassMark()
+      );
 
       // Rule 4: Exclude courses that already have a final grade from being selectable when adding/changing grade
       const visibleCourses = state.studyPlan.filter(c => {
@@ -8609,10 +9245,17 @@
       const id = document.getElementById('grade-edit-id').value;
       const courseId = document.getElementById('grade-course-select').value;
       const isPartial = document.getElementById('grade-is-partial').checked;
-      const score = document.getElementById('grade-score-input').value.trim().toUpperCase();
+      const gradeInput = document.getElementById('grade-score-input');
+      const score = gradeInput.value.trim().toUpperCase();
+      const gradeScale = gradeInput.dataset.gradeScale || state.profile.gradeScale;
+      const gradePassMark = Number(gradeInput.dataset.gradePassMark);
       const date = normalizeDateToSlash(document.getElementById('grade-date-input').value) || todaySlash;
 
       if (!courseId || !score) return;
+      if (getGradeQuality(score, gradeScale, gradePassMark) === null && !isNonNumericalGrade(score)) {
+        showToast(`Enter a valid grade for the ${getGradeScale(gradeScale).label} scale.`, true);
+        return;
+      }
 
       // Prevent duplicate final grades on the same course
       if (!isPartial && !id && isCourseFinalized(courseId)) {
@@ -8620,7 +9263,7 @@
         return;
       }
 
-      const obj = { id: id || 'e_' + Date.now(), courseId, isPartial, score, date };
+      const obj = { id: id || 'e_' + Date.now(), courseId, isPartial, score, gradeScale, gradePassMark, date };
       if (id) {
         const idx = state.evaluations.findIndex(e => e.id === id);
         if (idx > -1) state.evaluations[idx] = obj;
@@ -8629,7 +9272,7 @@
       }
 
       // If a final passing grade was recorded, stop following it in Attendance & Daily schedule
-      if (!isPartial && isPassingGrade(score)) {
+      if (!isPartial && isPassingGrade(score, gradeScale, gradePassMark)) {
         if (state.courseAttendance[courseId]) {
           state.courseAttendance[courseId].attending = false;
         }
@@ -8688,7 +9331,11 @@
           const isPendingModule = Boolean(c.mergedIntoId && !isAnnulledModule);
           const finalized = isCourseFinalized(c.id);
 
-          const finalEv = effectiveEvals.find(ev => ev.courseId === c.id && !ev.isPartial && isPassingGrade(ev.score));
+          const finalEv = effectiveEvals.find(ev =>
+            ev.courseId === c.id &&
+            !ev.isPartial &&
+            isPassingGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev))
+          );
 
           const card = document.createElement('div');
           card.className = 'course-card'
@@ -9232,7 +9879,11 @@
             archivedCourses.forEach(({ course, profileRecord }) => {
               const det = getCourseDetails(course.id);
               const { effectiveEvals } = effectiveByProfile.get(profileRecord.id);
-              const finalEv = effectiveEvals.find(ev => ev.courseId === course.id && !ev.isPartial && isPassingGrade(ev.score));
+              const finalEv = effectiveEvals.find(ev =>
+                ev.courseId === course.id &&
+                !ev.isPartial &&
+                isPassingGrade(ev.score, getEvaluationScale(ev), getEvaluationPassMark(ev))
+              );
               const isOpen = expandCourseId === course.id;
               const acc = buildCourseAccordionCard(course, det, {
                 isOpen,
