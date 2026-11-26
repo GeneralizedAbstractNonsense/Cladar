@@ -2328,6 +2328,98 @@
       width: 100%;
       margin: 0 auto;
     }
+    #modal-evaluations-detail .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      gap: 12px;
+      justify-content: flex-start;
+      padding-right: max(16px, calc((100% - 960px) / 2));
+      padding-left: max(16px, calc((100% - 960px) / 2));
+      background: rgba(22, 24, 31, 0.9);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+    }
+    [data-theme="light"] #modal-evaluations-detail .modal-header {
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom-color: rgba(60, 60, 67, 0.16);
+    }
+    #modal-evaluations-detail .modal-header .fullscreen-title-group {
+      flex: 0 1 auto;
+    }
+    #modal-evaluations-detail .evaluations-back-button {
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+      padding: 0;
+      border-radius: 999px;
+      color: var(--accent-blue);
+      font-size: 1.4rem;
+      opacity: 1;
+    }
+    #modal-evaluations-detail .evaluations-back-button:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+    #modal-evaluations-detail .modal-body {
+      max-width: 960px;
+      padding: 24px clamp(16px, 4vw, 32px) calc(32px + env(safe-area-inset-bottom, 0px));
+      gap: 20px;
+    }
+    .evaluations-toolbar,
+    .evaluations-conversion-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .evaluations-toolbar {
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .evaluations-conversion-controls {
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+    }
+    .evaluations-table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      -webkit-overflow-scrolling: touch;
+    }
+    .evaluations-table-scroll:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 3px;
+    }
+    #modal-evaluations-detail .eval-table {
+      min-width: 640px;
+    }
+    #modal-evaluations-detail .eval-table th,
+    #modal-evaluations-detail .eval-table td {
+      padding: 14px 10px;
+      line-height: 1.4;
+    }
+    #modal-evaluations-detail .eval-table th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+    @media (max-width: 480px) {
+      #modal-evaluations-detail .modal-header {
+        padding-right: 16px;
+        padding-left: 12px;
+      }
+      #modal-evaluations-detail .modal-body {
+        padding-top: 18px;
+      }
+      .evaluations-conversion-controls {
+        align-items: flex-start;
+      }
+    }
     #modal-edit-profile {
       padding: 0;
       align-items: stretch;
@@ -2852,6 +2944,44 @@
       display: flex;
       flex-direction: column;
       gap: 7px;
+    }
+    .settings-backup-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(10, 132, 255, 0.22);
+      border-radius: 12px;
+      background: rgba(10, 132, 255, 0.08);
+    }
+    .settings-backup-info-icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 28px;
+      border-radius: 8px;
+      background: rgba(10, 132, 255, 0.14);
+      color: var(--accent-blue);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .settings-backup-info-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .settings-backup-info-copy strong {
+      color: var(--text-color);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+    .settings-backup-info-copy p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      line-height: 1.45;
     }
     .ios-settings-section-title {
       font-size: 0.72rem;
@@ -4240,24 +4370,26 @@
   </div>
 
   <!-- EVALUATIONS DETAIL MODAL -->
-  <div class="modal-overlay" id="modal-evaluations-detail">
+  <div class="modal-overlay fullscreen-modal" id="modal-evaluations-detail" role="dialog" aria-modal="true" aria-labelledby="evaluations-title">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>All Evaluations</h3>
-        <button class="btn-icon modal-close">&times;</button>
+        <div class="fullscreen-title-group">
+          <button type="button" class="btn-icon modal-close evaluations-back-button" aria-label="Back to profile" title="Back to profile">&larr;</button>
+          <h3 id="evaluations-title">Evaluations</h3>
+        </div>
       </div>
       <div class="modal-body">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
+        <div class="evaluations-toolbar">
           <span style="font-size:0.8rem; color:var(--text-muted);" id="eval-count-lbl">0 evaluations recorded</span>
-          <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:6px 12px; font-size:0.8rem; margin-top:0;">+ Add Grade</button>
+          <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:10px 16px; font-size:0.88rem; margin-top:0;">+ Add Grade</button>
         </div>
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-          <label for="eval-conversion-scale" style="font-size:0.78rem; color:var(--text-muted);">Preview in</label>
-          <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:6px 28px 6px 10px;"></select>
+        <div class="evaluations-conversion-controls">
+          <label for="eval-conversion-scale" style="font-size:0.84rem; color:var(--text-muted);">Preview grades in</label>
+          <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:10px 32px 10px 12px;"></select>
           <button type="button" class="btn-link" id="toggle-eval-conversion-btn" aria-pressed="false">Convert grades</button>
-          <span id="eval-conversion-note" style="display:none; font-size:0.72rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
+          <span id="eval-conversion-note" style="display:none; font-size:0.78rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
         </div>
-        <div style="width:100%;">
+        <div class="evaluations-table-scroll" role="region" aria-label="Evaluations table" tabindex="0">
           <table class="eval-table">
             <colgroup id="eval-table-colgroup">
               <col style="width: 38%;">
@@ -4546,6 +4678,14 @@
         <!-- Backup & Data Management Section -->
         <div class="ios-settings-section">
           <div class="ios-settings-section-title">Backup &amp; Data Management</div>
+          <div class="settings-backup-info" role="note">
+            <div class="settings-backup-info-icon" aria-hidden="true">i</div>
+            <div class="settings-backup-info-copy">
+              <strong>Keep a separate copy of your data</strong>
+              <p>JSON backups include profiles, study plans, grades, attendance, events, tasks, notes, and preferences. Export or share a copy and store it somewhere safe.</p>
+              <p>Import or paste a backup to restore it. Matching data on this device may be replaced.</p>
+            </div>
+          </div>
           <div class="ios-settings-group">
             <button type="button" class="ios-settings-row" id="btn-export-json">
               <div class="ios-row-left">
@@ -5894,7 +6034,7 @@
     window.addEventListener('resize', () => syncLiquidDockPill(true));
     requestAnimationFrame(() => syncLiquidDockPill(true));
 
-    const PROFILE_SUBVIEW_IDS = new Set(['modal-archive', 'modal-courses', 'modal-study-plan', 'modal-edit-profile']);
+    const HISTORY_MANAGED_SUBVIEW_IDS = new Set(['modal-archive', 'modal-courses', 'modal-study-plan', 'modal-edit-profile', 'modal-evaluations-detail']);
     let profileEditInitialSnapshot = null;
     let profileEditReturnFocus = null;
     let profileDiscardReturnFocus = null;
@@ -5902,7 +6042,7 @@
     function openModal(id) {
       const el = document.getElementById(id);
       if (!el) return;
-      if (PROFILE_SUBVIEW_IDS.has(id) && !el.classList.contains('active')) {
+      if (HISTORY_MANAGED_SUBVIEW_IDS.has(id) && !el.classList.contains('active')) {
         const currentState = history.state && typeof history.state === 'object' ? history.state : {};
         history.pushState({ ...currentState, cladarProfileSubview: id }, '');
       }
@@ -5916,7 +6056,7 @@
         return;
       }
       el.classList.remove('active');
-      if (PROFILE_SUBVIEW_IDS.has(id) && history.state?.cladarProfileSubview === id) {
+      if (HISTORY_MANAGED_SUBVIEW_IDS.has(id) && history.state?.cladarProfileSubview === id) {
         history.back();
       }
       if (id === 'modal-edit-profile') restoreProfileEditorFocus();
@@ -5929,7 +6069,7 @@
     });
 
     window.addEventListener('popstate', () => {
-      const activeSubview = [...PROFILE_SUBVIEW_IDS]
+      const activeSubview = [...HISTORY_MANAGED_SUBVIEW_IDS]
         .map(id => document.getElementById(id))
         .find(el => el?.classList.contains('active'));
       if (!activeSubview) return;
@@ -5953,7 +6093,7 @@
     });
 
     const swipeStarts = new WeakMap();
-    PROFILE_SUBVIEW_IDS.forEach(id => {
+    HISTORY_MANAGED_SUBVIEW_IDS.forEach(id => {
       const screen = document.getElementById(id);
       screen.addEventListener('touchstart', event => {
         if (event.touches.length !== 1) return;
@@ -5971,9 +6111,10 @@
         const touch = event.changedTouches[0];
         const deltaX = touch.clientX - start.x;
         const deltaY = touch.clientY - start.y;
-        const isLeftwardDismiss = id !== 'modal-edit-profile' && deltaX <= -110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
+        const isLeftwardDismiss = id !== 'modal-edit-profile' && id !== 'modal-evaluations-detail' && deltaX <= -110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
         const isLeadingEdgeBack = start.x <= 28 && deltaX >= 110 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3;
-        if (isLeftwardDismiss || isLeadingEdgeBack) closeModal(id);
+        const isTopOverlay = [...document.querySelectorAll('.modal-overlay.active')].at(-1)?.id === id;
+        if (isTopOverlay && (isLeftwardDismiss || isLeadingEdgeBack)) closeModal(id);
       }, { passive: true });
       screen.addEventListener('touchcancel', () => swipeStarts.delete(screen), { passive: true });
     });
