@@ -2077,6 +2077,115 @@
       font-size: 0.8rem;
       font-weight: 600;
     }
+    #modal-attendance .attendance-modal-body {
+      max-width: none;
+      width: 100%;
+      min-height: 0;
+      padding: 0 clamp(14px, 3vw, 36px) calc(28px + env(safe-area-inset-bottom, 0px));
+      overflow-x: hidden;
+    }
+    .attendance-page-switcher {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px;
+      padding: 5px;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      background: var(--card-bg);
+      background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+    }
+    .attendance-page-tab {
+      min-width: 0;
+      min-height: 44px;
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-muted);
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .attendance-page-tab.is-active {
+      background: var(--card-bg);
+      color: var(--text-color);
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    .attendance-page-tab:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 2px;
+    }
+    .attendance-page-viewport {
+      width: 100%;
+      min-width: 0;
+      flex: 0 0 auto;
+      overflow-x: clip;
+      overflow-y: visible;
+      touch-action: pan-y;
+    }
+    .attendance-pages-track {
+      display: flex;
+      width: 200%;
+      align-items: flex-start;
+      transition: transform 0.3s cubic-bezier(0.2, 0.75, 0.25, 1), height 0.2s ease;
+      will-change: transform;
+    }
+    .attendance-page {
+      display: flex;
+      flex: 0 0 50%;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+      padding: 2px 2px 8px;
+    }
+    .attendance-history-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .attendance-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .attendance-history-section .attendance-list {
+      gap: 8px;
+    }
+    .attendance-helper {
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+    #modal-attendance #att-sem-filter-row {
+      gap: 8px;
+      margin-top: 0;
+    }
+    #modal-attendance #att-sem-filter-row .btn-preset {
+      min-height: 40px;
+    }
+    #modal-attendance #att-sem-filter-row .btn-preset[aria-pressed="true"] {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+    #modal-attendance .att-course-card,
+    #modal-attendance .att-course-top {
+      min-width: 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .attendance-pages-track,
+      .attendance-page-tab {
+        transition: none;
+      }
+    }
 
     .gauges-row { display: flex; justify-content: space-around; align-items: center; padding: 10px 0; }
     .gauge-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -2364,8 +2473,11 @@
     }
     #modal-evaluations-detail .modal-body {
       max-width: 960px;
-      padding: 24px clamp(16px, 4vw, 32px) calc(32px + env(safe-area-inset-bottom, 0px));
+      min-height: 0;
+      flex: 1 1 0;
+      padding: 24px clamp(16px, 4vw, 32px) 20px;
       gap: 20px;
+      overscroll-behavior-y: contain;
     }
     .evaluations-toolbar,
     .evaluations-conversion-controls {
@@ -2385,6 +2497,24 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius-md);
       background: var(--card-bg);
+    }
+    .evaluations-footer-controls {
+      display: flex;
+      flex: 0 0 auto;
+      justify-content: center;
+      margin: 0;
+      padding: 12px 0 max(12px, env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid var(--card-border);
+      background: var(--bg-color);
+    }
+    .evaluations-footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 32px);
     }
     .evaluation-pdf-controls {
       display: grid;
@@ -2424,23 +2554,108 @@
       font-size: 0.76rem;
       line-height: 1.4;
     }
-    .evaluations-table-scroll {
-      width: 100%;
-      overflow-x: auto;
-      border-radius: var(--radius-md);
-      -webkit-overflow-scrolling: touch;
+    .evaluation-export-selection-card {
+      max-width: 600px;
+      max-height: min(88vh, 760px);
     }
-    .evaluations-table-scroll:focus-visible {
-      outline: 3px solid var(--accent-blue);
-      outline-offset: 3px;
+    .evaluation-export-selection-body {
+      gap: 14px;
+    }
+    .evaluation-export-selection-summary {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+    .evaluation-export-select-all {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .evaluation-export-select-all input,
+    .evaluation-export-option input {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      accent-color: var(--accent-blue);
+    }
+    .evaluation-export-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: min(48vh, 420px);
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .evaluation-export-option {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      cursor: pointer;
+    }
+    .evaluation-export-option-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .evaluation-export-option-copy strong {
+      color: var(--text-color);
+      font-size: 0.88rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .evaluation-export-option-copy small {
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+    .evaluation-export-option-grade {
+      color: var(--accent-blue);
+      font-size: 0.92rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .evaluation-export-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .evaluation-export-actions button {
+      min-height: 44px;
+      min-width: 110px;
+      margin: 0;
+      padding: 10px 16px;
+    }
+    .evaluations-table-container {
+      width: 100%;
+      min-width: 0;
     }
     #modal-evaluations-detail .eval-table {
-      min-width: 640px;
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
     }
     #modal-evaluations-detail .eval-table th,
     #modal-evaluations-detail .eval-table td {
-      padding: 14px 10px;
+      padding: 12px 8px;
       line-height: 1.4;
+      overflow-wrap: anywhere;
+      word-break: normal;
     }
     #modal-evaluations-detail .eval-table th {
       padding-top: 12px;
@@ -2454,6 +2669,73 @@
       #modal-evaluations-detail .modal-body {
         padding-top: 18px;
       }
+      #modal-evaluations-detail .evaluations-table-container {
+        overflow: visible;
+      }
+      #modal-evaluations-detail .eval-table,
+      #modal-evaluations-detail .eval-table tbody {
+        display: block;
+      }
+      #modal-evaluations-detail .eval-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      #modal-evaluations-detail .eval-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      #modal-evaluations-detail .eval-table tbody tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px 12px;
+        padding: 12px;
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-md);
+        background: var(--card-bg);
+      }
+      #modal-evaluations-detail .eval-table tbody td {
+        display: block;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        font-size: 0.78rem;
+      }
+      #modal-evaluations-detail .eval-table tbody td::before {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--text-muted);
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        content: attr(data-label);
+      }
+      #modal-evaluations-detail .eval-table tbody td:first-child {
+        grid-column: 1 / -1;
+      }
+      #modal-evaluations-detail .eval-table tbody td:nth-child(2) {
+        grid-column: 1;
+      }
+      #modal-evaluations-detail .eval-table tbody td:nth-child(3) {
+        grid-column: 2;
+      }
+      #modal-evaluations-detail .eval-table tbody td:nth-child(4) {
+        grid-column: 1;
+      }
+      #modal-evaluations-detail .eval-table tbody td:nth-child(5) {
+        grid-column: 2;
+      }
+      #modal-evaluations-detail .eval-table tbody td.empty-state {
+        grid-column: 1 / -1;
+      }
       .evaluations-conversion-controls {
         align-items: flex-start;
       }
@@ -2462,6 +2744,18 @@
       }
       #export-evaluations-pdf-btn {
         width: 100%;
+      }
+      .evaluation-export-actions {
+        flex-direction: column-reverse;
+      }
+      .evaluation-export-actions button {
+        width: 100%;
+      }
+      .evaluation-export-option {
+        grid-template-columns: 20px minmax(0, 1fr);
+      }
+      .evaluation-export-option-grade {
+        grid-column: 2;
       }
     }
     #modal-edit-profile {
@@ -3815,7 +4109,7 @@
                 <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 1 4 16.5v-11Z"/><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H20M8 7h8M8 10h6"/></svg>
               </span>
               <span class="profile-action-copy">
-                <span class="profile-action-title">Courses &amp; Exams</span>
+                <span class="profile-action-title">Courses</span>
                 <span class="profile-action-detail">Course notes, resources, and exam dates</span>
               </span>
               <svg class="profile-action-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.2 4.7a.8.8 0 0 1 1.1 0l5.1 5.1a.8.8 0 0 1 0 1.1l-5.1 5.1a.8.8 0 1 1-1.1-1.1l4.6-4.6-4.6-4.6a.8.8 0 0 1 0-1.1z"/></svg>
@@ -3937,63 +4231,70 @@
         <h3>Attendance</h3>
         <span style="width:28px;"></span>
       </div>
-      <div class="modal-body">
-
-        <!-- Log New Absence, Delay, or Early Exit Box -->
-        <div class="sub-panel-box">
-          <div class="course-sub-title">Record Absence, Delay, or Early Exit</div>
-          <div class="form-row-wrap">
-            <div class="form-group">
-              <label>Course</label>
-              <select id="att-log-course" class="form-control"></select>
-            </div>
-            <div class="form-group" style="max-width:155px;">
-              <label>Type</label>
-              <select id="att-log-type" class="form-control">
-                <option value="absence">Absence</option>
-                <option value="delay">Delay</option>
-                <option value="early_exit">Early Exit</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row-wrap">
-            <div class="form-group">
-              <label>Date (YYYY-MM-DD)</label>
-              <div class="date-slash-wrapper">
-                <input type="text" id="att-log-date" class="form-control date-slash-input" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric">
-                <input type="date" id="att-log-date-proxy" class="native-date-proxy" tabindex="-1">
-                <button type="button" class="date-picker-trigger" data-proxy="att-log-date-proxy" title="Choose date">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
-                </button>
+      <div class="modal-body attendance-modal-body">
+        <div class="attendance-page-switcher" role="tablist" aria-label="Attendance sections">
+          <button type="button" class="attendance-page-tab is-active" id="attendance-tab-absences" role="tab" aria-controls="attendance-page-absences" aria-selected="true" tabindex="0">Absences</button>
+          <button type="button" class="attendance-page-tab" id="attendance-tab-courses" role="tab" aria-controls="attendance-page-courses" aria-selected="false" tabindex="-1">Courses</button>
+        </div>
+        <div class="attendance-page-viewport" id="attendance-pages-viewport">
+          <div class="attendance-pages-track" id="attendance-pages-track">
+            <section class="attendance-page" id="attendance-page-absences" role="tabpanel" aria-labelledby="attendance-tab-absences">
+              <div class="sub-panel-box">
+                <div class="course-sub-title">Record attendance</div>
+                <div class="form-row-wrap">
+                  <div class="form-group">
+                    <label for="att-log-course">Course</label>
+                    <select id="att-log-course" class="form-control"></select>
+                  </div>
+                  <div class="form-group" style="max-width:155px;">
+                    <label for="att-log-type">Type</label>
+                    <select id="att-log-type" class="form-control">
+                      <option value="absence">Absence</option>
+                      <option value="delay">Delay</option>
+                      <option value="early_exit">Early Exit</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row-wrap">
+                  <div class="form-group">
+                    <label for="att-log-date">Date (YYYY-MM-DD)</label>
+                    <div class="date-slash-wrapper">
+                      <input type="text" id="att-log-date" class="form-control date-slash-input" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric">
+                      <input type="date" id="att-log-date-proxy" class="native-date-proxy" tabindex="-1">
+                      <button type="button" class="date-picker-trigger" data-proxy="att-log-date-proxy" title="Choose date">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="att-log-note">Duration / note</label>
+                    <input type="text" id="att-log-note" class="form-control" placeholder="e.g. 2 hours or 12:30">
+                  </div>
+                </div>
+                <button type="button" class="btn-primary-action" id="btn-save-attendance-log" style="margin-top:2px;">Save Record</button>
+                <span class="attendance-helper">Absences and early exits add a notes request to Tasks.</span>
               </div>
-            </div>
-            <div class="form-group">
-              <label>Duration / Note (Optional)</label>
-              <input type="text" id="att-log-note" class="form-control" placeholder="e.g. 2 hours, 15 min, or 12:30">
-            </div>
+              <section class="attendance-history-section" aria-labelledby="attendance-history-title">
+                <div class="courses-section-divider">
+                  <span id="attendance-history-title">Attendance history</span>
+                </div>
+                <div id="att-full-history-list" class="attendance-list"></div>
+              </section>
+            </section>
+            <section class="attendance-page" id="attendance-page-courses" role="tabpanel" aria-labelledby="attendance-tab-courses" aria-hidden="true" inert>
+              <div class="courses-section-divider">
+                <span>Followed courses this semester</span>
+              </div>
+              <div class="preset-btn-row" id="att-sem-filter-row">
+                <button type="button" class="btn-preset" data-sem-filter="all" aria-pressed="true">All active</button>
+                <button type="button" class="btn-preset" data-sem-filter="1" aria-pressed="false">1st semester</button>
+                <button type="button" class="btn-preset" data-sem-filter="2" aria-pressed="false">2nd semester</button>
+                <button type="button" class="btn-preset" data-sem-filter="attending" aria-pressed="false">Attending only</button>
+              </div>
+              <div id="att-courses-list" class="attendance-list"></div>
+            </section>
           </div>
-          <button type="button" class="btn-primary-action" id="btn-save-attendance-log" style="margin-top:2px;">Save Record</button>
-          <span style="font-size:0.72rem; color:var(--text-muted);">* Recording an absence or early exit automatically adds a task to request lecture notes for that course and date.</span>
         </div>
-
-        <!-- Semester Courses Attendance & Daily Sync Configuration -->
-        <div class="courses-section-divider" style="margin-top:4px;">
-          <span>Followed Courses This Semester</span>
-        </div>
-        <div class="preset-btn-row" id="att-sem-filter-row" style="margin-top:0;">
-          <button type="button" class="btn-preset" data-sem-filter="all" style="border-color:var(--accent-blue); color:var(--accent-blue);">All Active</button>
-          <button type="button" class="btn-preset" data-sem-filter="1">1st Semester</button>
-          <button type="button" class="btn-preset" data-sem-filter="2">2nd Semester</button>
-          <button type="button" class="btn-preset" data-sem-filter="attending">Attending Only</button>
-        </div>
-        <div id="att-courses-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-
-        <!-- Recorded Absences, Delays & Early Exits History -->
-        <div class="courses-section-divider" style="margin-top:8px;">
-          <span>Recorded Absences, Delays &amp; Early Exits</span>
-        </div>
-        <div id="att-full-history-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-
       </div>
     </div>
   </div>
@@ -4239,8 +4540,14 @@
               <input type="email" id="edit-email" class="form-control" autocomplete="email">
             </div>
             <div class="form-group">
-              <label for="edit-date-of-birth">Date of birth</label>
-              <input type="date" id="edit-date-of-birth" class="form-control" autocomplete="bday">
+              <label for="edit-date-of-birth">Date of birth (YYYY-MM-DD)</label>
+              <div class="date-slash-wrapper">
+                <input type="text" id="edit-date-of-birth" class="form-control date-slash-input" autocomplete="bday" placeholder="YYYY-MM-DD" maxlength="10" inputmode="numeric" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                <input type="date" id="edit-date-of-birth-proxy" class="native-date-proxy" tabindex="-1" aria-hidden="true">
+                <button type="button" class="date-picker-trigger" data-proxy="edit-date-of-birth-proxy" title="Choose date of birth" aria-label="Choose date of birth">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+                </button>
+              </div>
             </div>
             <div class="form-group profile-edit-span">
               <label for="edit-tax-code">Tax ID / Fiscal Code</label>
@@ -4434,29 +4741,12 @@
           <h3 id="evaluations-title">Evaluations</h3>
         </div>
       </div>
-      <div class="modal-body">
+      <div class="modal-body evaluations-content">
         <div class="evaluations-toolbar">
           <span style="font-size:0.8rem; color:var(--text-muted);" id="eval-count-lbl">0 evaluations recorded</span>
           <button class="btn-primary-action" id="open-add-grade-modal-btn" style="padding:10px 16px; font-size:0.88rem; margin-top:0;">+ Add Grade</button>
         </div>
-        <div class="evaluations-conversion-controls">
-          <label for="eval-conversion-scale" style="font-size:0.84rem; color:var(--text-muted);">Preview grades in</label>
-          <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:10px 32px 10px 12px;"></select>
-          <button type="button" class="btn-link" id="toggle-eval-conversion-btn" aria-pressed="false">Convert grades</button>
-          <span id="eval-conversion-note" style="display:none; font-size:0.78rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
-        </div>
-        <div class="evaluation-pdf-controls">
-          <div class="form-group">
-            <label for="evaluation-pdf-display-name">Name to show on the document</label>
-            <input type="text" id="evaluation-pdf-display-name" class="form-control" autocomplete="name">
-          </div>
-          <button type="button" class="btn-primary-action" id="export-evaluations-pdf-btn">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-3 5-5h-3V4h-4v8H7l5 5z"/></svg>
-            Export to PDF
-          </button>
-          <p class="evaluation-pdf-help">The PDF uses the grading system selected above. Your display name can be changed for this export.</p>
-        </div>
-        <div class="evaluations-table-scroll" role="region" aria-label="Evaluations table" tabindex="0">
+        <div class="evaluations-table-container">
           <table class="eval-table">
             <colgroup id="eval-table-colgroup">
               <col style="width: 38%;">
@@ -4467,15 +4757,58 @@
             </colgroup>
             <thead>
               <tr>
-                <th>Course / SSD</th>
-                <th>Professor</th>
-                <th>Grade</th>
-                <th>Type</th>
-                <th id="eval-converted-header" style="display:none;"></th>
+                <th scope="col">Course / SSD</th>
+                <th scope="col">Professor</th>
+                <th scope="col">Grade</th>
+                <th scope="col">Type</th>
+                <th id="eval-converted-header" scope="col" style="display:none;"></th>
               </tr>
             </thead>
             <tbody id="eval-table-body"></tbody>
           </table>
+        </div>
+      </div>
+      <div class="evaluations-footer-controls">
+        <div class="evaluations-footer-inner">
+          <div class="evaluations-conversion-controls">
+            <label for="eval-conversion-scale" style="font-size:0.84rem; color:var(--text-muted);">Preview grades in</label>
+            <select id="eval-conversion-scale" class="form-control" style="width:auto; min-width:190px; padding:10px 32px 10px 12px;"></select>
+            <button type="button" class="btn-link" id="toggle-eval-conversion-btn" aria-pressed="false">Convert grades</button>
+            <span id="eval-conversion-note" style="display:none; font-size:0.78rem; color:var(--text-muted);">Preview only — saved grades are unchanged.</span>
+          </div>
+          <div class="evaluation-pdf-controls">
+            <div class="form-group">
+              <label for="evaluation-pdf-display-name">Name to show on the document</label>
+              <input type="text" id="evaluation-pdf-display-name" class="form-control" autocomplete="name">
+            </div>
+            <button type="button" class="btn-primary-action" id="export-evaluations-pdf-btn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-3 5-5h-3V4h-4v8H7l5 5z"/></svg>
+              Export to PDF
+            </button>
+            <p class="evaluation-pdf-help">The PDF uses the grading system selected above. Your display name can be changed for this export.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-evaluations-export" role="dialog" aria-modal="true" aria-labelledby="evaluation-export-title" aria-describedby="evaluation-export-description">
+    <div class="modal-card evaluation-export-selection-card">
+      <div class="modal-header">
+        <h3 id="evaluation-export-title">Choose evaluations to export</h3>
+        <button type="button" class="btn-icon modal-close" aria-label="Close export selection">&times;</button>
+      </div>
+      <div class="modal-body evaluation-export-selection-body">
+        <p class="evaluation-export-selection-summary" id="evaluation-export-description">Select the exams to include in this PDF. All exams are selected by default.</p>
+        <label class="evaluation-export-select-all">
+          <input type="checkbox" id="evaluation-export-select-all">
+          <span>Select all</span>
+        </label>
+        <p class="evaluation-export-selection-summary" id="evaluation-export-selection-count" aria-live="polite"></p>
+        <div class="evaluation-export-list" id="evaluation-export-list" role="group" aria-label="Evaluations available for export"></div>
+        <div class="evaluation-export-actions">
+          <button type="button" class="btn-confirm-cancel modal-close">Cancel</button>
+          <button type="button" class="btn-primary-action" id="confirm-export-evaluations-pdf-btn">Export selected</button>
         </div>
       </div>
     </div>
@@ -4549,7 +4882,11 @@
         </div>
         <div class="sp-actions-row">
           <button type="button" class="btn-primary-action" id="open-add-course-btn">+ Add Course / Seminar</button>
-          <button type="button" class="btn-primary-action" id="open-merge-courses-btn" style="background:var(--accent-purple);">⇄ Merge Modules</button>
+          <button type="button" class="btn-primary-action" id="open-merge-courses-btn" style="background:var(--accent-purple);">Merge Modules</button>
+          <button type="button" class="btn-primary-action" id="export-study-plan-pdf-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-3 5-5h-3V4h-4v8H7l5 5z"/></svg>
+            Export Study Plan
+          </button>
         </div>
         <div id="study-plan-tree"></div>
       </div>
@@ -4958,6 +5295,18 @@
         return `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}`;
       }
       return cleaned;
+    }
+
+    function isValidIsoCalendarDate(value) {
+      const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) return false;
+      const [, year, month, day] = match;
+      const date = new Date(0);
+      date.setUTCHours(0, 0, 0, 0);
+      date.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
+      return date.getUTCFullYear() === Number(year) &&
+        date.getUTCMonth() === Number(month) - 1 &&
+        date.getUTCDate() === Number(day);
     }
 
     function parseSlashDate(str) {
@@ -5796,6 +6145,7 @@
     setupDateSlashInput('event-date', 'event-date-proxy');
     setupDateSlashInput('grade-date-input', 'grade-date-proxy');
     setupDateSlashInput('att-log-date', 'att-log-date-proxy');
+    setupDateSlashInput('edit-date-of-birth', 'edit-date-of-birth-proxy');
 
     /* ==========================================================================
        2. MARKDOWN & LATEX RENDERER + SINGLE-PANE LIVE EDITOR
@@ -8769,23 +9119,103 @@
       document.getElementById('att-log-note').value = '';
       renderAttendanceModalContent();
       openModal('modal-attendance');
+      setAttendancePage(0);
     }
 
     document.getElementById('open-attendance-btn').addEventListener('click', openAttendanceModal);
+
+    let attendanceActivePage = 0;
+    let attendanceSwipeStart = null;
+
+    function updateAttendancePageHeight() {
+      const activePage = document.getElementById(attendanceActivePage === 0 ? 'attendance-page-absences' : 'attendance-page-courses');
+      const track = document.getElementById('attendance-pages-track');
+      if (activePage && track) track.style.height = `${activePage.scrollHeight}px`;
+    }
+
+    function setAttendancePage(pageIndex) {
+      attendanceActivePage = Math.max(0, Math.min(1, pageIndex));
+      const track = document.getElementById('attendance-pages-track');
+      const tabs = [...document.querySelectorAll('#modal-attendance [role="tab"]')];
+      const pages = [...document.querySelectorAll('#modal-attendance [role="tabpanel"]')];
+
+      track.style.transform = `translateX(-${attendanceActivePage * 50}%)`;
+      tabs.forEach((tab, index) => {
+        const isActive = index === attendanceActivePage;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+      pages.forEach((page, index) => {
+        const isActive = index === attendanceActivePage;
+        page.setAttribute('aria-hidden', String(!isActive));
+        page.inert = !isActive;
+      });
+
+      const body = document.querySelector('#modal-attendance .attendance-modal-body');
+      if (body) body.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      requestAnimationFrame(updateAttendancePageHeight);
+    }
+
+    const attendancePageTablist = document.querySelector('#modal-attendance .attendance-page-switcher');
+    const attendancePageTabs = [...attendancePageTablist.querySelectorAll('[role="tab"]')];
+    attendancePageTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => setAttendancePage(index));
+    });
+    attendancePageTablist.addEventListener('keydown', event => {
+      const currentIndex = attendancePageTabs.indexOf(event.target);
+      if (currentIndex < 0) return;
+      let nextIndex = currentIndex;
+      if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % attendancePageTabs.length;
+      else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + attendancePageTabs.length) % attendancePageTabs.length;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = attendancePageTabs.length - 1;
+      else return;
+      event.preventDefault();
+      attendancePageTabs[nextIndex].focus();
+      setAttendancePage(nextIndex);
+    });
+
+    const attendancePageViewport = document.getElementById('attendance-pages-viewport');
+    attendancePageViewport.addEventListener('touchstart', event => {
+      if (event.target.closest('input, select, textarea, button, a')) {
+        attendanceSwipeStart = null;
+        return;
+      }
+      const touch = event.touches[0];
+      attendanceSwipeStart = touch ? { x: touch.clientX, y: touch.clientY } : null;
+    }, { passive: true });
+    attendancePageViewport.addEventListener('touchend', event => {
+      if (!attendanceSwipeStart) return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const deltaX = touch.clientX - attendanceSwipeStart.x;
+      const deltaY = touch.clientY - attendanceSwipeStart.y;
+      attendanceSwipeStart = null;
+      if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+      setAttendancePage(deltaX < 0 ? 1 : 0);
+    }, { passive: true });
+    attendancePageViewport.addEventListener('touchcancel', () => {
+      attendanceSwipeStart = null;
+    }, { passive: true });
+    window.addEventListener('resize', updateAttendancePageHeight);
+
+    function syncAttendanceSemesterFilterButtons() {
+      document.querySelectorAll('#att-sem-filter-row [data-sem-filter]').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.dataset.semFilter === state.attendanceSemFilter));
+      });
+    }
 
     document.getElementById('att-sem-filter-row').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-sem-filter]');
       if (!btn) return;
       state.attendanceSemFilter = btn.dataset.semFilter;
-      document.querySelectorAll('#att-sem-filter-row button').forEach(b => {
-        const active = b.dataset.semFilter === state.attendanceSemFilter;
-        b.style.borderColor = active ? 'var(--accent-blue)' : 'var(--card-border)';
-        b.style.color = active ? 'var(--accent-blue)' : 'var(--text-color)';
-      });
+      syncAttendanceSemesterFilterButtons();
       renderAttendanceModalContent();
     });
 
     function renderAttendanceModalContent() {
+      syncAttendanceSemesterFilterButtons();
       const profileEvaluationState = new Map(state.profiles.map(profileRecord => [
         profileRecord.id,
         getEffectiveEvaluationsAndCourses(profileRecord)
@@ -8926,6 +9356,7 @@
           `;
         }).join('');
       }
+      requestAnimationFrame(updateAttendancePageHeight);
     }
 
     function toggleCourseAttending(courseId) {
@@ -9220,7 +9651,7 @@
       document.getElementById('edit-name').value = p.name;
       document.getElementById('edit-mat').value = p.mat;
       document.getElementById('edit-email').value = p.email || '';
-      document.getElementById('edit-date-of-birth').value = p.dateOfBirth || '';
+      document.getElementById('edit-date-of-birth').value = normalizeDateToSlash(p.dateOfBirth || '');
       document.getElementById('edit-tax-code').value = p.taxCode || '';
       document.getElementById('edit-univ').value = p.univ;
       document.getElementById('edit-faculty').value = p.faculty || '';
@@ -9267,10 +9698,18 @@
     });
 
     document.getElementById('save-profile-btn').addEventListener('click', () => {
+      const dateOfBirthInput = document.getElementById('edit-date-of-birth');
+      const dateOfBirth = normalizeDateToSlash(dateOfBirthInput.value);
+      if (dateOfBirth && !isValidIsoCalendarDate(dateOfBirth)) {
+        showToast('Enter date of birth as YYYY-MM-DD.', true);
+        dateOfBirthInput.focus();
+        return;
+      }
+
       state.profile.name = document.getElementById('edit-name').value.trim() || 'Student';
       state.profile.mat = document.getElementById('edit-mat').value.trim();
       state.profile.email = document.getElementById('edit-email').value.trim();
-      state.profile.dateOfBirth = document.getElementById('edit-date-of-birth').value;
+      state.profile.dateOfBirth = dateOfBirth;
       state.profile.taxCode = document.getElementById('edit-tax-code').value.trim();
       state.profile.univ = document.getElementById('edit-univ').value.trim();
       state.profile.faculty = document.getElementById('edit-faculty').value.trim();
@@ -9483,68 +9922,74 @@
       return rows;
     }
 
-    async function exportEvaluationsToPdf() {
-      const displayName = document.getElementById('evaluation-pdf-display-name').value.trim() || state.profile.name || 'Student';
-      const targetScale = document.getElementById('eval-conversion-scale').value;
-      const targetScaleLabel = getGradeScale(targetScale).label;
-      const PdfConstructor = await getEvaluationPdfConstructor();
-      const logo = await loadEvaluationPdfLogo();
-      const pdf = new PdfConstructor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    function drawPdfProfileHeader(pdf, logo, title, profileRows) {
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const profileRows = getEvaluationPdfProfileRows(displayName, targetScaleLabel);
-
-      pdf.setProperties({
-        title: 'Cladar Evaluation Record',
-        subject: 'Personal evaluation record',
-        author: 'Cladar'
-      });
-      pdf.addImage(logo, 'PNG', 14, 13, 26, 26);
+      pdf.setProperties({ title, subject: 'Personal academic record', author: 'Cladar' });
       pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(14);
+      pdf.setFontSize(12.5);
       pdf.setTextColor(33, 42, 57);
-      pdf.text('Cladar Evaluation Record', 46, 17);
+      pdf.text(title, 14, 17);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(7.5);
       pdf.setTextColor(100, 110, 125);
       pdf.text(`Generated ${formatEvaluationPdfDate(todaySlash)}`, pageWidth - 14, 17, { align: 'right' });
+      pdf.addImage(logo, 'PNG', 14, 23, 8, 8);
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(7);
       pdf.setTextColor(55, 65, 81);
-      pdf.text('STUDENT DETAILS', 46, 24);
-
+      pdf.text('STUDENT DETAILS', 25, 29);
       pdf.autoTable({
         body: profileRows,
-        startY: 27,
-        margin: { left: 46, right: 14 },
-        tableWidth: pageWidth - 60,
+        startY: 31,
+        margin: { left: 25, right: 14 },
+        tableWidth: pageWidth - 39,
         theme: 'plain',
         styles: {
           font: 'helvetica',
-          fontSize: 7.5,
+          fontSize: 7,
           textColor: [55, 65, 81],
-          cellPadding: { top: 1.2, right: 1.4, bottom: 1.2, left: 1.4 },
+          cellPadding: { top: 1, right: 1.2, bottom: 1, left: 1.2 },
           overflow: 'linebreak',
           valign: 'top'
         },
         columnStyles: {
-          0: { cellWidth: 18, fontStyle: 'bold' },
-          1: { cellWidth: 56 },
-          2: { cellWidth: 18, fontStyle: 'bold' },
-          3: { cellWidth: 58 }
+          0: { cellWidth: 20, fontStyle: 'bold' },
+          1: { cellWidth: 65 },
+          2: { cellWidth: 20, fontStyle: 'bold' },
+          3: { cellWidth: 66 }
         }
       });
+      return Math.max((pdf.lastAutoTable?.finalY || 31) + 12, 72);
+    }
 
-      const tableStartY = Math.max((pdf.lastAutoTable?.finalY || 27) + 12, 82);
+    function drawPdfRunningHeader(pdf, logo, title, displayName) {
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      pdf.addImage(logo, 'PNG', 14, 10, 8, 8);
       pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(11);
+      pdf.setFontSize(8.5);
       pdf.setTextColor(33, 42, 57);
-      pdf.text('Evaluation Results', 14, tableStartY - 7);
+      pdf.text(title, 25, 16);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(100, 110, 125);
+      pdf.text(displayName, pageWidth - 14, 16, { align: 'right' });
+    }
 
-      const { effectiveEvals } = getEffectiveEvaluationsAndCourses();
+    function drawPdfFooter(pdf, data, disclaimer) {
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(90, 98, 110);
+      const disclaimerLines = pdf.splitTextToSize(disclaimer, pageWidth - 28);
+      pdf.text(disclaimerLines, pageWidth / 2, pageHeight - 14, { align: 'center' });
+      pdf.text(`Page ${data.pageNumber}`, pageWidth - 14, pageHeight - 5, { align: 'right' });
+    }
+
+    function getEvaluationPdfRows(evaluations, targetScale) {
       const targetPassMark = getGradePassMark(targetScale, state.profile.degreeCategory);
       const unit = getCreditUnit();
-      const tableRows = effectiveEvals.map(evaluation => {
+      return evaluations.map(evaluation => {
         const course = state.studyPlan.find(item => item.id === evaluation.courseId) || {
           name: 'Unknown Course',
           code: '—',
@@ -9553,24 +9998,82 @@
           cfu: 0,
           excludeCredits: false
         };
-        const sourceScale = getEvaluationScale(evaluation);
-        const convertedGrade = convertGradeBetweenScales(
+        const grade = convertGradeBetweenScales(
           evaluation.score,
-          sourceScale,
+          getEvaluationScale(evaluation),
           targetScale,
           getEvaluationPassMark(evaluation),
           targetPassMark
         );
-        const courseDetails = `${course.code} · ${course.ssd} · ${formatCourseCfu(course, unit)}`;
-        const type = evaluation.isConsolidated ? 'Final (Merged)' : (evaluation.isPartial ? 'Partial' : 'Final');
-        return [
-          `${course.name}\n${courseDetails}`,
-          course.prof || '—',
-          convertedGrade,
-          type,
-          formatEvaluationPdfDate(evaluation.date)
-        ];
+        return {
+          id: String(evaluation.id),
+          course: course.name,
+          details: `${course.code} · ${course.ssd} · ${formatCourseCfu(course, unit)}`,
+          professor: course.prof || '—',
+          grade,
+          type: evaluation.isConsolidated ? 'Final (Merged)' : (evaluation.isPartial ? 'Partial' : 'Final'),
+          date: formatEvaluationPdfDate(evaluation.date)
+        };
       });
+    }
+
+    function updateEvaluationExportSelectionCount() {
+      const checkboxes = [...document.querySelectorAll('#evaluation-export-list [data-evaluation-export-id]')];
+      const selectedCount = checkboxes.filter(input => input.checked).length;
+      const selectAll = document.getElementById('evaluation-export-select-all');
+      selectAll.checked = checkboxes.length > 0 && selectedCount === checkboxes.length;
+      selectAll.indeterminate = selectedCount > 0 && selectedCount < checkboxes.length;
+      selectAll.disabled = checkboxes.length === 0;
+      document.getElementById('confirm-export-evaluations-pdf-btn').disabled = selectedCount === 0;
+      document.getElementById('evaluation-export-selection-count').textContent =
+        `${selectedCount} of ${checkboxes.length} evaluations selected.`;
+    }
+
+    function openEvaluationExportSelection() {
+      const { effectiveEvals } = getEffectiveEvaluationsAndCourses();
+      const targetScale = document.getElementById('eval-conversion-scale').value;
+      const rows = getEvaluationPdfRows(effectiveEvals, targetScale);
+      const list = document.getElementById('evaluation-export-list');
+      const selectAll = document.getElementById('evaluation-export-select-all');
+      selectAll.checked = rows.length > 0;
+      selectAll.indeterminate = false;
+      list.innerHTML = rows.length
+        ? rows.map(row => `
+            <label class="evaluation-export-option">
+              <input type="checkbox" data-evaluation-export-id="${escapeHtml(row.id)}" checked>
+              <span class="evaluation-export-option-copy">
+                <strong>${escapeHtml(row.course)}</strong>
+                <small>${escapeHtml(row.details)}<br>${escapeHtml(row.professor)} · ${escapeHtml(row.type)} · ${escapeHtml(row.date)}</small>
+              </span>
+              <span class="evaluation-export-option-grade">${escapeHtml(row.grade)}</span>
+            </label>
+          `).join('')
+        : '<p class="empty-state">No evaluations are available to export.</p>';
+      updateEvaluationExportSelectionCount();
+      openModal('modal-evaluations-export');
+    }
+
+    async function exportEvaluationsToPdf(selectedEvaluationIds) {
+      const displayName = document.getElementById('evaluation-pdf-display-name').value.trim() || state.profile.name || 'Student';
+      const targetScale = document.getElementById('eval-conversion-scale').value;
+      const targetScaleLabel = getGradeScale(targetScale).label;
+      const PdfConstructor = await getEvaluationPdfConstructor();
+      const logo = await loadEvaluationPdfLogo();
+      const pdf = new PdfConstructor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const profileRows = getEvaluationPdfProfileRows(displayName, targetScaleLabel);
+      const tableStartY = drawPdfProfileHeader(pdf, logo, 'Cladar Evaluation Record', profileRows);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(33, 42, 57);
+      pdf.text('Evaluation Results', 14, tableStartY - 7);
+
+      const selectedIds = new Set(selectedEvaluationIds.map(String));
+      const { effectiveEvals } = getEffectiveEvaluationsAndCourses();
+      const selectedEvals = effectiveEvals.filter(evaluation => selectedIds.has(String(evaluation.id)));
+      if (selectedEvals.length === 0) throw new Error('No evaluations were selected for export.');
+      const tableRows = getEvaluationPdfRows(selectedEvals, targetScale)
+        .map(row => [`${row.course}\n${row.details}`, row.professor, row.grade, row.type, row.date]);
 
       const disclaimer = 'Disclaimer: This document was generated by Cladar for personal record-keeping purposes only. It is not an official transcript and is not issued or endorsed by the university.';
       pdf.autoTable({
@@ -9581,7 +10084,7 @@
           'Type',
           'Date'
         ]],
-        body: tableRows.length ? tableRows : [['No evaluations recorded', '', '', '', '']],
+        body: tableRows,
         startY: tableStartY,
         margin: { top: 34, right: 14, bottom: 27, left: 14 },
         theme: 'grid',
@@ -9589,9 +10092,9 @@
         rowPageBreak: 'avoid',
         styles: {
           font: 'helvetica',
-          fontSize: 8,
+          fontSize: 7.5,
           textColor: [40, 48, 62],
-          cellPadding: 3,
+          cellPadding: 2.5,
           overflow: 'linebreak',
           valign: 'middle',
           lineColor: [220, 224, 230],
@@ -9601,7 +10104,7 @@
           fillColor: [37, 52, 74],
           textColor: [255, 255, 255],
           fontStyle: 'bold',
-          fontSize: 7.8
+          fontSize: 7.5
         },
         alternateRowStyles: { fillColor: [246, 248, 251] },
         columnStyles: {
@@ -9612,42 +10115,42 @@
           4: { cellWidth: 24 }
         },
         didDrawPage: data => {
-          if (data.pageNumber > 1) {
-            pdf.addImage(logo, 'PNG', 14, 10, 12, 12);
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(9);
-            pdf.setTextColor(33, 42, 57);
-            pdf.text('Cladar Evaluation Record', 30, 17);
-            pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(7.5);
-            pdf.setTextColor(100, 110, 125);
-            pdf.text(displayName, pageWidth - 14, 17, { align: 'right' });
-          }
-
-          pdf.setFont('helvetica', 'normal');
-          pdf.setFontSize(8);
-          pdf.setTextColor(90, 98, 110);
-          const disclaimerLines = pdf.splitTextToSize(disclaimer, pageWidth - 28);
-          pdf.text(disclaimerLines, pageWidth / 2, pageHeight - 14, { align: 'center' });
-          pdf.text(`Page ${data.pageNumber}`, pageWidth - 14, pageHeight - 5, { align: 'right' });
+          if (data.pageNumber > 1) drawPdfRunningHeader(pdf, logo, 'Cladar Evaluation Record', displayName);
+          drawPdfFooter(pdf, data, disclaimer);
         }
       });
 
       pdf.save(`cladar_evaluations_${todaySlash}.pdf`);
     }
 
-    document.getElementById('export-evaluations-pdf-btn').addEventListener('click', async event => {
+    document.getElementById('evaluation-export-list').addEventListener('change', updateEvaluationExportSelectionCount);
+    document.getElementById('evaluation-export-select-all').addEventListener('change', event => {
+      document.querySelectorAll('#evaluation-export-list [data-evaluation-export-id]').forEach(input => {
+        input.checked = event.currentTarget.checked;
+      });
+      updateEvaluationExportSelectionCount();
+    });
+
+    document.getElementById('export-evaluations-pdf-btn').addEventListener('click', openEvaluationExportSelection);
+    document.getElementById('confirm-export-evaluations-pdf-btn').addEventListener('click', async event => {
       const button = event.currentTarget;
       if (button.disabled) return;
       button.disabled = true;
+      const originalLabel = button.textContent;
+      button.textContent = 'Preparing PDF…';
+      const selectedIds = [...document.querySelectorAll('#evaluation-export-list [data-evaluation-export-id]:checked')]
+        .map(input => input.dataset.evaluationExportId);
       try {
-        await exportEvaluationsToPdf();
+        await exportEvaluationsToPdf(selectedIds);
+        closeModal('modal-evaluations-export');
         showToast('Evaluation PDF exported.');
       } catch (error) {
         console.error('Evaluation PDF export failed:', error);
-        showToast('Could not export PDF. Check your connection and try again.', true);
+        showToast('PDF export failed. Please try again.', true);
       } finally {
+        button.textContent = originalLabel;
         button.disabled = false;
+        updateEvaluationExportSelectionCount();
       }
     });
 
@@ -9679,14 +10182,14 @@
         const convertedQuality = getGradeQuality(ev.score, sourceScale, sourcePassMark);
         return `
           <tr style="cursor:${ev.isConsolidated ? 'default' : 'pointer'};" ${rowClick}>
-            <td>
+            <td data-label="Course">
               <strong style="font-size:0.84rem; display:block;">${escapeHtml(course.name)}</strong>
               <div class="sub-code-col">${escapeHtml(course.code)} &bull; ${escapeHtml(course.ssd)} (${cfuLabel})</div>
             </td>
-            <td style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(course.prof || '-')}</td>
-            <td title="${escapeHtml(sourceScaleTitle)}"><strong style="color:${gradeColor}; font-size:0.95rem;">${escapeHtml(ev.score)}</strong></td>
-            <td style="font-size:0.74rem; color:var(--text-muted);">${typeStr}<br>${escapeHtml(normalizeDateToSlash(ev.date))}</td>
-            ${isEvalConversionPreviewVisible ? `<td><strong style="font-size:0.9rem;">${escapeHtml(convertedGrade)}</strong>${convertedQuality !== null && convertedQuality < 0 ? '<br><span style="font-size:0.68rem; color:var(--accent-red);">Fail</span>' : ''}</td>` : ''}
+            <td data-label="Professor" style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(course.prof || '-')}</td>
+            <td data-label="Grade" title="${escapeHtml(sourceScaleTitle)}"><strong style="color:${gradeColor}; font-size:0.95rem;">${escapeHtml(ev.score)}</strong></td>
+            <td data-label="Type / Date" style="font-size:0.74rem; color:var(--text-muted);">${typeStr}<br>${escapeHtml(normalizeDateToSlash(ev.date))}</td>
+            ${isEvalConversionPreviewVisible ? `<td data-label="Converted grade"><strong style="font-size:0.9rem;">${escapeHtml(convertedGrade)}</strong>${convertedQuality !== null && convertedQuality < 0 ? '<br><span style="font-size:0.68rem; color:var(--accent-red);">Fail</span>' : ''}</td>` : ''}
           </tr>
         `;
       }).join('');
@@ -9799,6 +10302,113 @@
     document.getElementById('open-study-plan-btn').addEventListener('click', () => {
       renderStudyPlanTree();
       openModal('modal-study-plan');
+    });
+
+    async function exportStudyPlanToPdf() {
+      const PdfConstructor = await getEvaluationPdfConstructor();
+      const logo = await loadEvaluationPdfLogo();
+      const pdf = new PdfConstructor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const displayName = state.profile.name || 'Student';
+      const profileRows = getEvaluationPdfProfileRows(displayName, getGradeScale().label);
+      const tableStartY = drawPdfProfileHeader(pdf, logo, 'Cladar Study Plan', profileRows);
+      const unit = getCreditUnit();
+      const { annulledModuleIds, effectiveEvals } = getEffectiveEvaluationsAndCourses();
+      const courses = [...state.studyPlan].sort((a, b) =>
+        (Number(a.year) || 1) - (Number(b.year) || 1) ||
+        (Number(a.sem) || 1) - (Number(b.sem) || 1) ||
+        String(a.name || '').localeCompare(String(b.name || ''))
+      );
+      const tableRows = courses.map(course => {
+        const finalEvaluation = effectiveEvals.find(evaluation =>
+          evaluation.courseId === course.id &&
+          !evaluation.isPartial &&
+          isPassingGrade(evaluation.score, getEvaluationScale(evaluation), getEvaluationPassMark(evaluation))
+        );
+        const partialEvaluation = [...effectiveEvals].reverse().find(evaluation =>
+          evaluation.courseId === course.id && evaluation.isPartial
+        );
+        const status = finalEvaluation
+          ? `Passed: ${finalEvaluation.score}`
+          : (partialEvaluation
+            ? `Partial: ${partialEvaluation.score}`
+            : (annulledModuleIds.has(course.id)
+              ? 'Consolidated'
+              : (course.mergedIntoId ? 'Part of merged course' : 'Not evaluated')));
+        return [
+          `${formatOrdinalYear(Number(course.year) || 1)}\n${(Number(course.sem) || 1) === 1 ? '1st Semester' : '2nd / Annual'}`,
+          course.name || 'Untitled course',
+          `${course.code || '—'}${course.ssd ? ` / ${course.ssd}` : ''}`,
+          course.prof || 'Professor TBA',
+          formatCourseCfu(course, unit),
+          status
+        ];
+      });
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(10);
+      pdf.setTextColor(33, 42, 57);
+      pdf.text('Courses', 14, tableStartY - 7);
+      pdf.autoTable({
+        head: [['Year / Term', 'Course', 'Code / SSD', 'Professor', 'Credits', 'Grade / Status']],
+        body: tableRows.length ? tableRows : [['', 'No courses in this study plan.', '', '', '', '']],
+        startY: tableStartY,
+        margin: { top: 28, right: 14, bottom: 27, left: 14 },
+        theme: 'grid',
+        showHead: 'everyPage',
+        rowPageBreak: 'avoid',
+        styles: {
+          font: 'helvetica',
+          fontSize: 7.5,
+          textColor: [40, 48, 62],
+          cellPadding: 2.5,
+          overflow: 'linebreak',
+          valign: 'middle',
+          lineColor: [220, 224, 230],
+          lineWidth: 0.2
+        },
+        headStyles: {
+          fillColor: [37, 52, 74],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 7.5
+        },
+        alternateRowStyles: { fillColor: [246, 248, 251] },
+        columnStyles: {
+          0: { cellWidth: 28 },
+          1: { cellWidth: 53 },
+          2: { cellWidth: 32 },
+          3: { cellWidth: 34 },
+          4: { cellWidth: 15, halign: 'center' },
+          5: { cellWidth: 20 }
+        },
+        didDrawPage: data => {
+          if (data.pageNumber > 1) drawPdfRunningHeader(pdf, logo, 'Cladar Study Plan', displayName);
+          drawPdfFooter(
+            pdf,
+            data,
+            'Disclaimer: This document was generated by Cladar for personal record-keeping purposes only. It is not an official study plan and is not issued or endorsed by the university.'
+          );
+        }
+      });
+      pdf.save(`cladar_study_plan_${todaySlash}.pdf`);
+    }
+
+    document.getElementById('export-study-plan-pdf-btn').addEventListener('click', async event => {
+      const button = event.currentTarget;
+      if (button.disabled) return;
+      button.disabled = true;
+      const originalLabel = button.innerHTML;
+      button.textContent = 'Preparing PDF…';
+      try {
+        await exportStudyPlanToPdf();
+        showToast('Study Plan PDF exported.');
+      } catch (error) {
+        console.error('Study Plan PDF export failed:', error);
+        showToast('PDF export failed. Please try again.', true);
+      } finally {
+        button.innerHTML = originalLabel;
+        button.disabled = false;
+      }
     });
 
     function renderStudyPlanTree() {
