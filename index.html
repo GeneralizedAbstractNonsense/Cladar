@@ -4,14 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cladar</title>
+  <meta name="theme-color" content="#090a0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Cladar">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   
   <!-- Google Fonts and External Libraries -->
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="./vendor/qrcode.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" crossorigin="anonymous">
   <!-- KaTeX for LaTeX rendering ($...$) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
   <!-- Marked.js for Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -3804,7 +3812,7 @@
       <div style="font-size:0.7rem; color:var(--accent-purple); font-weight:700; display:none;" id="badge-honors-line"></div>
       <img id="badge-qr-img" class="badge-qr" src="" alt="Student QR Code" title="Tap QR Code for Full-Screen Scan">
       <div style="font-size:0.68rem; color:var(--text-muted);">Tap QR code for full-screen scan</div>
-      <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:2px;">Edit Profile</button>
+      <button class="btn-link" id="open-edit-profile-from-badge" style="margin-top:2px;">Edit Profile &amp; Badge Data</button>
     </div>
   </div>
 
@@ -8346,8 +8354,23 @@
 
     function generateDefaultBadgeUrl() {
       const p = state.profile;
-      const dataStr = encodeURIComponent(p.qrData || `${p.mat}_${p.univ}`);
-      return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${dataStr}`;
+      const data = p.qrData || `${p.mat}_${p.univ}`;
+      if (typeof qrcode !== 'function') {
+        const error = new Error('The local QR code generator is unavailable.');
+        console.error('Unable to generate the profile QR code:', error);
+        showToast('The QR code could not be generated.', true);
+        return '';
+      }
+      try {
+        const code = qrcode(0, 'M');
+        code.addData(data);
+        code.make();
+        return code.createDataURL(5, 8);
+      } catch (error) {
+        console.error('Unable to generate the profile QR code:', error);
+        showToast('The QR code could not be generated for this data.', true);
+        return '';
+      }
     }
 
     function getResolvedQrSrc() {
@@ -8367,7 +8390,9 @@
       document.getElementById('badge-mat-num').textContent = `ID: ${p.mat}`;
       document.getElementById('badge-course-name').textContent = `${p.degree} (${getProgramStructureLabel()})`;
       document.getElementById('badge-order-code').textContent = `Course Code: ${p.studyPlanCode || 'N/A'} | Enr: ${p.enrollmentYear || 'N/A'}`;
-      document.getElementById('badge-qr-img').src = qrSrc;
+      const badgeQrImage = document.getElementById('badge-qr-img');
+      if (qrSrc) badgeQrImage.src = qrSrc;
+      else badgeQrImage.removeAttribute('src');
 
       const honorsBadgeEl = document.getElementById('badge-honors-line');
       if (p.hasHonorsSchool && (p.honorsSchoolName || p.honorsClass)) {
@@ -8385,7 +8410,10 @@
       e.stopPropagation();
       const p = state.profile;
       document.getElementById('qr-fs-univ').textContent = p.univ;
-      document.getElementById('qr-fs-img').src = getResolvedQrSrc();
+      const fullScreenQrImage = document.getElementById('qr-fs-img');
+      const qrSrc = getResolvedQrSrc();
+      if (qrSrc) fullScreenQrImage.src = qrSrc;
+      else fullScreenQrImage.removeAttribute('src');
       document.getElementById('qr-fs-name').textContent = p.name;
       document.getElementById('qr-fs-mat').textContent = `ID: ${p.mat}`;
       openModal('modal-qr-fullscreen');
@@ -9502,6 +9530,14 @@
     renderCountdowns();
     renderDaySelector();
     renderDailyGrid();
+  </script>
+  <script>
+    if (window.isSecureContext && 'serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+          .catch(error => console.error('Cladar offline support could not be enabled:', error));
+      });
+    }
   </script>
 </body>
 </html>
