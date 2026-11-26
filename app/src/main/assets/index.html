@@ -1737,6 +1737,66 @@
     }
     .dash-top-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .dash-title { font-size: 1.05rem; font-weight: 800; color: var(--text-color); }
+    .academic-overview-privacy-toggle {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--card-border);
+      border-radius: 50%;
+      background: var(--bg-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+    .academic-overview-privacy-toggle:hover {
+      background: rgba(10, 132, 255, 0.1);
+      border-color: rgba(10, 132, 255, 0.3);
+      color: var(--accent-blue);
+    }
+    .academic-overview-privacy-toggle:focus-visible {
+      outline: 3px solid var(--accent-blue);
+      outline-offset: 3px;
+    }
+    .academic-overview-privacy-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .academic-overview-privacy-toggle .privacy-icon-hidden { display: none; }
+    .dashboard-card.is-obscured .academic-overview-privacy-toggle .privacy-icon-visible { display: none; }
+    .dashboard-card.is-obscured .academic-overview-privacy-toggle .privacy-icon-hidden { display: block; }
+    .dashboard-card.is-obscured #display-cfu-progress,
+    .dashboard-card.is-obscured .dash-carousel,
+    .dashboard-card.is-obscured .dash-dots-bar,
+    .dashboard-card.is-obscured .evaluations-header,
+    .dashboard-card.is-obscured .eval-list {
+      filter: blur(9px);
+      opacity: 0.3;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: filter 0.2s ease, opacity 0.2s ease;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .academic-overview-privacy-toggle,
+      .dashboard-card.is-obscured #display-cfu-progress,
+      .dashboard-card.is-obscured .dash-carousel,
+      .dashboard-card.is-obscured .dash-dots-bar,
+      .dashboard-card.is-obscured .evaluations-header,
+      .dashboard-card.is-obscured .eval-list {
+        transition: none;
+      }
+    }
+    @media (max-width: 380px) {
+      #academic-overview-card .dash-top-bar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 44px;
+        gap: 6px 8px;
+      }
+      #academic-overview-card .dash-title { grid-column: 1; grid-row: 1; }
+      #academic-overview-card #display-cfu-progress { grid-column: 1; grid-row: 2; justify-self: start; }
+      #academic-overview-card .academic-overview-privacy-toggle { grid-column: 2; grid-row: 1 / span 2; }
+    }
     .cfu-badge-small {
       background: rgba(10, 132, 255, 0.1);
       padding: 4px 12px;
@@ -2278,6 +2338,103 @@
       background: rgba(191, 90, 242, 0.12) !important;
       color: var(--accent-purple);
       border: 1px solid rgba(191, 90, 242, 0.22);
+    }
+    .study-plan-transfer-card {
+      max-width: 640px;
+      max-height: min(88vh, 760px);
+    }
+    .study-plan-transfer-body {
+      gap: 14px;
+    }
+    .study-plan-transfer-intro,
+    .study-plan-transfer-status {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+    .study-plan-transfer-select-all,
+    .study-plan-transfer-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      color: var(--text-color);
+    }
+    .study-plan-transfer-select-all {
+      min-height: 48px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .study-plan-transfer-select-all input,
+    .study-plan-transfer-option input {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      accent-color: var(--accent-blue);
+    }
+    .study-plan-transfer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: min(42vh, 360px);
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .study-plan-transfer-option {
+      cursor: pointer;
+    }
+    .study-plan-transfer-option-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+    .study-plan-transfer-option-copy strong {
+      font-size: 0.86rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+    .study-plan-transfer-option-copy small {
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+    .study-plan-transfer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .study-plan-transfer-actions button {
+      min-height: 44px;
+      margin: 0;
+      padding: 10px 16px;
+    }
+    .study-plan-transfer-body .form-control {
+      min-height: 120px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .study-plan-transfer-body .form-control[hidden] {
+      display: none;
+    }
+    .study-plan-transfer-status.is-error {
+      color: var(--accent-red);
+    }
+    @media (max-width: 480px) {
+      .study-plan-transfer-actions {
+        flex-direction: column-reverse;
+      }
+      .study-plan-transfer-actions button {
+        width: 100%;
+      }
     }
     .sp-actions-row svg {
       width: 17px;
@@ -4013,10 +4170,14 @@
         </div>
 
         <!-- Academic Dashboard -->
-        <div class="dashboard-card">
+        <div class="dashboard-card" id="academic-overview-card">
           <div class="dash-top-bar">
             <div class="dash-title">Academic Overview</div>
             <div class="cfu-badge-small" id="display-cfu-progress">0 / 180 CFU</div>
+            <button type="button" class="academic-overview-privacy-toggle" id="toggle-academic-overview-privacy" aria-label="Academic overview privacy" aria-pressed="false" aria-controls="display-cfu-progress dash-carousel dash-dots-bar recent-evaluations-header recent-evals-list" title="Hide academic overview">
+              <svg class="privacy-icon-visible" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.7"/></svg>
+              <svg class="privacy-icon-hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.2A10.7 10.7 0 0 1 12 6c6.1 0 9.5 6 9.5 6a15.7 15.7 0 0 1-3.1 3.6M6.2 6.8C3.8 8.3 2.5 12 2.5 12s3.4 6 9.5 6c1 0 1.9-.2 2.7-.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+            </button>
           </div>
 
           <div class="dash-carousel" id="dash-carousel">
@@ -4055,13 +4216,13 @@
           </div>
 
           <!-- Centered Pagination Dots right above Recent Evaluations -->
-          <div class="dash-dots-bar">
+          <div class="dash-dots-bar" id="dash-dots-bar">
             <button type="button" class="dash-dot active" id="dash-dot-0" aria-label="Weighted Averages"></button>
             <button type="button" class="dash-dot" id="dash-dot-1" aria-label="SSD Histogram"></button>
           </div>
 
           <!-- Recent Evaluations -->
-          <div class="evaluations-header">
+          <div class="evaluations-header" id="recent-evaluations-header">
             <h4>Recent Evaluations</h4>
             <button class="btn-link" id="open-all-evals-btn">Evaluations &rarr;</button>
           </div>
@@ -4109,7 +4270,7 @@
                 <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 1 4 16.5v-11Z"/><path d="M4 16.5A2.5 2.5 0 0 1 6.5 14H20M8 7h8M8 10h6"/></svg>
               </span>
               <span class="profile-action-copy">
-                <span class="profile-action-title">Courses</span>
+                <span class="profile-action-title">Courses &amp; Exams</span>
                 <span class="profile-action-detail">Course notes, resources, and exam dates</span>
               </span>
               <svg class="profile-action-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7.2 4.7a.8.8 0 0 1 1.1 0l5.1 5.1a.8.8 0 0 1 0 1.1l-5.1 5.1a.8.8 0 1 1-1.1-1.1l4.6-4.6-4.6-4.6a.8.8 0 0 1 0-1.1z"/></svg>
@@ -4887,8 +5048,60 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zm7-3 5-5h-3V4h-4v8H7l5 5z"/></svg>
             Export Study Plan
           </button>
+          <button type="button" class="btn-primary-action" id="share-study-plan-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 13v6h14v-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Share Plan
+          </button>
+          <button type="button" class="btn-primary-action" id="import-study-plan-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Import Plan
+          </button>
         </div>
         <div id="study-plan-tree"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-share-study-plan" role="dialog" aria-modal="true" aria-labelledby="share-study-plan-title" aria-describedby="share-study-plan-description">
+    <div class="modal-card study-plan-transfer-card">
+      <div class="modal-header">
+        <h3 id="share-study-plan-title">Share study plan</h3>
+        <button type="button" class="btn-icon modal-close" aria-label="Close share study plan">&times;</button>
+      </div>
+      <div class="modal-body study-plan-transfer-body">
+        <p class="study-plan-transfer-intro" id="share-study-plan-description">Choose courses to include. Grades and personal details stay private. Merged modules are shared together.</p>
+        <label class="study-plan-transfer-select-all">
+          <input type="checkbox" id="study-plan-share-select-all">
+          <span>Select all courses</span>
+        </label>
+        <p class="study-plan-transfer-status" id="study-plan-share-count" aria-live="polite"></p>
+        <div class="study-plan-transfer-list" id="study-plan-share-list" role="group" aria-label="Courses to share"></div>
+        <textarea id="study-plan-share-json" class="form-control" readonly hidden aria-label="Shared study plan JSON"></textarea>
+        <div class="study-plan-transfer-actions">
+          <button type="button" class="btn-confirm-cancel modal-close">Cancel</button>
+          <button type="button" class="btn-primary-action" id="copy-study-plan-json-btn">Copy JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-import-study-plan" role="dialog" aria-modal="true" aria-labelledby="import-study-plan-title" aria-describedby="import-study-plan-description">
+    <div class="modal-card study-plan-transfer-card">
+      <div class="modal-header">
+        <h3 id="import-study-plan-title">Import study plan</h3>
+        <button type="button" class="btn-icon modal-close" aria-label="Close import study plan">&times;</button>
+      </div>
+      <div class="modal-body study-plan-transfer-body">
+        <p class="study-plan-transfer-intro" id="import-study-plan-description">Paste JSON copied from Share Plan. Existing courses and grades are never changed.</p>
+        <div class="form-group">
+          <label for="study-plan-import-json">Study plan JSON</label>
+          <textarea id="study-plan-import-json" class="form-control" rows="8" spellcheck="false" placeholder="Paste shared plan JSON here"></textarea>
+        </div>
+        <p class="study-plan-transfer-status" id="study-plan-import-status" aria-live="polite"></p>
+        <div class="study-plan-transfer-actions">
+          <button type="button" class="btn-confirm-cancel modal-close">Cancel</button>
+          <button type="button" class="btn-primary-action" id="confirm-import-study-plan-btn" disabled>Import courses</button>
+        </div>
       </div>
     </div>
   </div>
@@ -5598,6 +5811,7 @@
 
     const state = {
       theme: localStorage.getItem('cladar_theme') || 'dark',
+      academicOverviewHidden: localStorage.getItem('cladar_academic_overview_hidden') === 'true',
       selectedDateSlash: todaySlash,
       routineDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
       calendarDate: new Date(today.getFullYear(), today.getMonth(), 1),
@@ -5901,6 +6115,7 @@
         localStorage.setItem('cladar_notes', JSON.stringify(state.notes));
         localStorage.setItem('cladar_weekly_plan', JSON.stringify(state.weeklyPlan));
         localStorage.setItem('cladar_theme', state.theme);
+        localStorage.setItem('cladar_academic_overview_hidden', String(state.academicOverviewHidden));
       } catch (e) {
         console.warn('Storage quota warning:', e);
       }
@@ -9009,7 +9224,35 @@
       showToast(`Profile "${name}" created.`);
     });
 
+    function renderAcademicOverviewPrivacy() {
+      const card = document.getElementById('academic-overview-card');
+      const button = document.getElementById('toggle-academic-overview-privacy');
+      const isHidden = state.academicOverviewHidden;
+      const label = isHidden ? 'Show academic overview' : 'Hide academic overview';
+      card.classList.toggle('is-obscured', isHidden);
+      button.setAttribute('aria-pressed', String(isHidden));
+      button.setAttribute('title', label);
+
+      document.querySelectorAll(
+        '#academic-overview-card #display-cfu-progress, ' +
+        '#academic-overview-card .dash-carousel, ' +
+        '#academic-overview-card .dash-dots-bar, ' +
+        '#academic-overview-card .evaluations-header, ' +
+        '#academic-overview-card .eval-list'
+      ).forEach(element => {
+        element.inert = isHidden;
+        element.setAttribute('aria-hidden', String(isHidden));
+      });
+    }
+
+    document.getElementById('toggle-academic-overview-privacy').addEventListener('click', () => {
+      state.academicOverviewHidden = !state.academicOverviewHidden;
+      saveData();
+      renderAcademicOverviewPrivacy();
+    });
+
     function renderProfileView() {
+      renderAcademicOverviewPrivacy();
       const p = state.profile;
       document.getElementById('profile-avatar-img').src = p.avatarUrl;
       document.getElementById('display-profile-name').textContent = p.name;
@@ -10302,6 +10545,402 @@
     document.getElementById('open-study-plan-btn').addEventListener('click', () => {
       renderStudyPlanTree();
       openModal('modal-study-plan');
+    });
+
+    const SHARED_STUDY_PLAN_FORMAT = 'cladar-study-plan';
+    const SHARED_STUDY_PLAN_VERSION = 1;
+    const MAX_SHARED_STUDY_PLAN_COURSES = 500;
+    let studyPlanShareCourses = [];
+
+    function getSortedStudyPlanCourses() {
+      return [...state.studyPlan].sort((a, b) =>
+        (Number(a.year) || 1) - (Number(b.year) || 1) ||
+        (Number(a.sem) || 1) - (Number(b.sem) || 1) ||
+        String(a.name || '').localeCompare(String(b.name || ''))
+      );
+    }
+
+    function getShareableStudyPlanCourse(course) {
+      const credits = Number(course.cfu);
+      return {
+        code: String(course.code || ''),
+        ssd: String(course.ssd || ''),
+        name: String(course.name || 'Untitled course'),
+        prof: String(course.prof || ''),
+        type: ['Teaching', 'Course', 'Seminar'].includes(course.type) ? course.type : 'Teaching',
+        cfu: Number.isFinite(credits) && credits >= 0 ? credits : 0,
+        excludeCredits: Boolean(course.excludeCredits || course.noCredit),
+        ay: String(course.ay || ''),
+        year: Number(course.year) || 1,
+        sem: Number(course.sem) === 2 ? 2 : 1
+      };
+    }
+
+    function getLocalMergedCourseIds(course) {
+      if (Array.isArray(course.mergedModuleIds) && course.mergedModuleIds.length > 0) {
+        return [course.id, ...course.mergedModuleIds];
+      }
+      if (course.mergedIntoId) {
+        const parent = state.studyPlan.find(item => item.id === course.mergedIntoId);
+        if (parent && Array.isArray(parent.mergedModuleIds)) {
+          return [parent.id, ...parent.mergedModuleIds];
+        }
+      }
+      return [course.id];
+    }
+
+    function getSharedStudyPlanCourseGroups(courses) {
+      const byShareId = new Map(courses.map(course => [course.shareId, course]));
+      const groupedIds = new Set();
+      const groups = [];
+      courses.forEach(course => {
+        if (groupedIds.has(course.shareId)) return;
+        const parent = course.mergedIntoShareId ? byShareId.get(course.mergedIntoShareId) : course;
+        const ids = parent?.mergedModuleShareIds?.length
+          ? [parent.shareId, ...parent.mergedModuleShareIds]
+          : [course.shareId];
+        const group = ids.map(id => byShareId.get(id)).filter(Boolean);
+        group.forEach(item => groupedIds.add(item.shareId));
+        groups.push(group);
+      });
+      return groups;
+    }
+
+    function buildSharedStudyPlanPayload(selectedIndexes) {
+      const selectedCourses = selectedIndexes.map(index => studyPlanShareCourses[index]);
+      const shareIdByCourseId = new Map(selectedCourses.map((course, index) => [course.id, `course-${index + 1}`]));
+      return {
+        format: SHARED_STUDY_PLAN_FORMAT,
+        version: SHARED_STUDY_PLAN_VERSION,
+        courses: selectedCourses.map(course => {
+          const sharedCourse = {
+            shareId: shareIdByCourseId.get(course.id),
+            ...getShareableStudyPlanCourse(course)
+          };
+          if (Array.isArray(course.mergedModuleIds) && course.mergedModuleIds.length > 0 &&
+              course.mergedModuleIds.every(id => shareIdByCourseId.has(id))) {
+            sharedCourse.mergedModuleShareIds = course.mergedModuleIds.map(id => shareIdByCourseId.get(id));
+          } else if (course.mergedIntoId) {
+            const parent = state.studyPlan.find(item => item.id === course.mergedIntoId);
+            if (parent && Array.isArray(parent.mergedModuleIds) &&
+                parent.mergedModuleIds.every(id => shareIdByCourseId.has(id))) {
+              sharedCourse.mergedIntoShareId = shareIdByCourseId.get(parent.id);
+            }
+          }
+          return sharedCourse;
+        })
+      };
+    }
+
+    function updateStudyPlanShareSelection() {
+      const checkboxes = [...document.querySelectorAll('#study-plan-share-list [data-share-index]')];
+      const selectedCount = checkboxes.filter(input => input.checked).length;
+      const selectAll = document.getElementById('study-plan-share-select-all');
+      selectAll.checked = checkboxes.length > 0 && selectedCount === checkboxes.length;
+      selectAll.indeterminate = selectedCount > 0 && selectedCount < checkboxes.length;
+      selectAll.disabled = checkboxes.length === 0;
+      document.getElementById('copy-study-plan-json-btn').disabled = selectedCount === 0;
+      document.getElementById('study-plan-share-count').textContent =
+        `${selectedCount} of ${checkboxes.length} courses selected.`;
+      document.getElementById('study-plan-share-json').hidden = true;
+    }
+
+    function handleStudyPlanShareSelectionChange(event) {
+      const changedInput = event.target.closest('input[data-share-index]');
+      if (!changedInput) return;
+      const course = studyPlanShareCourses[Number(changedInput.dataset.shareIndex)];
+      const groupIds = new Set(getLocalMergedCourseIds(course));
+      document.querySelectorAll('#study-plan-share-list [data-share-index]').forEach(input => {
+        const groupedCourse = studyPlanShareCourses[Number(input.dataset.shareIndex)];
+        if (groupIds.has(groupedCourse.id)) input.checked = changedInput.checked;
+      });
+      updateStudyPlanShareSelection();
+    }
+
+    function openStudyPlanShareModal() {
+      studyPlanShareCourses = getSortedStudyPlanCourses();
+      const list = document.getElementById('study-plan-share-list');
+      document.getElementById('study-plan-share-json').value = '';
+      document.getElementById('study-plan-share-select-all').checked = studyPlanShareCourses.length > 0;
+      list.innerHTML = studyPlanShareCourses.length
+        ? studyPlanShareCourses.map((course, index) => `
+            <label class="study-plan-transfer-option">
+              <input type="checkbox" data-share-index="${index}" checked>
+              <span class="study-plan-transfer-option-copy">
+                <strong>${escapeHtml(course.name || 'Untitled course')}</strong>
+                <small>${escapeHtml(course.code || 'No code')} · ${escapeHtml(course.ssd || 'No subject area')} · ${escapeHtml(formatOrdinalYear(Number(course.year) || 1))}, ${Number(course.sem) === 1 ? '1st semester' : '2nd / annual'} · ${escapeHtml(formatCourseCfu(course))}</small>
+              </span>
+            </label>
+          `).join('')
+        : '<p class="empty-state">No courses are available to share.</p>';
+      updateStudyPlanShareSelection();
+      openModal('modal-share-study-plan');
+    }
+
+    async function copySharedStudyPlanJson() {
+      const selectedIndexes = [...document.querySelectorAll('#study-plan-share-list [data-share-index]:checked')]
+        .map(input => Number(input.dataset.shareIndex));
+      if (selectedIndexes.length === 0) return;
+
+      const output = document.getElementById('study-plan-share-json');
+      try {
+        const payload = buildSharedStudyPlanPayload(selectedIndexes);
+        const json = JSON.stringify(payload, null, 2);
+        parseSharedStudyPlanJson(json);
+        output.value = json;
+        output.hidden = false;
+        if (window.isSecureContext && navigator.clipboard?.writeText) {
+          try {
+            await navigator.clipboard.writeText(json);
+          } catch (error) {
+            console.warn('Clipboard API unavailable; using the manual copy fallback.', error);
+            copyStudyPlanJsonFallback(output);
+          }
+        } else {
+          copyStudyPlanJsonFallback(output);
+        }
+        closeModal('modal-share-study-plan');
+        showToast('Study plan JSON copied.');
+      } catch (error) {
+        console.error('Study plan JSON copy failed:', error);
+        if (output.value) {
+          output.hidden = false;
+          output.focus();
+          output.select();
+        }
+        showToast(error.message || 'Could not create or copy the shared plan.', true);
+      }
+    }
+
+    function copyStudyPlanJsonFallback(output) {
+      const temporaryField = document.createElement('textarea');
+      temporaryField.value = output.value;
+      temporaryField.setAttribute('readonly', '');
+      temporaryField.style.position = 'fixed';
+      temporaryField.style.opacity = '0';
+      document.body.appendChild(temporaryField);
+      try {
+        temporaryField.focus();
+        temporaryField.select();
+        if (!document.execCommand('copy')) throw new Error('The browser could not access the clipboard.');
+      } finally {
+        temporaryField.remove();
+      }
+    }
+
+    function parseSharedStudyPlanJson(rawJson) {
+      if (rawJson.length > 1000000) throw new Error('The shared plan is too large.');
+      let payload;
+      try {
+        payload = JSON.parse(rawJson);
+      } catch {
+        throw new Error('Enter valid JSON copied from Share Plan.');
+      }
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload) ||
+          payload.format !== SHARED_STUDY_PLAN_FORMAT || payload.version !== SHARED_STUDY_PLAN_VERSION) {
+        throw new Error('This is not a supported Cladar study plan.');
+      }
+      if (!Array.isArray(payload.courses) || payload.courses.length === 0 ||
+          payload.courses.length > MAX_SHARED_STUDY_PLAN_COURSES) {
+        throw new Error(`The shared plan must contain 1–${MAX_SHARED_STUDY_PLAN_COURSES} courses.`);
+      }
+
+      const courses = payload.courses.map((course, index) => {
+        if (!course || typeof course !== 'object' || Array.isArray(course)) {
+          throw new Error(`Course ${index + 1} has invalid data.`);
+        }
+        const readText = (key, fallback, maxLength) => {
+          const value = course[key] === undefined ? fallback : course[key];
+          if (typeof value !== 'string' || value.length > maxLength) {
+            throw new Error(`Course ${index + 1} has invalid ${key}.`);
+          }
+          return value.trim();
+        };
+        const name = readText('name', '', 200);
+        if (!name) throw new Error(`Course ${index + 1} is missing its name.`);
+        const shareId = readText('shareId', '', 40);
+        if (!/^course-\d+$/.test(shareId)) throw new Error(`Course ${index + 1} has an invalid share ID.`);
+        const type = readText('type', 'Teaching', 30);
+        if (!['Teaching', 'Course', 'Seminar'].includes(type)) {
+          throw new Error(`Course ${index + 1} has an unsupported activity type.`);
+        }
+        const cfu = course.cfu === undefined ? 0 : course.cfu;
+        const year = course.year === undefined ? 1 : course.year;
+        const sem = course.sem === undefined ? 1 : course.sem;
+        if (typeof cfu !== 'number' || !Number.isFinite(cfu) || cfu < 0 || cfu > 1000 ||
+            !Number.isInteger(year) || year < 1 || year > 50 ||
+            !Number.isInteger(sem) || (sem !== 1 && sem !== 2)) {
+          throw new Error(`Course ${index + 1} has invalid credits or semester details.`);
+        }
+        if (course.excludeCredits !== undefined && typeof course.excludeCredits !== 'boolean') {
+          throw new Error(`Course ${index + 1} has invalid credit settings.`);
+        }
+        const excludeCredits = Boolean(course.excludeCredits);
+        const mergedModuleShareIds = course.mergedModuleShareIds === undefined ? [] : course.mergedModuleShareIds;
+        if (!Array.isArray(mergedModuleShareIds) ||
+            mergedModuleShareIds.some(id => typeof id !== 'string' || !/^course-\d+$/.test(id)) ||
+            new Set(mergedModuleShareIds).size !== mergedModuleShareIds.length ||
+            (mergedModuleShareIds.length > 0 && course.mergedIntoShareId !== undefined)) {
+          throw new Error(`Course ${index + 1} has invalid merged-module details.`);
+        }
+        const mergedIntoShareId = course.mergedIntoShareId === undefined
+          ? ''
+          : readText('mergedIntoShareId', '', 40);
+        if (mergedIntoShareId && !/^course-\d+$/.test(mergedIntoShareId)) {
+          throw new Error(`Course ${index + 1} has invalid merged-module details.`);
+        }
+        return {
+          shareId,
+          code: readText('code', 'EXT01', 80) || 'EXT01',
+          ssd: readText('ssd', 'N/A', 80) || 'N/A',
+          name,
+          prof: readText('prof', '', 200),
+          type,
+          cfu,
+          excludeCredits,
+          noCredit: excludeCredits,
+          ay: readText('ay', '', 40),
+          year,
+          sem,
+          mergedModuleShareIds,
+          mergedIntoShareId
+        };
+      });
+      const coursesByShareId = new Map();
+      courses.forEach(course => {
+        if (coursesByShareId.has(course.shareId)) throw new Error('The shared plan contains duplicate share IDs.');
+        coursesByShareId.set(course.shareId, course);
+      });
+      courses.forEach(course => {
+        course.mergedModuleShareIds.forEach(moduleId => {
+          const module = coursesByShareId.get(moduleId);
+          if (!module || module.shareId === course.shareId || module.mergedIntoShareId !== course.shareId ||
+              module.mergedModuleShareIds.length > 0) {
+            throw new Error('The shared plan has invalid merged-module links.');
+          }
+        });
+        if (course.mergedIntoShareId) {
+          const parent = coursesByShareId.get(course.mergedIntoShareId);
+          if (!parent || !parent.mergedModuleShareIds.includes(course.shareId)) {
+            throw new Error('The shared plan has invalid merged-module links.');
+          }
+        }
+      });
+      return courses;
+    }
+
+    function getStudyPlanCourseIdentity(course) {
+      return JSON.stringify([
+        String(course.code || '').trim().toLowerCase(),
+        String(course.name || '').trim().toLowerCase(),
+        Number(course.year) || 1,
+        Number(course.sem) || 1
+      ]);
+    }
+
+    function previewSharedStudyPlanImport() {
+      const status = document.getElementById('study-plan-import-status');
+      const importButton = document.getElementById('confirm-import-study-plan-btn');
+      const rawJson = document.getElementById('study-plan-import-json').value.trim();
+      status.classList.remove('is-error');
+      importButton.disabled = true;
+      if (!rawJson) {
+        status.textContent = '';
+        return;
+      }
+      try {
+        const courses = parseSharedStudyPlanJson(rawJson);
+        const existing = new Set(state.studyPlan.map(getStudyPlanCourseIdentity));
+        let duplicates = 0;
+        let addCount = 0;
+        getSharedStudyPlanCourseGroups(courses).forEach(group => {
+          const keys = group.map(getStudyPlanCourseIdentity);
+          const hasDuplicate = keys.some(key => existing.has(key)) || new Set(keys).size < keys.length;
+          if (hasDuplicate) {
+            duplicates += group.length;
+          } else {
+            keys.forEach(key => existing.add(key));
+            addCount += group.length;
+          }
+        });
+        status.textContent = `${addCount} course${addCount === 1 ? '' : 's'} ready to add; ${duplicates} course${duplicates === 1 ? '' : 's'} in duplicate or merged groups will be skipped.`;
+        importButton.disabled = false;
+      } catch (error) {
+        status.textContent = error.message;
+        status.classList.add('is-error');
+      }
+    }
+
+    document.getElementById('share-study-plan-btn').addEventListener('click', openStudyPlanShareModal);
+    document.getElementById('study-plan-share-list').addEventListener('change', handleStudyPlanShareSelectionChange);
+    document.getElementById('study-plan-share-select-all').addEventListener('change', event => {
+      document.querySelectorAll('#study-plan-share-list [data-share-index]').forEach(input => {
+        input.checked = event.currentTarget.checked;
+      });
+      updateStudyPlanShareSelection();
+    });
+    document.getElementById('copy-study-plan-json-btn').addEventListener('click', copySharedStudyPlanJson);
+    document.getElementById('import-study-plan-btn').addEventListener('click', () => {
+      document.getElementById('study-plan-import-json').value = '';
+      document.getElementById('study-plan-import-status').textContent = '';
+      document.getElementById('confirm-import-study-plan-btn').disabled = true;
+      openModal('modal-import-study-plan');
+    });
+    document.getElementById('study-plan-import-json').addEventListener('input', previewSharedStudyPlanImport);
+    document.getElementById('confirm-import-study-plan-btn').addEventListener('click', () => {
+      const rawJson = document.getElementById('study-plan-import-json').value.trim();
+      try {
+        const incomingCourses = parseSharedStudyPlanJson(rawJson);
+        const existingKeys = new Set(state.studyPlan.map(getStudyPlanCourseIdentity));
+        const usedIds = new Set(getAllProfileCourses().map(item => item.course.id));
+        let duplicates = 0;
+        const groupsToAdd = [];
+        getSharedStudyPlanCourseGroups(incomingCourses).forEach(group => {
+          const keys = group.map(getStudyPlanCourseIdentity);
+          const hasDuplicate = keys.some(key => existingKeys.has(key)) || new Set(keys).size < keys.length;
+          if (hasDuplicate) {
+            duplicates += group.length;
+            return;
+          }
+          keys.forEach(key => existingKeys.add(key));
+          groupsToAdd.push(group);
+        });
+        const coursesToAdd = groupsToAdd.flat();
+
+        if (coursesToAdd.length > 0) {
+          const newIdByShareId = new Map(coursesToAdd.map((course, index) => [
+            course.shareId,
+            reserveUniqueCourseId(`c_${Date.now()}_${index + 1}`, usedIds)
+          ]));
+          const importedCourses = coursesToAdd.map(course => ({
+            ...course,
+            id: newIdByShareId.get(course.shareId),
+            ...(course.mergedModuleShareIds.length > 0
+              ? { mergedModuleIds: course.mergedModuleShareIds.map(id => newIdByShareId.get(id)) }
+              : {}),
+            ...(course.mergedIntoShareId ? { mergedIntoId: newIdByShareId.get(course.mergedIntoShareId) } : {})
+          }));
+          importedCourses.forEach(course => {
+            delete course.shareId;
+            delete course.mergedModuleShareIds;
+            delete course.mergedIntoShareId;
+          });
+          state.studyPlan.push(...normalizeMergedCourseLinks(importedCourses));
+          saveData();
+          renderStudyPlanTree();
+          renderProfileView();
+        }
+        closeModal('modal-import-study-plan');
+        showToast(coursesToAdd.length
+          ? `Imported ${coursesToAdd.length} course${coursesToAdd.length === 1 ? '' : 's'}${duplicates ? `; skipped ${duplicates} duplicate or grouped` : ''}.`
+          : 'All shared courses were skipped to avoid duplicates or splitting merged groups.');
+      } catch (error) {
+        console.error('Study plan import failed:', error);
+        const status = document.getElementById('study-plan-import-status');
+        status.textContent = error.message || 'Could not import the shared plan.';
+        status.classList.add('is-error');
+        document.getElementById('confirm-import-study-plan-btn').disabled = true;
+      }
     });
 
     async function exportStudyPlanToPdf() {
