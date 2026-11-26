@@ -1,10 +1,10 @@
 {
-  "id": "./",
+  "id": "./cladar.html",
   "name": "Cladar",
   "short_name": "Cladar",
   "description": "Offline-first academic planning and student profile manager.",
   "lang": "en",
-  "start_url": "./",
+  "start_url": "./cladar.html",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
