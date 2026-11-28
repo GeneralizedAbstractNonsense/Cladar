@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -81,6 +82,44 @@ class MainActivity : AppCompatActivity() {
     
     class WebAppInterface(private val context: Context) {
         @JavascriptInterface
+        fun savePdf(base64Data: String, filename: String) {
+            try {
+                val safeFilename = filename.replace(Regex("[\\\\/:*?\"<>|]"), "_")
+                    .ifBlank { "cladar_export.pdf" }
+                    .let { if (it.endsWith(".pdf", ignoreCase = true)) it else "$it.pdf" }
+                val bytes = Base64.decode(base64Data, Base64.DEFAULT)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val resolver = context.contentResolver
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, safeFilename)
+                        put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                    }
+                    val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                    if (uri == null) throw Exception("Unable to create the PDF file")
+                    resolver.openOutputStream(uri)?.use { stream ->
+                        stream.write(bytes)
+                        stream.flush()
+                    } ?: throw Exception("Unable to open the PDF file")
+                    showToast("PDF saved in Download: $safeFilename")
+                } else {
+                    @Suppress("DEPRECATION")
+                    val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    if (!downloadsDir.exists()) downloadsDir.mkdirs()
+                    val file = File(downloadsDir, safeFilename)
+                    FileOutputStream(file).use { stream ->
+                        stream.write(bytes)
+                        stream.flush()
+                    }
+                    showToast("PDF saved in Download: $safeFilename")
+                }
+            } catch (e: Exception) {
+                showToast("Error in saving PDF: ${e.message}")
+            }
+        }
+
+        @JavascriptInterface
         fun saveJson(jsonString: String, filename: String) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -95,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                         resolver.openOutputStream(uri)?.use { stream ->
                             stream.write(jsonString.toByteArray())
                         }
-                        showToast("Backup salvato in Download: $filename")
+                        showToast("Backup saved in Download: $filename")
                     }
                 } else {
                     @Suppress("DEPRECATION")
@@ -104,10 +143,10 @@ class MainActivity : AppCompatActivity() {
                     FileOutputStream(file).use { stream ->
                         stream.write(jsonString.toByteArray())
                     }
-                    showToast("Backup salvato in Download: $filename")
+                    showToast("Backup saved in Download: $filename")
                 }
             } catch (e: Exception) {
-                showToast("Errore nel salvataggio del file: ${e.message}")
+                showToast("Error in saving: ${e.message}")
             }
         }
 
