@@ -10094,6 +10094,20 @@
       return evaluationPdfLibraryPromise;
     }
 
+    async function saveEvaluationPdf(pdf, filename) {
+      if (window.AndroidBridge && typeof window.AndroidBridge.savePdf === 'function') {
+        const bytes = new Uint8Array(pdf.output('arraybuffer'));
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+        }
+        window.AndroidBridge.savePdf(btoa(binary), filename);
+        return;
+      }
+      pdf.save(filename);
+    }
+
     function loadEvaluationPdfLogo() {
       return new Promise((resolve, reject) => {
         const logo = new Image();
@@ -10364,7 +10378,7 @@
         }
       });
 
-      pdf.save(`cladar_evaluations_${todaySlash}.pdf`);
+      await saveEvaluationPdf(pdf, `cladar_evaluations_${todaySlash}.pdf`);
     }
 
     document.getElementById('evaluation-export-list').addEventListener('change', updateEvaluationExportSelectionCount);
@@ -11030,7 +11044,7 @@
           );
         }
       });
-      pdf.save(`cladar_study_plan_${todaySlash}.pdf`);
+      await saveEvaluationPdf(pdf, `cladar_study_plan_${todaySlash}.pdf`);
     }
 
     document.getElementById('export-study-plan-pdf-btn').addEventListener('click', async event => {
